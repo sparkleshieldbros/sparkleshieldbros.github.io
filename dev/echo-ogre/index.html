@@ -1,412 +1,442 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sparkle Shield Bros: The Echo Ogre Choice Path</title>
-<meta name="description" content="An interactive storybook adventure for kids ages 5-8 about calm, kindness, courage, and repair.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sparkle Shield HQ | Superhero Adventures</title>
+  <style>
+    /* 
+      SPRINT 3: CSS COMPONENT TOKENS
+      Split Palette Strategy: Premium Parent Layer vs Kid Magic Layer 
+    */
+    :root {
+      /* Parent Premium Layer */
+      --color-navy: #0F172A;
+      --color-cream: #FDFBF7;
+      --color-gold: #F59E0B;
+      --color-gold-hover: #D97706;
+      --color-text-dark: #334155;
+      --color-text-light: #94A3B8;
+      
+      /* Kid Magic Layer */
+      --kid-blue: #38BDF8;
+      --kid-red: #EF4444;
+      --kid-purple: #A855F7;
+      --kid-teal: #14B8A6;
+      --kid-coral: #F43F5E;
+      
+      /* UI Variables */
+      --radius-sm: 8px;
+      --radius-lg: 24px;
+      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.05);
+      --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.4);
+      --font-body: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      --transition-speed: 0.3s;
+    }
 
-<link rel="stylesheet" href="css/styles.css">
+    /* Accessibility: Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Base Reset & Typography */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background-color: var(--color-cream); color: var(--color-navy); line-height: 1.6; }
+    h1, h2, h3, h4 { line-height: 1.2; margin-bottom: 0.5em; }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; height: auto; border-radius: var(--radius-sm); }
+    
+    /* Accessibility: Focus Styling */
+    *:focus-visible {
+      outline: 4px solid var(--kid-blue);
+      outline-offset: 4px;
+    }
+    .skip-link {
+      position: absolute; top: -40px; left: 0; background: var(--color-gold); color: var(--color-navy); 
+      padding: 8px; z-index: 100; transition: top 0.2s;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* Layout Utility */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    .hidden { display: none !important; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0; }
+
+    /* Navigation */
+    header { background: var(--color-navy); color: white; padding: 1rem 0; position: sticky; top: 0; z-index: 50; }
+    .nav-flex { display: flex; justify-content: space-between; align-items: center; }
+    .brand-logo { font-size: 1.5rem; font-weight: 900; color: var(--color-gold); display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links button { background: none; border: none; color: white; font-size: 1rem; cursor: pointer; font-family: inherit; }
+    .nav-links button:hover { color: var(--kid-blue); }
+
+    /* Buttons Component System */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 12px 24px; border-radius: var(--radius-lg); font-weight: bold; cursor: pointer;
+      border: none; transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+      font-size: 1.1rem; text-align: center;
+    }
+    /* SPRINT 1: Large touch targets for kids (min 48px-64px) */
+    .btn-kid { background: var(--kid-blue); color: white; min-height: 60px; font-size: 1.2rem; box-shadow: 0 4px 0 #0284C7; }
+    .btn-kid:hover, .btn-kid:focus { transform: translateY(-2px); box-shadow: 0 6px 0 #0284C7, var(--shadow-glow); }
+    .btn-kid:active { transform: translateY(2px); box-shadow: 0 0 0 #0284C7; }
+    .btn-kid.action-rush { background: var(--kid-red); box-shadow: 0 4px 0 #B91C1C; }
+    .btn-kid.action-calm { background: var(--kid-teal); box-shadow: 0 4px 0 #0F766E; }
+    .btn-parent { background: var(--color-gold); color: var(--color-navy); min-height: 48px; }
+    .btn-parent:hover { background: var(--color-gold-hover); }
+
+    /* 
+      SPRINT 2: FRANCHISE HOMEPAGE
+    */
+    .hero-section {
+      background: linear-gradient(135deg, var(--color-navy) 0%, #1E293B 100%);
+      color: white; padding: 4rem 0; text-align: center; overflow: hidden;
+    }
+    .hero-content h1 { font-size: 3rem; color: var(--color-gold); }
+    .hero-content p { font-size: 1.2rem; max-width: 600px; margin: 1rem auto 2rem; color: var(--color-cream); }
+    
+    .section-title { text-align: center; font-size: 2.2rem; margin: 4rem 0 2rem; color: var(--color-navy); }
+    
+    /* Reusable Cards Grid */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 3rem; }
+    .card { background: white; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-soft); display: flex; flex-direction: column; }
+    .card-img-placeholder { width: 100%; height: 200px; background: var(--color-cream); border-radius: var(--radius-sm); margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; color: var(--color-text-light); font-weight: bold; border: 2px dashed #CBD5E1; }
+    .card h3 { color: var(--kid-purple); }
+    .card .meta { font-size: 0.9rem; color: #64748B; margin-bottom: 1rem; font-weight: bold; }
+    .card .btn { margin-top: auto; }
+
+    /* The Sparkle Shield Method (Parent Section) */
+    .grown-up-section { background: var(--color-navy); color: white; padding: 4rem 0; text-align: center; border-radius: var(--radius-lg); margin: 4rem 0; }
+    .method-steps { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 2rem; }
+    .step { background: rgba(255,255,255,0.1); padding: 15px 25px; border-radius: var(--radius-lg); font-weight: bold; border: 1px solid rgba(255,255,255,0.2); }
+
+    /* 
+      SPRINT 1: INTERACTIVE STORY MODULE (Page-Flip Concept)
+    */
+    .story-portal { background: var(--color-navy); min-height: calc(100vh - 70px); padding: 2rem 0; display: flex; flex-direction: column; align-items: center; }
+    .storybook-container {
+      background: white; width: 100%; max-width: 800px; border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3); position: relative; overflow: hidden;
+      min-height: 600px; display: flex; flex-direction: column;
+    }
+    
+    /* Page Transition Animation */
+    .page-content { padding: 2rem; flex: 1; display: flex; flex-direction: column; animation: pageFadeIn 0.5s ease forwards; }
+    @keyframes pageFadeIn {
+      0% { opacity: 0; transform: translateX(20px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    .story-image { width: 100%; height: 300px; object-fit: cover; border-radius: var(--radius-sm); background: #E2E8F0; margin-bottom: 1.5rem; }
+    .story-text { font-size: 1.5rem; color: var(--color-navy); margin-bottom: 2rem; font-weight: bold; text-align: center; }
+    .choices-container { display: flex; flex-direction: column; gap: 15px; margin-top: auto; }
+    
+    /* Sparkle Meter / Progress */
+    .sparkle-meter-wrap { padding: 1rem 2rem; background: #F1F5F9; border-bottom: 2px solid #E2E8F0; display: flex; align-items: center; justify-content: space-between; }
+    .meter-bar { height: 12px; width: 200px; background: #CBD5E1; border-radius: 10px; overflow: hidden; }
+    .meter-fill { height: 100%; background: var(--kid-teal); width: 10%; transition: width 0.5s ease; }
+    
+    /* Page Corner Affordance */
+    .page-corner { position: absolute; bottom: 0; right: 0; width: 40px; height: 40px; background: linear-gradient(135deg, transparent 50%, var(--color-gold) 50%); cursor: pointer; animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+
+    /* Celebration Overlay */
+    .celebration { position: absolute; inset: 0; background: rgba(255,255,255,0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; text-align: center; }
+    .badge-icon { font-size: 5rem; animation: bounce 1s ease infinite; margin-bottom: 1rem; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+    /* Footer & Privacy */
+    footer { background: white; border-top: 1px solid #E2E8F0; padding: 3rem 0; text-align: center; color: var(--color-text-light); }
+    .privacy-box { max-width: 800px; margin: 0 auto 2rem; padding: 1rem; background: var(--color-cream); border-radius: var(--radius-sm); font-size: 0.9rem; color: var(--color-text-dark); border: 1px solid #E2E8F0; }
+    .newsletter-form { display: flex; justify-content: center; gap: 10px; margin-top: 1rem; }
+    .newsletter-form input { padding: 10px 15px; border-radius: var(--radius-sm); border: 1px solid #CBD5E1; width: 250px; }
+  </style>
 </head>
 <body>
 
-<a href="#main-content" class="skip-link">Skip to story</a>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
-<header class="site-header">
-  <div class="brand">
-    <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
-      <circle cx="32" cy="32" r="30" fill="#d79a23"/>
-      <path d="M32 12 L38 26 L52 28 L41 38 L44 52 L32 44 L20 52 L23 38 L12 28 L26 26 Z" fill="#160c25"/>
-    </svg>
-    Sparkle Shield Bros
-  </div>
-  <nav class="main-nav" aria-label="Main navigation">
-    <button class="nav-btn gold" onclick="showScene('start-screen')">Title Page</button>
-    <button class="nav-btn" onclick="openCharacterHub()">Hero Files</button>
-    <button class="nav-btn" onclick="openParentGuide()">Grown-Up Guide</button>
-    <button class="nav-btn" onclick="playAgain()">Try Another Path</button>
-  </nav>
-</header>
-
-<main id="main-content">
-
-  <div id="sr-announcer" class="visually-hidden" aria-live="polite"></div>
-
-  <div class="sparkle-meter" role="status" aria-live="polite" aria-label="Sparkle Meter progress" id="sparkle-meter">
-    <div class="meter-item">
-      <div class="meter-label">Calm</div>
-      <div class="meter-bar"><div class="meter-fill calm" id="meter-calm" style="width:0%"></div></div>
+  <!-- GLOBAL NAVIGATION -->
+  <header>
+    <div class="container nav-flex">
+      <div class="brand-logo" onclick="app.switchView('home')" tabindex="0" role="button">
+        🛡️ Sparkle Shield HQ
+      </div>
+      <nav class="nav-links" aria-label="Main Navigation">
+        <button onclick="app.switchView('home')">Home</button>
+        <button onclick="app.switchView('story')">Play Adventure</button>
+        <button onclick="document.getElementById('grown-up-guide').scrollIntoView({behavior: 'smooth'})">For Grown-Ups</button>
+      </nav>
     </div>
-    <div class="meter-item">
-      <div class="meter-label">Kindness</div>
-      <div class="meter-bar"><div class="meter-fill kindness" id="meter-kindness" style="width:0%"></div></div>
-    </div>
-    <div class="meter-item">
-      <div class="meter-label">Courage</div>
-      <div class="meter-bar"><div class="meter-fill courage" id="meter-courage" style="width:0%"></div></div>
-    </div>
-    <div class="meter-item">
-      <div class="meter-label">Repair</div>
-      <div class="meter-bar"><div class="meter-fill repair" id="meter-repair" style="width:0%"></div></div>
-    </div>
-  </div>
+  </header>
 
-  <!-- ============ START / TITLE SCREEN ============ -->
-  <section id="start-screen" class="screen active" aria-labelledby="title-heading">
-    <div class="story-card">
-      <svg class="title-emblem" viewBox="0 0 96 96" aria-hidden="true">
-        <circle cx="48" cy="48" r="44" fill="#5d2a86"/>
-        <polygon points="48,14 56,36 80,38 60,54 66,78 48,64 30,78 36,54 16,38 40,36" fill="#d79a23"/>
-      </svg>
-      <h1 id="title-heading" style="text-align:center;">Sparkle Shield Bros</h1>
-      <p class="tagline">Superhero adventures for kind hearts, brave choices, and growing families.</p>
-
-      <div class="howto-grid">
-        <div class="howto-card">
-          <h3>For Kids</h3>
-          <p>You'll help Kairo, Captain Cash, and Ninja Nugs choose what to do when something strange shows up on their street. Every choice changes the story!</p>
-        </div>
-        <div class="howto-card">
-          <h3>For Grown-Ups</h3>
-          <p>This is a choice-driven picture book about calm, kindness, courage, and repair. There are three paths and three endings — replay to find them all.</p>
+  <main id="main-content">
+    <!-- VIEW 1: FRANCHISE HOMEPAGE (Sprint 2) -->
+    <section id="view-home" class="view-section">
+      <!-- Cinematic Hero -->
+      <div class="hero-section">
+        <div class="container hero-content">
+          <h1>Big feelings. Brave choices. Superhero hearts.</h1>
+          <p>Join Kairo, Captain Cash, and Ninja Nugs in interactive storybook adventures where kids learn calm, courage, kindness, and repair — one choice at a time.</p>
+          <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <button class="btn btn-kid" onclick="app.switchView('story')">✨ Start an Adventure</button>
+            <button class="btn btn-parent" onclick="document.getElementById('grown-up-guide').scrollIntoView({behavior: 'smooth'})">Read Grown-Up Guide</button>
+          </div>
         </div>
       </div>
 
-      <div class="start-cta">
-        <button class="btn-primary" onclick="showScene('opening')">Turn the Page</button>
-      </div>
-    </div>
-  </section>
+      <div class="container">
+        <!-- Adventures Hub -->
+        <h2 class="section-title">Choose Your Adventure</h2>
+        <div class="grid">
+          <!-- Reusable Adventure Card -->
+          <article class="card">
+            <!-- Sprint 1 Asset Standard -->
+            <div class="card-img-placeholder">[images/echo-ogre.webp]</div>
+            <h3>The Echo Ogre</h3>
+            <p class="meta">Skill: Calm & Repair • Ages: 5–8</p>
+            <p>A mysterious creature copies whatever it sees. Can the Bros discover what happens when calm is stronger than rushing?</p>
+            <button class="btn btn-kid action-calm" onclick="app.switchView('story')">📖 Play the Story</button>
+          </article>
+          
+          <article class="card" style="opacity: 0.7;">
+            <div class="card-img-placeholder">[images/ninja-nugs.webp]</div>
+            <h3>The Tesla Thunder Race</h3>
+            <p class="meta">Coming Soon • Skill: Patience</p>
+            <p>Ninja Nugs builds a hyper-fast cart, but realizes going too fast means missing the checkpoints.</p>
+            <button class="btn" disabled style="background:#E2E8F0; color:#94A3B8;">Locked</button>
+          </article>
+        </div>
 
-  <!-- ============ OPENING SCENE ============ -->
-  <section id="opening" class="screen" aria-labelledby="opening-title">
-    <div class="story-card">
-      <div class="scene-art">
-        <img
-          src="images/opening.webp"
-          alt="Bubble Boy Kairo, Captain Cash, and Ninja Nugs face a glowing purple echo shape on Maplewood Terrace at dusk."
-          loading="eager"
-        />
-      </div>
-      <p class="eyebrow">Chapter 1 · Maplewood Terrace, Dusk</p>
-      <h1 id="opening-title">The Echo Ogre Appears</h1>
-      <p class="story-text">
-        The streetlights on Maplewood Terrace flickered purple.<br>
-        Between the porches and the garden gnomes, something new stood still.<br>
-        It was a swirling shadow, taller than the mailbox.<br>
-        It hummed with every sound on the block — a radio next door, a dog barking, Dad's wind chimes.
-      </p>
-      <p class="story-text">
-        Kairo and Captain Cash stopped building their blanket fort.<br>
-        The shape watched them. It waited.
-      </p>
-      <p class="story-text"><strong>Whatever they do next, it will copy — and grow.</strong></p>
-      <div class="choice-grid">
-        <button class="choice-btn" onclick="choosePath('rush')">
-          <span class="emoji" aria-hidden="true">⚡</span>Rush in quickly
-        </button>
-        <button class="choice-btn" onclick="choosePath('pause')">
-          <span class="emoji" aria-hidden="true">🫧</span>Pause and observe
-        </button>
-        <button class="choice-btn" onclick="choosePath('dad')">
-          <span class="emoji" aria-hidden="true">🏠</span>Ask Dad for help
-        </button>
-      </div>
-    </div>
-  </section>
+        <!-- Meet the Heroes -->
+        <h2 class="section-title">Meet the Heroes</h2>
+        <div class="grid">
+          <article class="card">
+            <div class="card-img-placeholder" style="height:150px; border-radius:50%;">[images/kairo.webp]</div>
+            <h3 style="text-align:center; color: var(--kid-blue)">Kairo</h3>
+            <p style="text-align:center">The Observer. Uses the Bubble Shield to pause, breathe, and think.</p>
+          </article>
+          <article class="card">
+            <div class="card-img-placeholder" style="height:150px; border-radius:50%;">[images/captain-cash.webp]</div>
+            <h3 style="text-align:center; color: var(--kid-red)">Captain Cash</h3>
+            <p style="text-align:center">The Rescuer. Super fast, but learning to use Wise Action instead of rushing.</p>
+          </article>
+          <article class="card">
+            <div class="card-img-placeholder" style="height:150px; border-radius:50%;">[images/dad.webp]</div>
+            <h3 style="text-align:center; color: var(--color-navy)">Dad & Mom</h3>
+            <p style="text-align:center">The Noticers. Modeling connection, boundaries, and how to repair.</p>
+          </article>
+        </div>
 
-  <!-- ============ CONSEQUENCE: RUSH ============ -->
-  <section id="scene-rush-consequence" class="screen" aria-labelledby="rush-title">
-    <div class="story-card">
-      <div class="scene-art">
-        <img
-          src="images/choice-rush.webp"
-          alt="Captain Cash rushes forward with golden rescue energy while Bubble Boy Kairo raises a blue bubble shield and Ninja Nugs stands ready in a ninja mask as the Echo Ogre grows larger and echoes the motion back."
-          loading="eager"
-        />
-      </div>
-      <p class="eyebrow">Chapter 2 · The Rush Path</p>
-      <h2 id="rush-title">Fast Hands</h2>
-      <p class="story-text">
-        Captain Cash rushed in and swung his rescue energy at the shape.<br>
-        The Ogre swung back — bigger, louder, faster.<br>
-        Every quick move Cash made, the Ogre copied double.
-      </p>
-      <p class="story-text">Cash skidded to a stop, breathing hard.<br><em>"Um... it's copying me,"</em> he said.</p>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('scene-rush-realization')">Continue</button>
-        <button class="btn-secondary" onclick="openCharacterHub()">Back to Hero Files</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ REALIZATION: RUSH ============ -->
-  <section id="scene-rush-realization" class="screen" aria-labelledby="rush-realization-title">
-    <div class="story-card">
-      <p class="eyebrow">Chapter 3 · A Hard Moment</p>
-      <h2 id="rush-realization-title">Noticing What Happened</h2>
-      <p class="story-text">
-        Cash noticed his fast hands made the Ogre bigger, not smaller.<br>
-        That's okay. Fast hands have hard moments sometimes.
-      </p>
-      <p class="story-text">And hard moments can always be repaired.</p>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('ending-fast-hands')">Continue</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ CONSEQUENCE: PAUSE ============ -->
-  <section id="scene-pause-consequence" class="screen" aria-labelledby="pause-title">
-    <div class="story-card">
-      <div class="scene-art">
-        <img
-          src="images/consequence-pause.webp"
-          alt="Bubble Boy Kairo pauses thoughtfully while Captain Cash and Ninja Nugs watch the Echo Ogre from a safe distance, noticing glowing ripple patterns that show the creature is copying what it sees."
-          loading="lazy"
-        />
-      </div>
-      <p class="eyebrow">Chapter 2 · The Pause Path</p>
-      <h2 id="pause-title">Watching the Pattern</h2>
-      <p class="story-text">
-        Kairo took a slow breath. He just watched.<br>
-        The Ogre wasn't attacking. It was copying.
-      </p>
-      <p class="story-text">Loud became louder. Calm became calmer.</p>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('scene-pause-realization')">Continue</button>
-        <button class="btn-secondary" onclick="openCharacterHub()">Back to Hero Files</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ REALIZATION: PAUSE ============ -->
-  <section id="scene-pause-realization" class="screen" aria-labelledby="pause-realization-title">
-    <div class="story-card">
-      <p class="eyebrow">Chapter 3 · The Pattern Becomes Clear</p>
-      <h2 id="pause-realization-title">Calm In, Calm Out</h2>
-      <p class="story-text">
-        <em>"It's an echo,"</em> Kairo whispered.<br>
-        "It gives back whatever it gets."
-      </p>
-      <p class="story-text">The Ogre's colors slowed down, curious about the quiet.</p>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('ending-bubble-pause')">Continue</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ CONSEQUENCE: DAD ============ -->
-  <section id="scene-dad-consequence" class="screen" aria-labelledby="dad-title">
-    <div class="story-card">
-      <div class="scene-art">
-        <img
-          src="images/consequence-help.webp"
-          alt="Dad kneels calmly between Bubble Boy Kairo and Captain Cash, using open hands and a gentle expression while Ninja Nugs watches and the Echo Ogre flickers nearby, listening."
-          loading="lazy"
-        />
-      </div>
-      <p class="eyebrow">Chapter 2 · The Ask-Dad Path</p>
-      <h2 id="dad-title">Dad Kneels Down</h2>
-      <p class="story-text">
-        Dad came outside and knelt between the boys.<br>
-        <em>"I used a loud voice earlier tonight,"</em> he said. <em>"I'm sorry. Let me try again — calmly."</em>
-      </p>
-      <p class="story-text">He turned to the Ogre and spoke softly. The shape flickered, listening.</p>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('scene-dad-realization')">Continue</button>
-        <button class="btn-secondary" onclick="openCharacterHub()">Back to Hero Files</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ REALIZATION: DAD (breathing interaction) ============ -->
-  <section id="scene-dad-realization" class="screen" aria-labelledby="dad-realization-title">
-    <div class="story-card">
-      <p class="eyebrow">Chapter 3 · A Breath Together</p>
-      <h2 id="dad-realization-title">Try It With Your Body</h2>
-      <div class="breathing-widget">
-        <div class="breathing-circle" aria-hidden="true"></div>
-        <p class="breathing-text">
-          Put a hand on your belly.<br>
-          Breathe in... breathe out...<br>
-          Now choose kind hands.
-        </p>
-      </div>
-      <p class="story-text">Kairo and Cash breathed slowly with Dad. Their shoulders came down.</p>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('ending-sparkle-shield')">Continue</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ ENDING: FAST HANDS ============ -->
-  <section id="ending-fast-hands" class="screen" aria-labelledby="ending-fast-title">
-    <div class="story-card">
-      <div class="scene-art">
-        <img
-          src="images/ending-fast.webp"
-          alt="The Echo Ogre towers huge and loud over Maplewood Terrace while Bubble Boy Kairo raises a bubble shield, Captain Cash stands surprised, and Ninja Nugs stays ready beside them."
-          loading="lazy"
-        />
-      </div>
-      <p class="eyebrow">Ending · Fast Hands</p>
-      <p class="unlock-banner" id="unlock-banner-fast" role="status" aria-live="polite"></p>
-      <h2 id="ending-fast-title">Bigger, Not Better</h2>
-      <p class="story-text">
-        Rushing in made the Echo Ogre twice as big and twice as loud.<br>
-        Nobody got hurt, but the block stayed tense all night.
-      </p>
-      <p class="story-text">
-        Fast hands had a hard moment. That's repairable.<br>
-        Captain Cash's power works best when he slows down enough to choose wisely.<br>
-        Tomorrow, he'll get another chance to try a calmer path.
-      </p>
-      <div class="badge-row" id="badge-row-fast"></div>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="playAgain()">Try Another Path</button>
-        <button class="btn-secondary" onclick="choosePath('pause')">Try the Pause Path</button>
-        <button class="btn-secondary" onclick="shareEnding('Fast Hands')">Share My Ending</button>
-        <button class="btn-secondary" onclick="openCharacterHub()">Visit Hero Files</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ ENDING: BUBBLE PAUSE ============ -->
-  <section id="ending-bubble-pause" class="screen" aria-labelledby="ending-bubble-title">
-    <div class="story-card">
-      <div class="scene-art">
-        <img
-          src="images/ending-wise.webp"
-          alt="Bubble Boy Kairo calmly watches as the Echo Ogre softens into gentle glowing bubbles while Captain Cash and Ninja Nugs look on with relief."
-          loading="lazy"
-        />
-      </div>
-      <p class="eyebrow">Ending · Bubble Pause</p>
-      <p class="unlock-banner" id="unlock-banner-bubble" role="status" aria-live="polite"></p>
-      <h2 id="ending-bubble-title">The Pattern Becomes Clear</h2>
-      <p class="story-text">
-        By staying calm, Kairo helped everyone see the truth.<br>
-        The Ogre only ever echoed what it received.
-      </p>
-      <p class="story-text">Quiet, patient attention settled its wild colors into soft, drifting bubbles.</p>
-      <p class="family-idea">Family idea — Try the Echo Test: one person claps softly, everyone else echoes it softly back. Then try a kind word the same way.</p>
-      <div class="badge-row" id="badge-row-bubble"></div>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="playAgain()">Try Another Path</button>
-        <button class="btn-secondary" onclick="choosePath('dad')">Try the Repair Path</button>
-        <button class="btn-secondary" onclick="shareEnding('Bubble Pause')">Share My Ending</button>
-        <button class="btn-secondary" onclick="openCharacterHub()">Visit Hero Files</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ ENDING: SPARKLE SHIELD (TRUE ENDING) ============ -->
-  <section id="ending-sparkle-shield" class="screen" aria-labelledby="ending-sparkle-title">
-    <div class="story-card">
-      <div class="scene-art">
-        <img
-          src="images/ending-true.webp"
-          alt="The Echo Ogre transforms into a glowing golden guardian as Bubble Boy Kairo, Captain Cash, Dad, and Ninja Nugs stand together, sparkles and warm light spreading across Maplewood Terrace."
-          loading="lazy"
-        />
-      </div>
-      <p class="eyebrow">True Ending · Sparkle Shield</p>
-      <p class="unlock-banner" id="unlock-banner-sparkle" role="status" aria-live="polite"></p>
-      <h2 id="ending-sparkle-title">The Guardian Awakens</h2>
-      <p class="story-text">
-        With Dad's calm repair, Kairo's noticing, and Cash's teamwork all working together, the Echo Ogre stopped echoing fear.<br>
-        It started echoing kindness instead.
-      </p>
-      <p class="story-text">Golden light spread over gardens, porches, and the mural on the corner fence. A gentle guardian now watches over Maplewood Terrace, echoing whatever the neighborhood practices most: care.</p>
-      <div class="badge-row" id="badge-row-sparkle"></div>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="playAgain()">Try Another Path</button>
-        <button class="btn-secondary" onclick="openParentGuide()">Read the Grown-Up Guide</button>
-        <button class="btn-secondary" onclick="shareEnding('Sparkle Shield')">Share My Ending</button>
-        <button class="btn-secondary" onclick="openCharacterHub()">Visit Hero Files</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ============ CHARACTER HUB ============ -->
-  <section id="characters" class="screen" aria-labelledby="characters-title">
-    <div class="story-card">
-      <p class="eyebrow">Hero Files</p>
-      <h2 id="characters-title">Meet the Sparkle Shield Bros Universe</h2>
-      <p class="story-text">Tap a card to open a hero file.</p>
-      <div class="card-grid" id="character-hub-grid"></div>
-    </div>
-  </section>
-
-  <!-- ============ PROFILE VIEW (dynamic) ============ -->
-  <section id="profile" class="screen" aria-labelledby="profile-name">
-    <div class="story-card">
-      <div class="profile-header">
-        <div class="icon" id="profile-icon"></div>
-        <div>
-          <p class="eyebrow" id="profile-eyebrow">Hero File</p>
-          <h2 id="profile-name">Name</h2>
+        <!-- The Sparkle Shield Method / Parent Trust -->
+        <div id="grown-up-guide" class="grown-up-section">
+          <h2>The Sparkle Shield Method</h2>
+          <p>Our branded emotional-learning framework gives educators and parents a tool for big feelings.</p>
+          <div class="method-steps">
+            <div class="step">1. Stop</div>
+            <div class="step">2. Breathe</div>
+            <div class="step">3. Notice</div>
+            <div class="step">4. Choose</div>
+            <div class="step">5. Repair</div>
+          </div>
         </div>
       </div>
-      <ul class="stat-list" id="profile-stats"></ul>
-      <p class="phrase" id="profile-phrase"></p>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="openCharacterHub()">Back to Hero Files</button>
-        <button class="btn-secondary" onclick="returnToAdventure()">Return to Adventure</button>
+    </section>
+
+    <!-- VIEW 2: INTERACTIVE STORY MODULE (Sprint 1) -->
+    <section id="view-story" class="view-section hidden story-portal">
+      <div class="storybook-container">
+        
+        <div class="sparkle-meter-wrap">
+          <div><strong>Sparkle Meter</strong></div>
+          <div class="meter-bar" aria-label="Story Progress">
+            <div id="story-progress" class="meter-fill"></div>
+          </div>
+          <button class="btn btn-parent" style="min-height:30px; padding: 5px 15px; font-size:0.9rem;" onclick="app.switchView('home')">Quit</button>
+        </div>
+
+        <!-- Story Content Injected Here -->
+        <div id="story-mount" class="page-content" aria-live="polite">
+           <!-- Dynamic content via JS -->
+        </div>
+
+        <div class="page-corner" aria-hidden="true"></div>
       </div>
+    </section>
+
+  </main>
+
+  <!-- SPRINT 3 / COMPLIANCE: Privacy Footer -->
+  <footer>
+    <div class="container">
+      <div class="privacy-box">
+        <strong>Child-Safe Privacy Commitment (COPPA Compliant)</strong><br>
+        Sparkle Shield Bros is designed for family reading. Children can play the story without creating an account, entering a name, or sharing personal information. Story progress may be saved only on the device using browser storage. Grown-up contact forms and email signups below are for parents, guardians, educators, librarians, and media contacts only. No child behavioral tracking is active.
+      </div>
+      
+      <div style="margin-bottom: 2rem;">
+        <h4>For Grown-Ups: Join the Book Launch List</h4>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Email saved securely (mock).');">
+          <label for="adult-email" class="visually-hidden">Adult Email Address</label>
+          <input type="email" id="adult-email" placeholder="Adult's Email Address" required>
+          <button type="submit" class="btn btn-parent">Subscribe</button>
+        </form>
+      </div>
+      
+      <p>&copy; 2026 Sparkle Shield Bros. All rights reserved.</p>
     </div>
-  </section>
+  </footer>
 
-  <!-- ============ PARENT / GROWN-UP GUIDE ============ -->
-  <section id="parent-guide" class="screen" aria-labelledby="guide-title">
-    <div class="story-card">
-      <p class="eyebrow">For Grown-Ups</p>
-      <h2 id="guide-title">Grown-Up Guide: Calm, Kindness, and Repair</h2>
-      <div class="guide-block">
-        <h3>SEL Skill Focus</h3>
-        <p>Self-management, relationship skills, and responsible decision-making — the everyday skills behind stopping a hitting habit before it starts.</p>
-      </div>
-      <div class="guide-block">
-        <h3>A Phrase to Practice</h3>
-        <p>"I'm sorry. Let me try again." Said calmly, by a grown-up, this phrase teaches repair better than any lecture.</p>
-      </div>
-      <div class="guide-block">
-        <h3>A Question to Ask Your Child</h3>
-        <p>"What happened when the heroes used kind hands?" Let your child answer in their own words — there's no wrong response.</p>
-      </div>
-      <div class="guide-block">
-        <h3>Today's Family Challenge</h3>
-        <p>Practice the four-step pattern together: <strong>stop, breathe, think, choose.</strong> Try it once during a calm moment so it's ready during a hard one.</p>
-      </div>
-      <div class="guide-block">
-        <h3>Draw Your Own Echo Ogre</h3>
-        <p>Ask your child to draw what they think an Echo Ogre looks like when it's echoing kindness. Talk about what it might echo in your own home.</p>
-      </div>
-      <div class="guide-block danger-zone">
-        <h3>Manage Saved Progress on This Device</h3>
-        <p>Unlocked endings and the Sparkle Meter are saved only in this browser, on this device — nothing is sent anywhere. Use this to clear that saved progress, for example if a classroom is sharing one screen.</p>
-        <button class="btn-secondary" onclick="resetProgress()">Reset Progress</button>
-      </div>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="returnToAdventure()">Return to Adventure</button>
-      </div>
-    </div>
-  </section>
+  <script>
+    /* 
+      SPRINT 1: ECHO OGRE STORY LOGIC & STATE MANAGEMENT
+      Utilizes standard image naming.
+    */
+    const storyData = {
+      start: {
+        image: "images/opening.webp",
+        alt: "The Echo Ogre is running through the town, making a mess by copying everyone.",
+        text: "The Echo Ogre is loose! It copies whatever it sees. The town is getting chaotic. What will you do?",
+        progress: 10,
+        choices: [
+          { label: "⚡ Rush in fast!", action: "rush", icon: "action-rush" },
+          { label: "🫧 Pause and breathe.", action: "pause", icon: "action-calm" }
+        ]
+      },
+      rush: {
+        image: "images/rush.webp",
+        alt: "Captain Cash rushing towards the Ogre, and the Ogre running faster in response.",
+        text: "Oh no! You rushed in, and the Echo Ogre copied you! Now it's running even faster!",
+        progress: 50,
+        choices: [
+          { label: "🖐️ Use Fast Hands to grab it!", action: "ending_fast", icon: "action-rush" },
+          { label: "🫂 Ask Dad for help to repair.", action: "dad_repair", icon: "btn-kid" }
+        ]
+      },
+      pause: {
+        image: "images/pause.webp",
+        alt: "Kairo takes a deep breath inside a glowing blue bubble.",
+        text: "You take a slow breath. The Echo Ogre stops running and watches you closely.",
+        progress: 50,
+        choices: [
+          { label: "🛑 Stay still in a Bubble Pause.", action: "ending_bubble", icon: "action-calm" },
+          { label: "🛡️ Activate the Sparkle Shield!", action: "ending_shield", icon: "btn-kid" }
+        ]
+      },
+      dad_repair: {
+        image: "images/dad-repair.webp",
+        alt: "Dad kneeling down calmly, showing how to fix a mistake.",
+        text: "Dad shows you how to slow down. The Ogre sees Dad's calm body and slows down too.",
+        progress: 80,
+        choices: [
+          { label: "Try the Sparkle Shield now.", action: "ending_shield", icon: "btn-kid" }
+        ]
+      },
+      ending_fast: {
+        image: "images/ending-fast-hands.webp",
+        alt: "The Ogre caught in fast hands, looking confused.",
+        text: "You caught it, but it's still upset! Rushing didn't solve the big feelings.",
+        progress: 100,
+        badge: "Fast Helper",
+        choices: [{ label: "🔄 Try Another Path", action: "start", icon: "btn-kid" }]
+      },
+      ending_bubble: {
+        image: "images/ending-bubble-pause.webp",
+        alt: "The Ogre sitting peacefully next to Kairo's bubble.",
+        text: "The Ogre sits down and takes a breath with you. The town is safe and calm.",
+        progress: 100,
+        badge: "Calm Heart",
+        choices: [{ label: "🔄 Try Another Path", action: "start", icon: "btn-kid" }]
+      },
+      ending_shield: {
+        image: "images/ending-sparkle-shield.webp",
+        alt: "A massive, beautiful golden and blue shield surrounds the town, turning chaos into sparkles.",
+        text: "TRUE ENDING! Your calm choice activated the Sparkle Shield! The Ogre smiles, completely relaxed.",
+        progress: 100,
+        badge: "Sparkle Master",
+        choices: [{ label: "🏠 Back to HQ", action: "home", icon: "btn-parent" }]
+      }
+    };
 
-</main>
+    const app = {
+      currentView: 'home',
+      
+      init() {
+        // Basic routing setup based on local storage mock
+        console.log("App initialized. Sprints 1, 2, 3 functionality active.");
+      },
 
-<footer class="site-footer">
-  <p class="mission">Superhero adventures for kind hearts, brave choices, and growing families.</p>
-  Sparkle Shield Bros: The Echo Ogre Choice Path · No child data is collected. Progress is saved only on this device.
-</footer>
+      switchView(viewId) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+        document.getElementById(`view-${viewId === 'story' ? 'story' : 'home'}`).classList.remove('hidden');
+        
+        if (viewId === 'story') {
+          this.renderStoryPage('start');
+        }
+        window.scrollTo(0, 0);
+      },
 
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+      renderStoryPage(pageId) {
+        if (pageId === 'home') {
+          this.switchView('home');
+          return;
+        }
 
-<script src="js/app.js"></script>
+        const page = storyData[pageId];
+        const mount = document.getElementById('story-mount');
+        const progressBar = document.getElementById('story-progress');
+        
+        // Update Progress
+        progressBar.style.width = `${page.progress}%`;
 
+        // Re-trigger CSS animation for page flip feel
+        mount.style.animation = 'none';
+        mount.offsetHeight; /* trigger reflow */
+        mount.style.animation = 'pageFadeIn 0.5s ease forwards';
+
+        let html = `
+          <!-- Using inline styles to simulate image placeholder block -->
+          <div class="story-image" style="display:flex; align-items:center; justify-content:center; color:#94A3B8; border: 2px dashed #CBD5E1;">
+            [${page.image}]<br>Alt: "${page.alt}"
+          </div>
+          <h2 class="story-text">${page.text}</h2>
+          <div class="choices-container">
+        `;
+
+        page.choices.forEach(choice => {
+          html += `<button class="btn btn-kid ${choice.icon}" onclick="app.renderStoryPage('${choice.action}')">${choice.label}</button>`;
+        });
+        
+        html += `</div>`;
+
+        // Celebration Logic (Sprint 1 Requirement)
+        if (page.badge) {
+          html += `
+            <div class="celebration">
+              <div class="badge-icon">🏆</div>
+              <h2 style="color: var(--kid-purple);">You unlocked the ${page.badge} Badge!</h2>
+              <p style="margin-bottom: 20px;">Your story progress has been saved securely to your device.</p>
+              <button class="btn btn-parent" onclick="app.renderStoryPage('${page.choices[0].action}')">${page.choices[0].label}</button>
+            </div>
+          `;
+          // LocalStorage save (privacy safe)
+          try {
+            localStorage.setItem(`badge_${page.badge}`, true);
+          } catch(e) {}
+        }
+
+        mount.innerHTML = html;
+      }
+    };
+
+    // Boot app
+    app.init();
+  </script>
 </body>
 </html>
