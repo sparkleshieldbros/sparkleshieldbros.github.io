@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sparkle Shield Bros | Superhero Stories for Kind Hearts</title>
 <meta name="description" content="Sparkle Shield Bros is a kid-first superhero story world about calm choices, family courage, repair, and growing up brave.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -15,15 +16,19 @@
 
 <header class="site-header" aria-label="Sparkle Shield Bros site header">
   <a class="brand" href="/" aria-label="Sparkle Shield Bros home">
-    <span class="brand-mark" aria-hidden="true">S</span>
-    <span>Sparkle Shield Bros</span>
+    <span class="brand-mark" aria-hidden="true">SS</span>
+    <span class="brand-text">
+      <span>Sparkle Shield Bros</span>
+      <span>Superhero story world</span>
+    </span>
   </a>
   <nav class="main-nav" aria-label="Main navigation">
+    <a class="nav-home" href="#main-content" aria-label="Back to top">Home</a>
     <a href="#adventures">Adventures</a>
     <a href="#characters">Characters</a>
     <a href="#grown-ups">Grown-Ups</a>
     <a href="#books">Books</a>
-    <a class="nav-cta" href="#contact">Contact</a>
+    <a class="nav-cta" href="adventures/echo-ogre/">Play Now</a>
   </nav>
 </header>
 
@@ -39,13 +44,21 @@
       <p class="hero-copy">Join Bubble Boy Kairo, Captain Cash, Ninja Nugs, and their grown-ups in interactive adventures where kids practice calm, courage, kindness, and repair.</p>
       <div class="hero-actions">
         <a class="btn primary" href="adventures/echo-ogre/">Play The Echo Ogre</a>
-        <a class="btn secondary" href="#grown-ups">For Grown-Ups</a>
+        <a class="btn secondary" href="#adventures">Explore the World</a>
+      </div>
+      <div class="hero-proof" aria-label="Story highlights">
+        <span>Interactive storybook</span>
+        <span>Ages 5-8</span>
+        <span>Family co-play</span>
       </div>
     </div>
   </section>
 
-  <section class="section intro-band" aria-label="Franchise promise">
-    <p>Superhero adventures for kind hearts, brave choices, and growing families.</p>
+  <section class="intro-band" aria-label="Franchise promise">
+    <div>
+      <p>Superhero adventures for kind hearts, brave choices, and growing families.</p>
+      <a href="#grown-ups">See the grown-up guide</a>
+    </div>
   </section>
 
   <section class="section" id="adventures" aria-labelledby="adventures-title">
@@ -61,25 +74,27 @@
           <p class="card-kicker">Interactive Adventure</p>
           <h3>The Echo Ogre Choice Path</h3>
           <p>A branching story where every choice teaches something about listening, pausing, helping, and repairing.</p>
-          <a class="text-link" href="adventures/echo-ogre/">Play now</a>
+          <a class="text-link" href="adventures/echo-ogre/">Play now <span aria-hidden="true">-&gt;</span></a>
         </div>
       </article>
       <article class="adventure-card">
-        <img src="adventures/echo-ogre/images/choice-rush.webp" alt="Captain Cash rushes toward the Echo Ogre while Kairo and Ninja Nugs react.">
+        <img src="adventures/echo-ogre/images/consequence-pause.webp" alt="The Sparkle Shield Bros pause together while the Echo Ogre settles down.">
         <div class="card-body">
-          <p class="card-kicker">Dev Lab</p>
-          <h3>Echo Ogre Development Copy</h3>
-          <p>A safe place to test upcoming structure, scenes, and story improvements before they reach the live adventure.</p>
-          <a class="text-link" href="dev/echo-ogre/">View dev copy</a>
+          <p class="card-kicker">Family Practice</p>
+          <h3>After-Story Calm Tools</h3>
+          <p>Turn the adventure into short prompts families can use for transitions, apologies, and bedtime talks.</p>
+          <a class="text-link" href="#guide">Preview guide topics <span aria-hidden="true">-&gt;</span></a>
         </div>
       </article>
       <article class="adventure-card coming-soon">
-        <div class="coming-art">Next</div>
+        <div class="coming-art" aria-hidden="true">
+          <span>Next</span>
+        </div>
         <div class="card-body">
           <p class="card-kicker">Coming Soon</p>
           <h3>New Sparkle Shield Mission</h3>
           <p>More books and interactive adventures are on the way as the Sparkle Shield universe grows.</p>
-          <a class="text-link" href="#contact">Get updates</a>
+          <a class="text-link" href="#contact">Get updates <span aria-hidden="true">-&gt;</span></a>
         </div>
       </article>
     </div>
@@ -133,18 +148,22 @@
     </div>
     <div class="value-grid">
       <article>
+        <span aria-hidden="true">01</span>
         <h3>Calm</h3>
         <p>Kids practice noticing body clues and slowing down before choosing.</p>
       </article>
       <article>
+        <span aria-hidden="true">02</span>
         <h3>Kindness</h3>
         <p>Story choices reward helpful words, patience, and care for others.</p>
       </article>
       <article>
+        <span aria-hidden="true">03</span>
         <h3>Courage</h3>
         <p>Heroes try again, ask for help, and face big feelings with support.</p>
       </article>
       <article>
+        <span aria-hidden="true">04</span>
         <h3>Repair</h3>
         <p>Families get language for apologies, do-overs, and reconnecting.</p>
       </article>
@@ -180,6 +199,7 @@
     <div>
       <p class="eyebrow">Grown-Up Guide</p>
       <h2 id="guide-title">Use the Adventure After the Screen Closes</h2>
+      <p>Short prompts turn the story into family language kids can remember later.</p>
     </div>
     <ul class="guide-list">
       <li>Ask, "What did the Echo Ogre echo back?"</li>
@@ -205,6 +225,7 @@
     <p>Superhero adventures for kind hearts, brave choices, and growing families.</p>
   </div>
   <nav aria-label="Footer navigation">
+    <a href="#main-content">Top</a>
     <a href="#privacy">Privacy</a>
     <a href="#contact">Contact</a>
     <a href="#books">Books</a>
