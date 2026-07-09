@@ -12,9 +12,6 @@
 <style>
 /* ============================================================
    SPARKLE SHIELD BROS — DESIGN TOKENS
-   Font stack: Baloo 2 / Nunito load from Google Fonts when
-   online, and fall back to the system UI font offline, so the
-   site still reads cleanly with no internet connection.
    ============================================================ */
 :root{
   --sparkle-blue: #1b4167;
@@ -73,7 +70,6 @@ button:focus-visible, a:focus-visible, .card:focus-visible{
   clip: rect(0 0 0 0); white-space: nowrap; border: 0; padding: 0; margin: -1px;
 }
 
-/* Skip link: hidden until keyboard-focused, per accessibility review */
 .skip-link{
   position: absolute; left: -999px; top: auto;
   background: var(--sparkle-gold); color: var(--night-indigo);
@@ -82,7 +78,6 @@ button:focus-visible, a:focus-visible, .card:focus-visible{
 }
 .skip-link:focus{ left: 12px; top: 12px; }
 
-/* ---------- Layout shell ---------- */
 header.site-header{
   position: sticky;
   top: 0;
@@ -131,7 +126,6 @@ nav.main-nav{
 .nav-btn.gold{ background: var(--sparkle-gold); color: var(--night-indigo); border-color: var(--sparkle-gold); }
 .nav-btn.gold:hover{ background: var(--sparkle-gold-light); }
 
-/* Reduce vertical header footprint on small phones: single scrollable row */
 @media (max-width: 560px){
   header.site-header{ flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   nav.main-nav{ flex-wrap: nowrap; }
@@ -152,7 +146,6 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
   to{ opacity: 1; transform: translateY(0); }
 }
 
-/* ---------- Sparkle Meter ---------- */
 .sparkle-meter{
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -172,7 +165,6 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
 .meter-fill.courage{ background: var(--sparkle-gold); }
 .meter-fill.repair{ background: var(--echo-purple-light); }
 
-/* ---------- Storybook-style card ---------- */
 .story-card{
   position: relative;
   background:
@@ -185,7 +177,6 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
   box-shadow: var(--shadow-soft);
   overflow: hidden;
 }
-/* Folded page corner, to read as an opened storybook rather than a web app */
 .story-card::before{
   content: "";
   position: absolute; top: 0; right: 0;
@@ -272,7 +263,6 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
 .btn-secondary{ background: transparent; color: var(--sparkle-cream); border: 2px solid rgba(255,246,223,0.4); }
 .btn-secondary:hover{ border-color: var(--sparkle-gold); }
 
-/* ---------- Start / title screen ---------- */
 .title-emblem{ width: 96px; height: 96px; margin: 0 auto 10px auto; }
 .tagline{
   text-align: center;
@@ -291,7 +281,6 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
 .howto-card h3{ font-size: 0.95rem; color: var(--sparkle-gold-light); }
 .start-cta{ text-align: center; margin-top: 8px; }
 
-/* ---------- Breathing widget ---------- */
 .breathing-widget{ text-align: center; margin: 10px 0 18px 0; }
 .breathing-circle{
   width: 80px; height: 80px; border-radius: 50%;
@@ -302,7 +291,6 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
 @keyframes breathe{ 0%, 100%{ transform: scale(0.8); } 50%{ transform: scale(1.15); } }
 .breathing-text{ font-size: 0.95rem; }
 
-/* ---------- Character hub ---------- */
 .card-grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-top: 18px; }
 .char-card{
   background: rgba(27,65,103,0.45);
@@ -315,9 +303,16 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
   transition: transform 0.18s ease, background 0.18s ease;
 }
 .char-card:hover{ transform: translateY(-4px); background: rgba(93,42,134,0.4); }
-.char-card .icon{ width: 64px; height: 64px; margin: 0 auto 10px auto; }
 .char-card h3{ font-size: 1rem; margin-bottom: 2px; }
 .char-card p{ font-size: 0.8rem; opacity: 0.85; margin: 0; }
+
+/* Hero portrait: tries the real /images file first, falls back to the
+   hand-drawn SVG badge automatically if that file isn't uploaded yet
+   (see the onerror handler wired up in heroIconMarkup()). */
+.icon{ position: relative; border-radius: 50%; overflow: hidden; border: 2px solid rgba(215,154,35,0.5); background: var(--night-indigo); }
+.icon img, .icon .icon-fallback, .icon .icon-fallback svg{ width: 100%; height: 100%; display: block; object-fit: cover; }
+.icon .icon-fallback{ display: none; }
+.char-card .icon{ width: 64px; height: 64px; margin: 0 auto 10px auto; }
 
 .profile-header{ display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .profile-header .icon{ width: 88px; height: 88px; flex: none; }
@@ -327,7 +322,6 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
 .stat-label{ font-weight: 800; color: var(--sparkle-gold-light); margin-right: 6px; }
 .phrase{ font-style: italic; border-left: 3px solid var(--sparkle-gold); padding-left: 14px; margin-top: 18px; }
 
-/* ---------- Parent guide ---------- */
 .guide-block{
   background: rgba(93,42,134,0.25);
   border: 1px solid rgba(215,154,35,0.25);
@@ -338,7 +332,6 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
 .guide-block h3{ font-size: 1rem; color: var(--sparkle-gold-light); }
 .guide-block.danger-zone{ border-color: rgba(201,100,122,0.6); }
 
-/* ---------- Badges ---------- */
 .badge-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
 .badge-pill{
   display:inline-flex; align-items:center; gap:6px;
@@ -352,7 +345,6 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
 }
 .badge-pill.locked{ opacity: 0.35; border-color: rgba(255,255,255,0.3); color: var(--sparkle-cream); }
 
-/* ---------- Toast ---------- */
 .toast{
   position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px);
   opacity: 0;
@@ -398,12 +390,8 @@ footer.site-footer .mission{
 
 <main id="main-content">
 
-  <!-- Screen-reader announcer: updated on every scene change so assistive
-       tech users hear where the story has moved, without an overwhelming
-       full-text live region. -->
   <div id="sr-announcer" class="visually-hidden" aria-live="polite"></div>
 
-  <!-- ============ SPARKLE METER ============ -->
   <div class="sparkle-meter" role="status" aria-live="polite" aria-label="Sparkle Meter progress" id="sparkle-meter">
     <div class="meter-item">
       <div class="meter-label">Calm</div>
@@ -423,14 +411,6 @@ footer.site-footer .mission{
     </div>
   </div>
 
-  <!-- ================================================================
-       STORY CONTENT SECTION START
-       This block (through STORY CONTENT SECTION END) holds every piece
-       of on-page story text and scene markup. It is safe to hand an AI
-       assistant a prompt like "only edit text inside the STORY CONTENT
-       SECTION" without risking the layout, navigation, or JavaScript.
-       ================================================================ -->
-
   <!-- ============ START / TITLE SCREEN ============ -->
   <section id="start-screen" class="screen active" aria-labelledby="title-heading">
     <div class="story-card">
@@ -444,7 +424,7 @@ footer.site-footer .mission{
       <div class="howto-grid">
         <div class="howto-card">
           <h3>For Kids</h3>
-          <p>You'll help Kairo and Captain Cash choose what to do when something strange shows up on their street. Every choice changes the story!</p>
+          <p>You'll help Kairo, Captain Cash, and Ninja Nugs choose what to do when something strange shows up on their street. Every choice changes the story!</p>
         </div>
         <div class="howto-card">
           <h3>For Grown-Ups</h3>
@@ -463,10 +443,10 @@ footer.site-footer .mission{
     <div class="story-card">
       <div class="scene-art">
         <img
-           src="images/opening.webp"
-           alt="Bubble Boy Kairo, Captain Cash, and Ninja Nugs face a glowing purple echo shape on Maplewood Terrace at dusk."
-           loading="eager"
-         />
+          src="images/opening.webp"
+          alt="Bubble Boy Kairo, Captain Cash, and Ninja Nugs face a glowing purple echo shape on Maplewood Terrace at dusk."
+          loading="eager"
+        />
       </div>
       <p class="eyebrow">Chapter 1 · Maplewood Terrace, Dusk</p>
       <h1 id="opening-title">The Echo Ogre Appears</h1>
@@ -499,13 +479,11 @@ footer.site-footer .mission{
   <section id="scene-rush-consequence" class="screen" aria-labelledby="rush-title">
     <div class="story-card">
       <div class="scene-art">
-        <<div class="scene-art">
-  <img
-    src="images/choice-rush.webp"
-    alt="Captain Cash rushes forward with golden rescue energy while Bubble Boy Kairo raises a blue bubble shield and Ninja Nugs stands ready in a ninja mask as the Echo Ogre grows larger and echoes the motion back."
-    loading="eager"
-  />
-</div>
+        <img
+          src="images/choice-rush.webp"
+          alt="Captain Cash rushes forward with golden rescue energy while Bubble Boy Kairo raises a blue bubble shield and Ninja Nugs stands ready in a ninja mask as the Echo Ogre grows larger and echoes the motion back."
+          loading="eager"
+        />
       </div>
       <p class="eyebrow">Chapter 2 · The Rush Path</p>
       <h2 id="rush-title">Fast Hands</h2>
@@ -543,10 +521,10 @@ footer.site-footer .mission{
     <div class="story-card">
       <div class="scene-art">
         <img
-           src="images/consequence-pause.webp"
-           alt="Bubble Boy Kairo pauses thoughtfully while Captain Cash and Ninja Nugs watch the Echo Ogre from a safe distance, noticing glowing ripple patterns that show the creature is copying what it sees."
-           loading="lazy"
-         />
+          src="images/consequence-pause.webp"
+          alt="Bubble Boy Kairo pauses thoughtfully while Captain Cash and Ninja Nugs watch the Echo Ogre from a safe distance, noticing glowing ripple patterns that show the creature is copying what it sees."
+          loading="lazy"
+        />
       </div>
       <p class="eyebrow">Chapter 2 · The Pause Path</p>
       <h2 id="pause-title">Watching the Pattern</h2>
@@ -583,10 +561,10 @@ footer.site-footer .mission{
     <div class="story-card">
       <div class="scene-art">
         <img
-           src="images/consequence-help.webp"
-           alt="alt="Dad kneels calmly between Bubble Boy Kairo and Captain Cash, using open hands and a gentle expression while Ninja Nugs watches and the Echo Ogre flickers nearby, listening."
-           loading="lazy"
-         />
+          src="images/consequence-help.webp"
+          alt="Dad kneels calmly between Bubble Boy Kairo and Captain Cash, using open hands and a gentle expression while Ninja Nugs watches and the Echo Ogre flickers nearby, listening."
+          loading="lazy"
+        />
       </div>
       <p class="eyebrow">Chapter 2 · The Ask-Dad Path</p>
       <h2 id="dad-title">Dad Kneels Down</h2>
@@ -627,10 +605,10 @@ footer.site-footer .mission{
     <div class="story-card">
       <div class="scene-art">
         <img
-  src="images/ending-fast.webp"
-  alt="The Echo Ogre towers huge and loud over Maplewood Terrace while Bubble Boy Kairo raises a bubble shield, Captain Cash stands surprised, and Ninja Nugs stays ready beside them."
-  loading="lazy"
-/>
+          src="images/ending-fast.webp"
+          alt="The Echo Ogre towers huge and loud over Maplewood Terrace while Bubble Boy Kairo raises a bubble shield, Captain Cash stands surprised, and Ninja Nugs stays ready beside them."
+          loading="lazy"
+        />
       </div>
       <p class="eyebrow">Ending · Fast Hands</p>
       <p class="unlock-banner" id="unlock-banner-fast" role="status" aria-live="polite"></p>
@@ -659,9 +637,10 @@ footer.site-footer .mission{
     <div class="story-card">
       <div class="scene-art">
         <img
-  src="images/ending-wise.webp"
-  alt="Bubble Boy Kairo calmly watches as the Echo Ogre softens into gentle glowing bubbles while Captain Cash and Ninja Nugs look on with relief."
-/>
+          src="images/ending-wise.webp"
+          alt="Bubble Boy Kairo calmly watches as the Echo Ogre softens into gentle glowing bubbles while Captain Cash and Ninja Nugs look on with relief."
+          loading="lazy"
+        />
       </div>
       <p class="eyebrow">Ending · Bubble Pause</p>
       <p class="unlock-banner" id="unlock-banner-bubble" role="status" aria-live="polite"></p>
@@ -687,10 +666,10 @@ footer.site-footer .mission{
     <div class="story-card">
       <div class="scene-art">
         <img
-  src="images/ending-true.webp"
-  alt="Bubble Boy Kairo calmly watches as the Echo Ogre softens into gentle glowing bubbles while Captain Cash and Ninja Nugs look on with relief."
-/>
-
+          src="images/ending-true.webp"
+          alt="The Echo Ogre transforms into a glowing golden guardian as Bubble Boy Kairo, Captain Cash, Dad, and Ninja Nugs stand together, sparkles and warm light spreading across Maplewood Terrace."
+          loading="lazy"
+        />
       </div>
       <p class="eyebrow">True Ending · Sparkle Shield</p>
       <p class="unlock-banner" id="unlock-banner-sparkle" role="status" aria-live="polite"></p>
@@ -775,10 +754,6 @@ footer.site-footer .mission{
     </div>
   </section>
 
-  <!-- ================================================================
-       STORY CONTENT SECTION END
-       ================================================================ -->
-
 </main>
 
 <footer class="site-footer">
@@ -789,12 +764,6 @@ footer.site-footer .mission{
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* ============================================================
-   STATE
-   All fields are initialized up front (including impulse and
-   awareness, which are tracked but not shown on the Sparkle
-   Meter) so nothing is ever read as undefined.
-   ============================================================ */
 const state = {
   calm: 0,
   kindness: 0,
@@ -817,16 +786,14 @@ const storyScenes = new Set([
 ]);
 
 /* ============================================================
-   AI-SAFE CONTENT SECTION START
-   Character data lives here in one place. A prompt like
-   "only modify the JavaScript `characters` object" can safely
-   change hero file copy without touching layout or navigation.
+   AI-SAFE CONTENT SECTION START — character data lives here.
    ============================================================ */
 const characters = {
   kairo: {
     name: "Bubble Boy Kairo",
-    eyebrow: "Hero File · The Observer",
-    icon: iconKairo(),
+    eyebrow: "Hero File \u00b7 The Observer",
+    image: "bubble-boy.webp",
+    fallbackIcon: iconKairo,
     power: "Bubble Shields, Bubble Bridges, Bubble Creativity",
     want: "To protect the people he loves",
     fear: "Making the wrong choice when someone needs him",
@@ -835,18 +802,34 @@ const characters = {
   },
   cash: {
     name: "Captain Cash",
-    eyebrow: "Hero File · The Rescuer",
-    icon: iconCash(),
+    eyebrow: "Hero File \u00b7 The Rescuer",
+    image: "captain-cash.webp",
+    fallbackIcon: iconCash,
     power: "Golden rescue energy, quick thinking, teamwork, repair",
     want: "To help quickly and prove he is brave",
     fear: "Being too little or too late",
     lesson: "Power works best when it slows down enough to choose wisely",
     phrase: "\u201cCaptain Cash is on the case!\u201d"
   },
+  nugs: {
+    /* PLACEHOLDER LORE -- Ninja Nugs now appears in the scene art, so a
+       card and profile are wired up here to match. Swap in real
+       power/want/fear/lesson/phrase whenever you have them. */
+    name: "Ninja Nugs",
+    eyebrow: "Hero File \u00b7 The Sidekick",
+    image: "ninja-nugs.webp",
+    fallbackIcon: iconNugs,
+    power: "Quick reflexes and a knack for sneaking in at just the right moment",
+    want: "To back up the team and never miss the action",
+    fear: "Being left behind",
+    lesson: "Small and quick can still make a big difference",
+    phrase: "\u201cNugs is on it!\u201d"
+  },
   dad: {
     name: "Dad",
-    eyebrow: "Hero File · The Model",
-    icon: iconDad(),
+    eyebrow: "Hero File \u00b7 The Model",
+    image: "dad.webp",
+    fallbackIcon: iconDad,
     power: "Calm, accountability, apology, and repair",
     want: "To help his children become kind and strong",
     fear: "Teaching the wrong lesson through his own actions",
@@ -855,8 +838,9 @@ const characters = {
   },
   mom: {
     name: "Mom",
-    eyebrow: "Hero File · The Noticer",
-    icon: iconMom(),
+    eyebrow: "Hero File \u00b7 The Noticer",
+    image: "mom.webp",
+    fallbackIcon: iconMom,
     power: "Super intuition and pattern recognition",
     want: "To help her family notice what matters",
     fear: "Missing a pattern that could protect someone",
@@ -865,8 +849,9 @@ const characters = {
   },
   ogre: {
     name: "Echo Ogre",
-    eyebrow: "Hero File · The Mystery",
-    icon: iconOgre(),
+    eyebrow: "Hero File \u00b7 The Mystery",
+    image: "echo-ogre.webp",
+    fallbackIcon: iconOgre,
     power: "Echoes actions and feelings ten times bigger",
     want: "To feel every strong feeling around him",
     fear: "Being ignored or misunderstood",
@@ -877,6 +862,12 @@ const characters = {
 /* ============================================================
    AI-SAFE CONTENT SECTION END
    ============================================================ */
+
+function heroIconMarkup(c){
+  return '<img src="images/' + c.image + '" alt="' + c.name + '" loading="lazy" class="icon-img" ' +
+    'onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';">' +
+    '<span class="icon-fallback">' + c.fallbackIcon() + '</span>';
+}
 
 function iconKairo(){
   return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#1b4167"/><circle cx="44" cy="38" r="16" fill="#fff6df"/><rect x="24" y="54" width="40" height="22" rx="8" fill="#2f8f83"/></svg>';
@@ -893,10 +884,10 @@ function iconMom(){
 function iconOgre(){
   return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#160c25"/><circle cx="44" cy="44" r="26" fill="#5d2a86"/><circle cx="44" cy="44" r="12" fill="#8d5cc2"/><circle cx="38" cy="40" r="3" fill="#fff6df"/><circle cx="50" cy="40" r="3" fill="#fff6df"/></svg>';
 }
+function iconNugs(){
+  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#1b4167"/><circle cx="44" cy="40" r="16" fill="#f3c568"/><rect x="26" y="56" width="36" height="20" rx="8" fill="#160c25"/></svg>';
+}
 
-/* ============================================================
-   SCENE NAVIGATION
-   ============================================================ */
 function showScene(id){
   document.querySelectorAll('section.screen').forEach(function(s){ s.classList.remove('active'); });
   const target = document.getElementById(id);
@@ -904,8 +895,6 @@ function showScene(id){
   target.classList.add('active');
   if (storyScenes.has(id)) lastStoryScene = id;
 
-  // Sparkle Meter is a story-progress readout, so it only appears
-  // during the story itself, not in Hero Files or the Grown-Up Guide.
   const meterEl = document.getElementById('sparkle-meter');
   meterEl.style.display = storyScenes.has(id) && id !== 'start-screen' ? 'grid' : 'none';
 
@@ -947,11 +936,8 @@ function playAgain(){ showScene('opening'); }
 
 function returnToAdventure(){ showScene(lastStoryScene || 'start-screen'); }
 
-/* ============================================================
-   SPARKLE METER
-   ============================================================ */
 function updateMeter(){
-  const max = 5; // headroom so repeat play doesn't cap the bar too early
+  const max = 5;
   setBar('meter-calm', state.calm, max);
   setBar('meter-kindness', state.kindness, max);
   setBar('meter-courage', state.courage, max);
@@ -962,9 +948,6 @@ function setBar(elId, value, max){
   document.getElementById(elId).style.width = pct + '%';
 }
 
-/* ============================================================
-   ENDINGS + LOCAL STORAGE (no personal data, progress only)
-   ============================================================ */
 const badgeLabels = {
   'ending-fast-hands': 'Fast Hands',
   'ending-bubble-pause': 'Bubble Pause',
@@ -1005,7 +988,7 @@ function saveProgress(){
     localStorage.setItem('sparkleMeterState', JSON.stringify({
       calm: state.calm, kindness: state.kindness, courage: state.courage, repair: state.repair
     }));
-  }catch(e){ /* localStorage unavailable — story still works, just without saving */ }
+  }catch(e){ }
 }
 
 function loadProgress(){
@@ -1020,7 +1003,7 @@ function loadProgress(){
       state.courage = m.courage || 0;
       state.repair = m.repair || 0;
     }
-  }catch(e){ /* ignore corrupt/unavailable storage */ }
+  }catch(e){ }
 }
 
 function resetProgress(){
@@ -1035,7 +1018,7 @@ function resetProgress(){
   try{
     localStorage.removeItem('sparkleEndingsUnlocked');
     localStorage.removeItem('sparkleMeterState');
-  }catch(e){ /* ignore */ }
+  }catch(e){ }
 
   updateMeter();
   renderBadges();
@@ -1062,9 +1045,6 @@ function renderBadges(){
   });
 }
 
-/* ============================================================
-   SHARE / TOAST
-   ============================================================ */
 let toastTimer = null;
 function showToast(message){
   const toast = document.getElementById('toast');
@@ -1085,9 +1065,6 @@ function shareEnding(endingName){
   }
 }
 
-/* ============================================================
-   CHARACTER HUB + PROFILES
-   ============================================================ */
 function openCharacterHub(){
   buildCharacterGrid();
   showScene('characters');
@@ -1096,14 +1073,14 @@ function openCharacterHub(){
 function buildCharacterGrid(){
   const grid = document.getElementById('character-hub-grid');
   grid.innerHTML = '';
-  const order = ['kairo', 'cash', 'dad', 'mom', 'ogre'];
+  const order = ['kairo', 'cash', 'nugs', 'dad', 'mom', 'ogre'];
   order.forEach(function(key){
     const c = characters[key];
     const card = document.createElement('button');
     card.className = 'char-card';
     card.setAttribute('type', 'button');
     card.innerHTML =
-      '<div class="icon">' + c.icon + '</div>' +
+      '<div class="icon">' + heroIconMarkup(c) + '</div>' +
       '<h3>' + c.name + '</h3>' +
       '<p>' + c.lesson + '</p>';
     card.addEventListener('click', function(){ showProfile(key); });
@@ -1114,7 +1091,7 @@ function buildCharacterGrid(){
 function showProfile(characterId){
   const c = characters[characterId];
   if (!c) return;
-  document.getElementById('profile-icon').innerHTML = c.icon;
+  document.getElementById('profile-icon').innerHTML = heroIconMarkup(c);
   document.getElementById('profile-eyebrow').textContent = c.eyebrow;
   document.getElementById('profile-name').textContent = c.name;
   document.getElementById('profile-phrase').textContent = c.phrase;
@@ -1128,13 +1105,10 @@ function showProfile(characterId){
 
 function openParentGuide(){ showScene('parent-guide'); }
 
-/* ============================================================
-   INIT
-   ============================================================ */
 loadProgress();
 updateMeter();
 renderBadges();
-document.getElementById('sparkle-meter').style.display = 'none'; // hidden on start screen by default
+document.getElementById('sparkle-meter').style.display = 'none';
 </script>
 
 </body>
