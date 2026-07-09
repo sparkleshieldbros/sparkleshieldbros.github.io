@@ -350,7 +350,6 @@ button:focus-visible{
 .section-heading h2,
 .grown-up-copy h2,
 .guide-section h2,
-.launch-section h2,
 .contact-section h2{
   color: var(--sparkle-navy);
   font-size: clamp(2.1rem, 5vw, 3.7rem);
@@ -360,7 +359,6 @@ button:focus-visible{
 .section-heading p:not(.eyebrow),
 .grown-up-copy p:not(.eyebrow),
 .contact-section p,
-.launch-section p,
 .guide-section p{
   margin-top: 12px;
   color: var(--muted);
@@ -372,6 +370,10 @@ button:focus-visible{
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
+}
+
+.sales-grid{
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .adventure-card,
@@ -593,12 +595,12 @@ button:focus-visible{
   border-color: rgba(27,46,90,0.26);
 }
 
-.sales-card .btn.secondary:hover{
+.sales-card .btn.secondary:hover,
+.btn.secondary.dark:hover{
   background: rgba(47,143,131,0.10);
 }
 
 .guide-section,
-.launch-section,
 .contact-section{
   display: grid;
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
@@ -615,41 +617,6 @@ button:focus-visible{
     linear-gradient(135deg, rgba(27,46,90,0.98), rgba(22,12,37,0.98) 70%),
     var(--night-indigo);
   box-shadow: var(--shadow-soft);
-}
-
-.launch-section{
-  background:
-    linear-gradient(135deg, rgba(47,143,131,0.10), rgba(215,154,35,0.12)),
-    var(--white);
-  border: 1px solid rgba(47,143,131,0.24);
-  box-shadow: var(--shadow-card);
-}
-
-.qa-list{
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.qa-list li{
-  position: relative;
-  padding: 12px 0 12px 30px;
-  border-bottom: 1px solid rgba(27,46,90,0.10);
-  color: var(--muted);
-  font-weight: 800;
-}
-
-.qa-list li::before{
-  content: "";
-  position: absolute;
-  top: 17px;
-  left: 0;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 50%, var(--sparkle-gold-light) 0 35%, transparent 38%),
-    var(--calm-teal);
 }
 
 .guide-section h2,
@@ -691,8 +658,21 @@ button:focus-visible{
   box-shadow: var(--shadow-soft);
 }
 
-.contact-section .btn{
+.contact-actions{
   justify-self: end;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.contact-actions .btn{
+  margin-top: 0;
+}
+
+.btn.secondary.dark{
+  color: var(--sparkle-navy);
+  border-color: rgba(27,46,90,0.26);
 }
 
 .site-footer{
@@ -748,7 +728,6 @@ button:focus-visible{
 
   .grown-up-section,
   .guide-section,
-  .launch-section,
   .contact-section,
   .site-footer{
     grid-template-columns: 1fr;
@@ -762,8 +741,9 @@ button:focus-visible{
     grid-template-columns: repeat(6, 190px);
   }
 
-  .contact-section .btn{
+  .contact-actions{
     justify-self: start;
+    justify-content: flex-start;
   }
 }
 
