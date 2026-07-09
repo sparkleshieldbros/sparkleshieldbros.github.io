@@ -140,11 +140,15 @@ main{
 }
 
 section.screen{ display: none; }
-section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
+section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
 
 @keyframes fadeUp{
   from{ opacity: 0; transform: translateY(14px); }
   to{ opacity: 1; transform: translateY(0); }
+}
+@keyframes pageTurnIn{
+  from{ opacity: 0; transform: perspective(1200px) rotateY(-7deg) translateX(14px); transform-origin: left center; }
+  to{ opacity: 1; transform: perspective(1200px) rotateY(0) translateX(0); transform-origin: left center; }
 }
 
 .sparkle-meter{
@@ -169,14 +173,20 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
 .story-card{
   position: relative;
   background:
+    linear-gradient(90deg, rgba(22,12,37,0.28), transparent 7%, transparent 93%, rgba(255,255,255,0.08)),
     radial-gradient(circle at 90% 8%, rgba(255,246,223,0.05), transparent 40%),
     radial-gradient(circle at 8% 95%, rgba(215,154,35,0.06), transparent 45%),
-    linear-gradient(160deg, rgba(27,65,103,0.55), rgba(22,12,37,0.55));
+    linear-gradient(160deg, rgba(27,65,103,0.72), rgba(22,12,37,0.62));
   border: 1px solid rgba(215,154,35,0.28);
   border-radius: var(--radius-lg);
   padding: clamp(18px, 4vw, 34px);
-  box-shadow: var(--shadow-soft);
+  box-shadow:
+    -16px 18px 28px rgba(0,0,0,0.18),
+    inset 10px 0 18px rgba(22,12,37,0.25),
+    inset -8px 0 16px rgba(255,246,223,0.05),
+    var(--shadow-soft);
   overflow: hidden;
+  min-height: 560px;
 }
 .story-card::before{
   content: "";
@@ -186,6 +196,66 @@ section.screen.active{ display: block; animation: fadeUp 0.5s ease; }
   border-width: 0 38px 38px 0;
   border-color: transparent rgba(215,154,35,0.45) transparent transparent;
   pointer-events: none;
+}
+.story-card::after{
+  content: "";
+  position: absolute;
+  inset: 12px auto 12px 18px;
+  width: 2px;
+  border-radius: 99px;
+  background: linear-gradient(180deg, transparent, rgba(215,154,35,0.35), transparent);
+  pointer-events: none;
+}
+
+.flipbook-controls{
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 18px 0;
+  background: rgba(22,12,37,0.56);
+  border: 1px solid rgba(215,154,35,0.25);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+.flipbook-controls.active{ display: flex; }
+.page-status{
+  font-weight: 800;
+  color: var(--sparkle-gold-light);
+  text-align: center;
+  min-width: 120px;
+}
+.page-hint{
+  display: block;
+  color: var(--sparkle-cream);
+  font-size: 0.74rem;
+  font-weight: 700;
+  opacity: 0.76;
+}
+.page-nav{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(215,154,35,0.45);
+  border-radius: 999px;
+  min-height: 42px;
+  padding: 8px 14px;
+  background: rgba(255,246,223,0.06);
+  color: var(--sparkle-cream);
+  font-weight: 800;
+  cursor: pointer;
+}
+.page-nav:hover:not(:disabled){ background: rgba(215,154,35,0.22); }
+.page-nav:disabled{
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+@media (max-width: 560px){
+  .flipbook-controls{ gap: 8px; padding: 8px; }
+  .page-nav{ min-width: 44px; padding: 8px 11px; }
+  .page-nav .label{ display: none; }
+  .page-status{ min-width: 94px; font-size: 0.88rem; }
+  .story-card{ min-height: 520px; }
 }
 
 .scene-art{
@@ -412,6 +482,22 @@ footer.site-footer .mission{
     </div>
   </div>
 
+  <div class="flipbook-controls" id="flipbook-controls" aria-label="Flipbook page controls">
+    <button class="page-nav" id="prev-page" type="button" onclick="previousPage()" aria-label="Previous page">
+      <span aria-hidden="true">&lt;</span><span class="label">Back</span>
+    </button>
+    <div class="page-status" id="page-status">
+      Page 1 
+      <span class="page-hint" id="page-hint">Turn the page to begin.</span>
+    </div>
+    <button class="page-nav" id="next-page" type="button" onclick="nextPage()" aria-label="Next page">
+      <span class="label">Next</span><span aria-hidden="true">&gt;</span>
+    </button>
+  </div>
+
+  <!-- ============================================================
+       AI-SAFE STORY CONTENT SECTION START — story pages live here.
+       ============================================================ -->
   <!-- ============ START / TITLE SCREEN ============ -->
   <section id="start-screen" class="screen active" aria-labelledby="title-heading">
     <div class="story-card">
@@ -738,7 +824,7 @@ footer.site-footer .mission{
       </div>
       <div class="guide-block">
         <h3>Today's Family Challenge</h3>
-        <p>Practice the four-step pattern together: <strong>stop, breathe, think, choose.</strong> Try it once during a calm moment so it's ready during a hard one.</p>
+        <p>Practice the Sparkle Shield Method together: <strong>stop, breathe, notice, choose, repair.</strong> Try it once during a calm moment so it's ready during a hard one.</p>
       </div>
       <div class="guide-block">
         <h3>Draw Your Own Echo Ogre</h3>
@@ -754,6 +840,9 @@ footer.site-footer .mission{
       </div>
     </div>
   </section>
+  <!-- ============================================================
+       AI-SAFE STORY CONTENT SECTION END
+       ============================================================ -->
 
 </main>
 
@@ -774,7 +863,9 @@ const state = {
   awareness: 0,
   currentPath: null,
   pathHistory: [],
-  endingsUnlocked: []
+  endingsUnlocked: [],
+  sceneTrail: ['start-screen'],
+  sceneTrailIndex: 0
 };
 
 let lastStoryScene = 'start-screen';
@@ -785,6 +876,36 @@ const storyScenes = new Set([
   'scene-dad-consequence', 'scene-dad-realization',
   'ending-fast-hands', 'ending-bubble-pause', 'ending-sparkle-shield'
 ]);
+
+/* ============================================================
+   STORY FLOW DATA START — future adventures can move toward a
+   fuller storyData object using this map as the first adapter.
+   ============================================================ */
+const nextSceneMap = {
+  'start-screen': 'opening',
+  'scene-rush-consequence': 'scene-rush-realization',
+  'scene-rush-realization': 'ending-fast-hands',
+  'scene-pause-consequence': 'scene-pause-realization',
+  'scene-pause-realization': 'ending-bubble-pause',
+  'scene-dad-consequence': 'scene-dad-realization',
+  'scene-dad-realization': 'ending-sparkle-shield'
+};
+const sceneLabels = {
+  'start-screen': 'Title Page',
+  opening: 'Choose a Path',
+  'scene-rush-consequence': 'Rush Path',
+  'scene-rush-realization': 'Fast Hands',
+  'scene-pause-consequence': 'Pause Path',
+  'scene-pause-realization': 'The Pattern',
+  'scene-dad-consequence': 'Repair Path',
+  'scene-dad-realization': 'Breathe Together',
+  'ending-fast-hands': 'Fast Hands Ending',
+  'ending-bubble-pause': 'Bubble Pause Ending',
+  'ending-sparkle-shield': 'Sparkle Shield Ending'
+};
+/* ============================================================
+   STORY FLOW DATA END
+   ============================================================ */
 
 /* ============================================================
    AI-SAFE CONTENT SECTION START — character data lives here.
@@ -889,20 +1010,79 @@ function iconNugs(){
   return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#1b4167"/><circle cx="44" cy="40" r="16" fill="#f3c568"/><rect x="26" y="56" width="36" height="20" rx="8" fill="#160c25"/></svg>';
 }
 
-function showScene(id){
+function showScene(id, options){
+  options = options || {};
   document.querySelectorAll('section.screen').forEach(function(s){ s.classList.remove('active'); });
   const target = document.getElementById(id);
   if (!target) return;
   target.classList.add('active');
-  if (storyScenes.has(id)) lastStoryScene = id;
+  if (storyScenes.has(id)){
+    lastStoryScene = id;
+    recordStoryScene(id, options);
+  }
 
   const meterEl = document.getElementById('sparkle-meter');
   meterEl.style.display = storyScenes.has(id) && id !== 'start-screen' ? 'grid' : 'none';
 
   if (id.startsWith('ending-')) unlockEnding(id);
 
+  updateFlipbookControls(id);
   announceScene(target);
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function recordStoryScene(id, options){
+  if (options.skipTrail) return;
+
+  const currentId = state.sceneTrail[state.sceneTrailIndex];
+  if (currentId === id) return;
+
+  state.sceneTrail = state.sceneTrail.slice(0, state.sceneTrailIndex + 1);
+  state.sceneTrail.push(id);
+  state.sceneTrailIndex = state.sceneTrail.length - 1;
+}
+
+function previousPage(){
+  if (state.sceneTrailIndex <= 0) return;
+  state.sceneTrailIndex -= 1;
+  showScene(state.sceneTrail[state.sceneTrailIndex], { skipTrail: true });
+}
+
+function nextPage(){
+  const nextVisited = state.sceneTrail[state.sceneTrailIndex + 1];
+  if (nextVisited){
+    state.sceneTrailIndex += 1;
+    showScene(nextVisited, { skipTrail: true });
+    return;
+  }
+
+  const current = state.sceneTrail[state.sceneTrailIndex];
+  const nextKnown = nextSceneMap[current];
+  if (nextKnown) showScene(nextKnown);
+}
+
+function updateFlipbookControls(id){
+  const controls = document.getElementById('flipbook-controls');
+  const prev = document.getElementById('prev-page');
+  const next = document.getElementById('next-page');
+  const status = document.getElementById('page-status');
+  const hint = document.getElementById('page-hint');
+  const isStory = storyScenes.has(id);
+
+  controls.classList.toggle('active', isStory);
+  if (!isStory) return;
+
+  const current = state.sceneTrail[state.sceneTrailIndex] || id;
+  const canGoForward = Boolean(state.sceneTrail[state.sceneTrailIndex + 1] || nextSceneMap[current]);
+  prev.disabled = state.sceneTrailIndex <= 0;
+  next.disabled = !canGoForward;
+
+  status.childNodes[0].nodeValue = 'Page ' + (state.sceneTrailIndex + 1) + ' · ' + (sceneLabels[current] || 'Story') + ' ';
+  hint.textContent = canGoForward
+    ? 'Use the page buttons or arrow keys.'
+    : current === 'opening'
+      ? 'Pick a choice to turn this page.'
+      : 'Try another path when you are ready.';
 }
 
 function announceScene(target){
@@ -1015,6 +1195,8 @@ function resetProgress(){
   state.impulse = 0; state.awareness = 0;
   state.currentPath = null; state.pathHistory = [];
   state.endingsUnlocked = [];
+  state.sceneTrail = ['start-screen'];
+  state.sceneTrailIndex = 0;
 
   try{
     localStorage.removeItem('sparkleEndingsUnlocked');
@@ -1110,6 +1292,21 @@ loadProgress();
 updateMeter();
 renderBadges();
 document.getElementById('sparkle-meter').style.display = 'none';
+updateFlipbookControls('start-screen');
+
+document.addEventListener('keydown', function(event){
+  if (event.defaultPrevented) return;
+  const tag = document.activeElement && document.activeElement.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+  if (event.key === 'ArrowLeft'){
+    previousPage();
+    event.preventDefault();
+  } else if (event.key === 'ArrowRight'){
+    nextPage();
+    event.preventDefault();
+  }
+});
 </script>
 
 </body>

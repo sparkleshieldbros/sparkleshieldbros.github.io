@@ -350,6 +350,7 @@ button:focus-visible{
 .section-heading h2,
 .grown-up-copy h2,
 .guide-section h2,
+.launch-section h2,
 .contact-section h2{
   color: var(--sparkle-navy);
   font-size: clamp(2.1rem, 5vw, 3.7rem);
@@ -359,6 +360,7 @@ button:focus-visible{
 .section-heading p:not(.eyebrow),
 .grown-up-copy p:not(.eyebrow),
 .contact-section p,
+.launch-section p,
 .guide-section p{
   margin-top: 12px;
   color: var(--muted);
@@ -375,7 +377,8 @@ button:focus-visible{
 .adventure-card,
 .sales-card,
 .character-card,
-.value-grid article{
+.value-grid article,
+.method-grid article{
   border: 1px solid rgba(27,46,90,0.13);
   border-radius: 8px;
   background: var(--white);
@@ -409,7 +412,8 @@ button:focus-visible{
 
 .card-body,
 .sales-card,
-.value-grid article{
+.value-grid article,
+.method-grid article{
   padding: 18px;
 }
 
@@ -425,7 +429,8 @@ button:focus-visible{
 .card-body h3,
 .sales-card h3,
 .character-card h3,
-.value-grid h3{
+.value-grid h3,
+.method-grid h3{
   color: var(--sparkle-navy);
   font-size: 1.45rem;
 }
@@ -433,7 +438,8 @@ button:focus-visible{
 .card-body p:not(.card-kicker),
 .sales-card p,
 .character-card p,
-.value-grid p{
+.value-grid p,
+.method-grid p{
   color: var(--muted);
   margin-top: 8px;
 }
@@ -538,6 +544,35 @@ button:focus-visible{
   font-weight: 900;
 }
 
+.method-section{
+  border-top: 1px solid rgba(27,46,90,0.12);
+}
+
+.method-grid{
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.method-grid article{
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,249,236,0.96));
+}
+
+.method-grid span{
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  background: var(--sparkle-gold);
+  color: var(--night-indigo);
+  font-family: var(--font-display);
+  font-weight: 900;
+}
+
 .sales-section{
   border-top: 1px solid rgba(27,46,90,0.12);
 }
@@ -563,6 +598,7 @@ button:focus-visible{
 }
 
 .guide-section,
+.launch-section,
 .contact-section{
   display: grid;
   grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
@@ -579,6 +615,41 @@ button:focus-visible{
     linear-gradient(135deg, rgba(27,46,90,0.98), rgba(22,12,37,0.98) 70%),
     var(--night-indigo);
   box-shadow: var(--shadow-soft);
+}
+
+.launch-section{
+  background:
+    linear-gradient(135deg, rgba(47,143,131,0.10), rgba(215,154,35,0.12)),
+    var(--white);
+  border: 1px solid rgba(47,143,131,0.24);
+  box-shadow: var(--shadow-card);
+}
+
+.qa-list{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.qa-list li{
+  position: relative;
+  padding: 12px 0 12px 30px;
+  border-bottom: 1px solid rgba(27,46,90,0.10);
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.qa-list li::before{
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, var(--sparkle-gold-light) 0 35%, transparent 38%),
+    var(--calm-teal);
 }
 
 .guide-section h2,
@@ -677,9 +748,14 @@ button:focus-visible{
 
   .grown-up-section,
   .guide-section,
+  .launch-section,
   .contact-section,
   .site-footer{
     grid-template-columns: 1fr;
+  }
+
+  .method-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .character-grid{
@@ -752,7 +828,8 @@ button:focus-visible{
 
   .adventure-grid,
   .sales-grid,
-  .value-grid{
+  .value-grid,
+  .method-grid{
     grid-template-columns: 1fr;
   }
 }
