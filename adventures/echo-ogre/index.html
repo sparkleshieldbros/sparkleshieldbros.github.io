@@ -3,12 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sparkle Shield Bros: The Echo Ogre Choice Path</title>
-<meta name="description" content="An interactive storybook adventure for kids ages 5-8 about calm, kindness, courage, and repair.">
+<title>The Echo Ogre Interactive Story | Sparkle Shield Bros</title>
+<meta name="description" content="Play The Echo Ogre Choice Path, an interactive Sparkle Shield Bros storybook adventure for ages 5-8 about calm, kindness, courage, and repair.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#1b2e5a">
+<link rel="canonical" href="https://sparkleshieldbros.github.io/adventures/echo-ogre/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Echo Ogre Interactive Story | Sparkle Shield Bros">
+<meta property="og:description" content="A choice-driven picture book adventure for ages 5-8 about listening, pausing, helping, and repairing.">
+<meta property="og:url" content="https://sparkleshieldbros.github.io/adventures/echo-ogre/">
+<meta property="og:image" content="https://sparkleshieldbros.github.io/adventures/echo-ogre/images/ending-true.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Echo Ogre Interactive Story | Sparkle Shield Bros">
+<meta name="twitter:description" content="Play a choice-driven Sparkle Shield Bros adventure about calm, kindness, courage, and repair.">
+<meta name="twitter:image" content="https://sparkleshieldbros.github.io/adventures/echo-ogre/images/ending-true.webp">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://sparkleshieldbros.github.io/#organization",
+      "name": "Sparkle Shield Bros",
+      "url": "https://sparkleshieldbros.github.io/"
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://sparkleshieldbros.github.io/#website",
+      "url": "https://sparkleshieldbros.github.io/",
+      "name": "Sparkle Shield HQ",
+      "publisher": {
+        "@id": "https://sparkleshieldbros.github.io/#organization"
+      },
+      "inLanguage": "en"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://sparkleshieldbros.github.io/adventures/echo-ogre/#breadcrumbs",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://sparkleshieldbros.github.io/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Adventures",
+          "item": "https://sparkleshieldbros.github.io/#adventures"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "The Echo Ogre Choice Path",
+          "item": "https://sparkleshieldbros.github.io/adventures/echo-ogre/"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://sparkleshieldbros.github.io/adventures/echo-ogre/#webpage",
+      "url": "https://sparkleshieldbros.github.io/adventures/echo-ogre/",
+      "name": "The Echo Ogre Interactive Story",
+      "description": "Play The Echo Ogre Choice Path, an interactive Sparkle Shield Bros storybook adventure for ages 5-8 about calm, kindness, courage, and repair.",
+      "isPartOf": {
+        "@id": "https://sparkleshieldbros.github.io/#website"
+      },
+      "breadcrumb": {
+        "@id": "https://sparkleshieldbros.github.io/adventures/echo-ogre/#breadcrumbs"
+      },
+      "primaryImageOfPage": {
+        "@type": "ImageObject",
+        "url": "https://sparkleshieldbros.github.io/adventures/echo-ogre/images/ending-true.webp"
+      },
+      "mainEntity": {
+        "@id": "https://sparkleshieldbros.github.io/adventures/echo-ogre/#interactive-story"
+      },
+      "inLanguage": "en"
+    },
+    {
+      "@type": "CreativeWork",
+      "@id": "https://sparkleshieldbros.github.io/adventures/echo-ogre/#interactive-story",
+      "name": "The Echo Ogre Choice Path",
+      "url": "https://sparkleshieldbros.github.io/adventures/echo-ogre/",
+      "description": "A choice-driven picture book adventure where kids help the Sparkle Shield Bros practice listening, pausing, helping, and repairing.",
+      "learningResourceType": "Interactive storybook",
+      "educationalUse": "Social emotional learning",
+      "isAccessibleForFree": true,
+      "audience": {
+        "@type": "PeopleAudience",
+        "suggestedMinAge": 5,
+        "suggestedMaxAge": 8
+      },
+      "publisher": {
+        "@id": "https://sparkleshieldbros.github.io/#organization"
+      },
+      "inLanguage": "en"
+    }
+  ]
+}
+</script>
 
 <style>
 /* ============================================================
@@ -110,6 +209,21 @@ nav.main-nav{
   gap: 6px;
   flex-wrap: wrap;
 }
+
+.breadcrumbs{
+  max-width: 980px;
+  margin: 14px auto 0 auto;
+  padding: 0 clamp(16px, 4vw, 40px);
+  color: rgba(255,246,223,0.78);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
+.breadcrumbs a{
+  color: var(--sparkle-gold-light);
+  text-decoration: none;
+}
+.breadcrumbs a:hover{ text-decoration: underline; }
+.breadcrumbs span{ margin: 0 5px; }
 
 .nav-btn{
   background: rgba(255,246,223,0.06);
@@ -458,6 +572,12 @@ footer.site-footer .mission{
     <button class="nav-btn" onclick="playAgain()">Try Another Path</button>
   </nav>
 </header>
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <a href="/">Home</a><span aria-hidden="true">/</span>
+  <a href="/#adventures">Adventures</a><span aria-hidden="true">/</span>
+  <span aria-current="page">The Echo Ogre Choice Path</span>
+</nav>
 
 <main id="main-content">
 
