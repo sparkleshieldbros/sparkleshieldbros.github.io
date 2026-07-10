@@ -401,15 +401,22 @@ button:focus-visible{
 }
 
 .adventure-card img{
+  display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
 }
 
 .adventure-card img.book-cover-art{
+  width: min(74%, 280px);
+  max-width: calc(100% - 32px);
   aspect-ratio: 2 / 3;
-  object-fit: cover;
-  background: var(--sparkle-navy);
+  object-fit: contain;
+  margin: 18px auto 0;
+  background: transparent;
+  border-radius: 6px;
+  box-shadow: 0 16px 30px rgba(27,46,90,0.20);
 }
 
 .adventure-card.featured{
@@ -422,6 +429,10 @@ button:focus-visible{
 .value-grid article,
 .method-grid article{
   padding: 18px;
+}
+
+.adventure-card.featured .card-body{
+  padding-top: 12px;
 }
 
 .card-kicker{
@@ -816,6 +827,10 @@ button:focus-visible{
   .value-grid,
   .method-grid{
     grid-template-columns: 1fr;
+  }
+
+  .adventure-card img.book-cover-art{
+    width: min(78vw, 300px);
   }
 }
 

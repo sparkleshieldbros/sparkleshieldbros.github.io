@@ -289,7 +289,7 @@ function showToast(message){
 }
 
 function shareEnding(endingName){
-  const message = 'I just unlocked the "' + endingName + '" ending in Sparkle Shield Bros: The Echo Ogre Choice Path! \u2728';
+  const message = 'I just unlocked the "' + endingName + '" ending in Sparkle Shield Bros: The Echo Ogre! \u2728';
   if (navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(message)
       .then(function(){ showToast('Copied! Paste it anywhere to share your ending.'); })
