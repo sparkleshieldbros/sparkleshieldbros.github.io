@@ -1066,7 +1066,7 @@ const characters = {
   kairo: {
     name: "Bubble Boy Kairo",
     eyebrow: "Hero File \u00b7 The Observer",
-    image: "bubble-boy.webp",
+    image: "/assets/images/characters/bubble-boy-kairo-profile.webp",
     fallbackIcon: iconKairo,
     power: "Bubble Shields, Bubble Bridges, Bubble Creativity",
     want: "To protect the people he loves",
@@ -1077,7 +1077,7 @@ const characters = {
   cash: {
     name: "Captain Cash",
     eyebrow: "Hero File \u00b7 The Rescuer",
-    image: "captain-cash.webp",
+    image: "/assets/images/characters/captain-cash-profile.webp",
     fallbackIcon: iconCash,
     power: "Golden rescue energy, quick thinking, teamwork, repair",
     want: "To help quickly and prove he is brave",
@@ -1091,7 +1091,7 @@ const characters = {
        power/want/fear/lesson/phrase whenever you have them. */
     name: "Ninja Nugs",
     eyebrow: "Hero File \u00b7 The Sidekick",
-    image: "ninja-nugs.webp",
+    image: "/assets/images/characters/ninja-nugs-profile.webp",
     fallbackIcon: iconNugs,
     power: "Quick reflexes and a knack for sneaking in at just the right moment",
     want: "To back up the team and never miss the action",
@@ -1102,7 +1102,7 @@ const characters = {
   dad: {
     name: "Dad",
     eyebrow: "Hero File \u00b7 The Model",
-    image: "dad.webp",
+    image: "/assets/images/characters/dad-profile.webp",
     fallbackIcon: iconDad,
     power: "Calm, accountability, apology, and repair",
     want: "To help his children become kind and strong",
@@ -1113,7 +1113,7 @@ const characters = {
   mom: {
     name: "Mom",
     eyebrow: "Hero File \u00b7 The Noticer",
-    image: "mom.webp",
+    image: "/assets/images/characters/mom-profile.webp",
     fallbackIcon: iconMom,
     power: "Super intuition and pattern recognition",
     want: "To help her family notice what matters",
@@ -1124,7 +1124,7 @@ const characters = {
   ogre: {
     name: "Echo Ogre",
     eyebrow: "Hero File \u00b7 The Mystery",
-    image: "echo-ogre.webp",
+    image: "/assets/images/characters/echo-ogre-profile.webp",
     fallbackIcon: iconOgre,
     power: "Echoes actions and feelings ten times bigger",
     want: "To feel every strong feeling around him",
@@ -1138,7 +1138,7 @@ const characters = {
    ============================================================ */
 
 function heroIconMarkup(c){
-  return '<img src="images/' + c.image + '" alt="' + c.name + '" width="1254" height="1254" loading="lazy" class="icon-img" ' +
+  return '<img src="' + c.image + '" alt="' + c.name + '" width="1254" height="1254" loading="lazy" class="icon-img" ' +
     'onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';">' +
     '<span class="icon-fallback">' + c.fallbackIcon() + '</span>';
 }
