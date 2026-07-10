@@ -601,6 +601,27 @@ button:focus-visible{
   align-items: flex-start;
 }
 
+.book-sales-card{
+  align-items: center;
+}
+
+.book-sales-card h3,
+.book-sales-card p,
+.book-sales-card .btn{
+  align-self: flex-start;
+}
+
+.book-sales-cover{
+  width: min(78%, 230px);
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 725 / 1024;
+  object-fit: contain;
+  margin: 0 auto 18px;
+  border-radius: 6px;
+  box-shadow: 0 18px 34px rgba(27,46,90,0.22);
+}
+
 .sales-card .btn,
 .contact-section .btn{
   margin-top: 24px;
