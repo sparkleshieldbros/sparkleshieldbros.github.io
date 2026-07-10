@@ -6,7 +6,7 @@
 <title>The Echo Ogre Interactive Story | Sparkle Shield Bros</title>
 <meta name="description" content="Play The Echo Ogre Choice Path, an interactive Sparkle Shield Bros storybook adventure for ages 5-8 about calm, kindness, courage, and repair.">
 <meta name="robots" content="index, follow">
-<meta name="theme-color" content="#1b2e5a">
+<meta name="theme-color" content="#071a33">
 <link rel="canonical" href="https://sparkleshieldbros.github.io/adventures/echo-ogre/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="The Echo Ogre Interactive Story | Sparkle Shield Bros">
@@ -114,16 +114,18 @@
    SPARKLE SHIELD BROS — DESIGN TOKENS
    ============================================================ */
 :root{
-  --sparkle-blue: #1b4167;
-  --sparkle-navy: #1b2e5a;
-  --sparkle-gold: #d79a23;
-  --sparkle-gold-light: #f3c568;
-  --sparkle-cream: #fff6df;
-  --echo-purple: #5d2a86;
-  --echo-purple-light: #8d5cc2;
-  --night-indigo: #160c25;
-  --calm-teal: #2f8f83;
-  --repair-rose: #c9647a;
+  --sparkle-blue: #0d2b4d;
+  --sparkle-navy: #071a33;
+  --sparkle-gold: #f4b51c;
+  --sparkle-gold-light: #ffe28a;
+  --bubble-orange: #f47718;
+  --cash-green: #31b84a;
+  --sparkle-cream: #ffffff;
+  --echo-purple: #0d2b4d;
+  --echo-purple-light: #31b84a;
+  --night-indigo: #061225;
+  --calm-teal: #31b84a;
+  --repair-rose: #f47718;
 
   --font-display: "Baloo 2", system-ui, sans-serif;
   --font-body: "Nunito", system-ui, sans-serif;
@@ -144,7 +146,7 @@ html{ scroll-behavior: smooth; }
 body{
   margin: 0;
   font-family: var(--font-body);
-  background: radial-gradient(circle at 20% 0%, var(--sparkle-navy), var(--night-indigo) 60%);
+  background: radial-gradient(circle at 20% 0%, var(--sparkle-blue), var(--night-indigo) 62%);
   color: var(--sparkle-cream);
   min-height: 100vh;
   line-height: 1.55;
@@ -182,9 +184,9 @@ header.site-header{
   position: sticky;
   top: 0;
   z-index: 50;
-  background: linear-gradient(180deg, rgba(22,12,37,0.97), rgba(22,12,37,0.9));
+  background: linear-gradient(180deg, rgba(6,18,37,0.97), rgba(7,26,51,0.92));
   backdrop-filter: blur(6px);
-  border-bottom: 1px solid rgba(215,154,35,0.25);
+  border-bottom: 1px solid rgba(244,181,28,0.32);
   padding: 8px max(14px, 3vw);
   display: flex;
   align-items: center;
@@ -202,7 +204,14 @@ header.site-header{
   color: var(--sparkle-gold-light);
   white-space: nowrap;
 }
-.brand .mark{ width: 30px; height: 30px; flex: none; }
+.brand .mark{
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px var(--sparkle-gold), 0 6px 14px rgba(0,0,0,0.28);
+}
 
 nav.main-nav{
   display: flex;
@@ -228,7 +237,7 @@ nav.main-nav{
 .nav-btn{
   background: rgba(255,246,223,0.06);
   color: var(--sparkle-cream);
-  border: 1px solid rgba(215,154,35,0.4);
+  border: 1px solid rgba(244,181,28,0.48);
   padding: 7px 12px;
   border-radius: 999px;
   cursor: pointer;
@@ -237,7 +246,7 @@ nav.main-nav{
   min-height: 40px;
   transition: background 0.2s ease, transform 0.2s ease;
 }
-.nav-btn:hover{ background: rgba(215,154,35,0.22); transform: translateY(-1px); }
+.nav-btn:hover{ background: rgba(244,181,28,0.22); transform: translateY(-1px); }
 .nav-btn.gold{ background: var(--sparkle-gold); color: var(--night-indigo); border-color: var(--sparkle-gold); }
 .nav-btn.gold:hover{ background: var(--sparkle-gold-light); }
 
@@ -270,8 +279,8 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   margin: 0 0 24px 0;
-  background: rgba(27,65,103,0.35);
-  border: 1px solid rgba(215,154,35,0.25);
+  background: rgba(13,43,77,0.42);
+  border: 1px solid rgba(244,181,28,0.32);
   border-radius: var(--radius-md);
   padding: 12px 14px;
 }
@@ -279,24 +288,24 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
 .meter-label{ font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.8; }
 .meter-bar{ height: 8px; border-radius: 99px; background: rgba(255,255,255,0.12); margin-top: 6px; overflow: hidden; }
 .meter-fill{ height: 100%; border-radius: 99px; transition: width 0.4s ease; }
-.meter-fill.calm{ background: var(--calm-teal); }
-.meter-fill.kindness{ background: var(--repair-rose); }
-.meter-fill.courage{ background: var(--sparkle-gold); }
-.meter-fill.repair{ background: var(--echo-purple-light); }
+.meter-fill.calm{ background: var(--cash-green); }
+.meter-fill.kindness{ background: var(--sparkle-gold); }
+.meter-fill.courage{ background: var(--bubble-orange); }
+.meter-fill.repair{ background: var(--sparkle-cream); }
 
 .story-card{
   position: relative;
   background:
-    linear-gradient(90deg, rgba(22,12,37,0.28), transparent 7%, transparent 93%, rgba(255,255,255,0.08)),
-    radial-gradient(circle at 90% 8%, rgba(255,246,223,0.05), transparent 40%),
-    radial-gradient(circle at 8% 95%, rgba(215,154,35,0.06), transparent 45%),
-    linear-gradient(160deg, rgba(27,65,103,0.72), rgba(22,12,37,0.62));
-  border: 1px solid rgba(215,154,35,0.28);
+    linear-gradient(90deg, rgba(6,18,37,0.32), transparent 7%, transparent 93%, rgba(255,255,255,0.08)),
+    radial-gradient(circle at 90% 8%, rgba(49,184,74,0.10), transparent 40%),
+    radial-gradient(circle at 8% 95%, rgba(244,119,24,0.12), transparent 45%),
+    linear-gradient(160deg, rgba(13,43,77,0.78), rgba(6,18,37,0.70));
+  border: 1px solid rgba(244,181,28,0.34);
   border-radius: var(--radius-lg);
   padding: clamp(18px, 4vw, 34px);
   box-shadow:
     -16px 18px 28px rgba(0,0,0,0.18),
-    inset 10px 0 18px rgba(22,12,37,0.25),
+    inset 10px 0 18px rgba(6,18,37,0.28),
     inset -8px 0 16px rgba(255,246,223,0.05),
     var(--shadow-soft);
   overflow: hidden;
@@ -308,7 +317,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   width: 0; height: 0;
   border-style: solid;
   border-width: 0 38px 38px 0;
-  border-color: transparent rgba(215,154,35,0.45) transparent transparent;
+  border-color: transparent rgba(244,181,28,0.45) transparent transparent;
   pointer-events: none;
 }
 .story-card::after{
@@ -317,7 +326,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   inset: 12px auto 12px 18px;
   width: 2px;
   border-radius: 99px;
-  background: linear-gradient(180deg, transparent, rgba(215,154,35,0.35), transparent);
+  background: linear-gradient(180deg, transparent, rgba(244,181,28,0.38), transparent);
   pointer-events: none;
 }
 
@@ -327,8 +336,8 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   justify-content: space-between;
   gap: 12px;
   margin: 0 0 18px 0;
-  background: rgba(22,12,37,0.56);
-  border: 1px solid rgba(215,154,35,0.25);
+  background: rgba(6,18,37,0.62);
+  border: 1px solid rgba(244,181,28,0.30);
   border-radius: var(--radius-md);
   padding: 10px 12px;
 }
@@ -350,7 +359,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid rgba(215,154,35,0.45);
+  border: 1px solid rgba(244,181,28,0.48);
   border-radius: 999px;
   min-height: 42px;
   padding: 8px 14px;
@@ -359,7 +368,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   font-weight: 800;
   cursor: pointer;
 }
-.page-nav:hover:not(:disabled){ background: rgba(215,154,35,0.22); }
+.page-nav:hover:not(:disabled){ background: rgba(244,181,28,0.22); }
 .page-nav:disabled{
   opacity: 0.38;
   cursor: not-allowed;
@@ -378,7 +387,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   border-radius: var(--radius-md);
   overflow: hidden;
   margin-bottom: 18px;
-  border: 1px solid rgba(215,154,35,0.3);
+  border: 1px solid rgba(244,181,28,0.34);
 }
 .scene-art svg{ width: 100%; height: 100%; display: block; }
 .scene-art img{ width: 100%; height: 100%; object-fit: cover; display: block; }
@@ -410,7 +419,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   font-size: 0.85rem;
   opacity: 0.85;
   margin-top: 14px;
-  border-left: 3px solid var(--calm-teal);
+  border-left: 3px solid var(--cash-green);
   padding-left: 12px;
 }
 
@@ -420,7 +429,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
 .choice-btn{
   background: var(--sparkle-blue);
   color: var(--sparkle-cream);
-  border: 2px solid rgba(215,154,35,0.5);
+  border: 2px solid rgba(244,181,28,0.54);
   border-radius: var(--radius-md);
   padding: 18px 14px;
   min-height: 64px;
@@ -430,7 +439,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
   text-align: center;
 }
-.choice-btn:hover{ transform: translateY(-3px) scale(1.02); background: var(--echo-purple); border-color: var(--sparkle-gold); }
+.choice-btn:hover{ transform: translateY(-3px) scale(1.02); background: var(--cash-green); color: var(--night-indigo); border-color: var(--sparkle-gold); }
 .choice-btn .emoji{ display:block; font-size: 1.6rem; margin-bottom: 6px; }
 
 .continue-row{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
@@ -443,12 +452,25 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   cursor: pointer;
   border: none;
 }
-.btn-primary{ background: var(--sparkle-gold); color: var(--night-indigo); }
-.btn-primary:hover{ background: var(--sparkle-gold-light); }
+.btn-primary{ background: linear-gradient(135deg, var(--sparkle-gold-light), var(--sparkle-gold)); color: var(--night-indigo); }
+.btn-primary:hover{ background: linear-gradient(135deg, var(--sparkle-gold), var(--bubble-orange)); }
 .btn-secondary{ background: transparent; color: var(--sparkle-cream); border: 2px solid rgba(255,246,223,0.4); }
 .btn-secondary:hover{ border-color: var(--sparkle-gold); }
 
-.title-emblem{ width: 96px; height: 96px; margin: 0 auto 10px auto; }
+.title-logo{
+  width: min(300px, 78vw);
+  height: auto;
+  margin: 0 auto 14px auto;
+  border-radius: 18px;
+  filter: drop-shadow(0 18px 28px rgba(0,0,0,0.32));
+}
+.title-card{
+  border-color: rgba(244,181,28,0.48);
+  background:
+    radial-gradient(circle at 17% 16%, rgba(244,119,24,0.22), transparent 34%),
+    radial-gradient(circle at 83% 18%, rgba(49,184,74,0.20), transparent 34%),
+    linear-gradient(160deg, rgba(13,43,77,0.86), rgba(6,18,37,0.76));
+}
 .tagline{
   text-align: center;
   font-style: italic;
@@ -458,8 +480,8 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
 .howto-grid{ display: grid; grid-template-columns: 1fr; gap: 14px; margin: 20px 0; }
 @media (min-width: 640px){ .howto-grid{ grid-template-columns: 1fr 1fr; } }
 .howto-card{
-  background: rgba(255,246,223,0.05);
-  border: 1px solid rgba(215,154,35,0.25);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(244,181,28,0.30);
   border-radius: var(--radius-md);
   padding: 14px 16px;
 }
@@ -469,7 +491,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
 .breathing-widget{ text-align: center; margin: 10px 0 18px 0; }
 .breathing-circle{
   width: 80px; height: 80px; border-radius: 50%;
-  background: radial-gradient(circle, var(--sparkle-gold-light), var(--echo-purple-light));
+  background: radial-gradient(circle, var(--sparkle-gold-light), var(--cash-green));
   margin: 0 auto 14px auto;
   animation: breathe 4s ease-in-out infinite;
 }
@@ -478,8 +500,8 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
 
 .card-grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-top: 18px; }
 .char-card{
-  background: rgba(27,65,103,0.45);
-  border: 1px solid rgba(215,154,35,0.3);
+  background: rgba(13,43,77,0.52);
+  border: 1px solid rgba(244,181,28,0.34);
   border-radius: var(--radius-md);
   padding: 16px 12px;
   text-align: center;
@@ -487,14 +509,14 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   color: inherit;
   transition: transform 0.18s ease, background 0.18s ease;
 }
-.char-card:hover{ transform: translateY(-4px); background: rgba(93,42,134,0.4); }
+.char-card:hover{ transform: translateY(-4px); background: rgba(49,184,74,0.28); }
 .char-card h3{ font-size: 1rem; margin-bottom: 2px; }
 .char-card p{ font-size: 0.8rem; opacity: 0.85; margin: 0; }
 
 /* Hero portrait: tries the real /images file first, falls back to the
    hand-drawn SVG badge automatically if that file isn't uploaded yet
    (see the onerror handler wired up in heroIconMarkup()). */
-.icon{ position: relative; border-radius: 50%; overflow: hidden; border: 2px solid rgba(215,154,35,0.5); background: var(--night-indigo); }
+.icon{ position: relative; border-radius: 50%; overflow: hidden; border: 2px solid rgba(244,181,28,0.56); background: var(--night-indigo); }
 .icon img, .icon .icon-fallback, .icon .icon-fallback svg{ width: 100%; height: 100%; display: block; object-fit: cover; }
 .icon .icon-fallback{ display: none; }
 .char-card .icon{ width: 64px; height: 64px; margin: 0 auto 10px auto; }
@@ -508,19 +530,19 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
 .phrase{ font-style: italic; border-left: 3px solid var(--sparkle-gold); padding-left: 14px; margin-top: 18px; }
 
 .guide-block{
-  background: rgba(93,42,134,0.25);
-  border: 1px solid rgba(215,154,35,0.25);
+  background: rgba(13,43,77,0.42);
+  border: 1px solid rgba(244,181,28,0.30);
   border-radius: var(--radius-md);
   padding: 16px 18px;
   margin-bottom: 14px;
 }
 .guide-block h3{ font-size: 1rem; color: var(--sparkle-gold-light); }
-.guide-block.danger-zone{ border-color: rgba(201,100,122,0.6); }
+.guide-block.danger-zone{ border-color: rgba(244,119,24,0.70); }
 
 .badge-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 14px; }
 .badge-pill{
   display:inline-flex; align-items:center; gap:6px;
-  background: rgba(215,154,35,0.15);
+  background: rgba(244,181,28,0.16);
   border: 1px solid var(--sparkle-gold);
   color: var(--sparkle-gold-light);
   padding: 6px 12px;
@@ -559,10 +581,7 @@ footer.site-footer .mission{
 
 <header class="site-header">
   <div class="brand">
-    <svg class="mark" viewBox="0 0 64 64" aria-hidden="true">
-      <circle cx="32" cy="32" r="30" fill="#d79a23"/>
-      <path d="M32 12 L38 26 L52 28 L41 38 L44 52 L32 44 L20 52 L23 38 L12 28 L26 26 Z" fill="#160c25"/>
-    </svg>
+    <img class="mark" src="/assets/images/brand/sparkle-shield-bros-logo.webp" alt="" width="1448" height="1448" aria-hidden="true">
     Sparkle Shield Bros
   </div>
   <nav class="main-nav" aria-label="Main navigation">
@@ -620,11 +639,8 @@ footer.site-footer .mission{
        ============================================================ -->
   <!-- ============ START / TITLE SCREEN ============ -->
   <section id="start-screen" class="screen active" aria-labelledby="title-heading">
-    <div class="story-card">
-      <svg class="title-emblem" viewBox="0 0 96 96" aria-hidden="true">
-        <circle cx="48" cy="48" r="44" fill="#5d2a86"/>
-        <polygon points="48,14 56,36 80,38 60,54 66,78 48,64 30,78 36,54 16,38 40,36" fill="#d79a23"/>
-      </svg>
+    <div class="story-card title-card">
+      <img class="title-logo" src="/assets/images/brand/sparkle-shield-bros-logo.webp" alt="Sparkle Shield Bros" width="1448" height="1448">
       <h1 id="title-heading" style="text-align:center;">Sparkle Shield Bros</h1>
       <p class="tagline">Superhero adventures for kind hearts, brave choices, and growing families.</p>
 
@@ -652,6 +668,8 @@ footer.site-footer .mission{
         <img
           src="images/opening.webp"
           alt="Bubble Boy Kairo, Captain Cash, and Ninja Nugs face a glowing purple echo shape on Maplewood Terrace at dusk."
+          width="1672"
+          height="941"
           loading="eager"
         />
       </div>
@@ -689,6 +707,8 @@ footer.site-footer .mission{
         <img
           src="images/choice-rush.webp"
           alt="Captain Cash rushes forward with golden rescue energy while Bubble Boy Kairo raises a blue bubble shield and Ninja Nugs stands ready in a ninja mask as the Echo Ogre grows larger and echoes the motion back."
+          width="1672"
+          height="941"
           loading="eager"
         />
       </div>
@@ -730,6 +750,8 @@ footer.site-footer .mission{
         <img
           src="images/consequence-pause.webp"
           alt="Bubble Boy Kairo pauses thoughtfully while Captain Cash and Ninja Nugs watch the Echo Ogre from a safe distance, noticing glowing ripple patterns that show the creature is copying what it sees."
+          width="1672"
+          height="941"
           loading="lazy"
         />
       </div>
@@ -770,6 +792,8 @@ footer.site-footer .mission{
         <img
           src="images/consequence-help.webp"
           alt="Dad kneels calmly between Bubble Boy Kairo and Captain Cash, using open hands and a gentle expression while Ninja Nugs watches and the Echo Ogre flickers nearby, listening."
+          width="1672"
+          height="941"
           loading="lazy"
         />
       </div>
@@ -814,6 +838,8 @@ footer.site-footer .mission{
         <img
           src="images/ending-fast.webp"
           alt="The Echo Ogre towers huge and loud over Maplewood Terrace while Bubble Boy Kairo raises a bubble shield, Captain Cash stands surprised, and Ninja Nugs stays ready beside them."
+          width="1672"
+          height="941"
           loading="lazy"
         />
       </div>
@@ -846,6 +872,8 @@ footer.site-footer .mission{
         <img
           src="images/ending-wise.webp"
           alt="Bubble Boy Kairo calmly watches as the Echo Ogre softens into gentle glowing bubbles while Captain Cash and Ninja Nugs look on with relief."
+          width="1672"
+          height="941"
           loading="lazy"
         />
       </div>
@@ -875,6 +903,8 @@ footer.site-footer .mission{
         <img
           src="images/ending-true.webp"
           alt="The Echo Ogre transforms into a glowing golden guardian as Bubble Boy Kairo, Captain Cash, Dad, and Ninja Nugs stand together, sparkles and warm light spreading across Maplewood Terrace."
+          width="1672"
+          height="941"
           loading="lazy"
         />
       </div>
@@ -1106,28 +1136,28 @@ const characters = {
    ============================================================ */
 
 function heroIconMarkup(c){
-  return '<img src="images/' + c.image + '" alt="' + c.name + '" loading="lazy" class="icon-img" ' +
+  return '<img src="images/' + c.image + '" alt="' + c.name + '" width="1254" height="1254" loading="lazy" class="icon-img" ' +
     'onerror="this.style.display=\'none\'; this.nextElementSibling.style.display=\'block\';">' +
     '<span class="icon-fallback">' + c.fallbackIcon() + '</span>';
 }
 
 function iconKairo(){
-  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#1b4167"/><circle cx="44" cy="38" r="16" fill="#fff6df"/><rect x="24" y="54" width="40" height="22" rx="8" fill="#2f8f83"/></svg>';
+  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#071a33"/><circle cx="44" cy="38" r="16" fill="#ffffff"/><rect x="24" y="54" width="40" height="22" rx="8" fill="#f47718"/></svg>';
 }
 function iconCash(){
-  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#5d2a86"/><circle cx="44" cy="38" r="16" fill="#f3c568"/><rect x="24" y="54" width="40" height="22" rx="8" fill="#c9647a"/></svg>';
+  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#071a33"/><circle cx="44" cy="38" r="16" fill="#ffe28a"/><rect x="24" y="54" width="40" height="22" rx="8" fill="#31b84a"/></svg>';
 }
 function iconDad(){
-  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#1b2e5a"/><circle cx="44" cy="36" r="17" fill="#d79a23"/><rect x="22" y="54" width="44" height="24" rx="8" fill="#160c25"/></svg>';
+  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#071a33"/><circle cx="44" cy="36" r="17" fill="#f4b51c"/><rect x="22" y="54" width="44" height="24" rx="8" fill="#061225"/></svg>';
 }
 function iconMom(){
-  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#1b2e5a"/><circle cx="44" cy="36" r="17" fill="#f3c568"/><rect x="22" y="54" width="44" height="24" rx="8" fill="#c9647a"/></svg>';
+  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#071a33"/><circle cx="44" cy="36" r="17" fill="#ffe28a"/><rect x="22" y="54" width="44" height="24" rx="8" fill="#f47718"/></svg>';
 }
 function iconOgre(){
-  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#160c25"/><circle cx="44" cy="44" r="26" fill="#5d2a86"/><circle cx="44" cy="44" r="12" fill="#8d5cc2"/><circle cx="38" cy="40" r="3" fill="#fff6df"/><circle cx="50" cy="40" r="3" fill="#fff6df"/></svg>';
+  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#061225"/><circle cx="44" cy="44" r="26" fill="#0d2b4d"/><circle cx="44" cy="44" r="12" fill="#31b84a"/><circle cx="38" cy="40" r="3" fill="#ffffff"/><circle cx="50" cy="40" r="3" fill="#ffffff"/></svg>';
 }
 function iconNugs(){
-  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#1b4167"/><circle cx="44" cy="40" r="16" fill="#f3c568"/><rect x="26" y="56" width="36" height="20" rx="8" fill="#160c25"/></svg>';
+  return '<svg viewBox="0 0 88 88"><circle cx="44" cy="44" r="42" fill="#071a33"/><circle cx="44" cy="40" r="16" fill="#ffe28a"/><rect x="26" y="56" width="36" height="20" rx="8" fill="#31b84a"/></svg>';
 }
 
 function showScene(id, options){
