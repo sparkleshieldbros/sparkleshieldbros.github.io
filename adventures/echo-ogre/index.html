@@ -458,11 +458,21 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
 .btn-secondary:hover{ border-color: var(--sparkle-gold); }
 
 .title-logo{
-  width: min(300px, 78vw);
+  width: min(170px, 48vw);
   height: auto;
-  margin: 0 auto 14px auto;
-  border-radius: 18px;
-  filter: drop-shadow(0 18px 28px rgba(0,0,0,0.32));
+  margin: 0 auto 12px auto;
+  border-radius: 14px;
+  filter: drop-shadow(0 12px 20px rgba(0,0,0,0.26));
+}
+.adventure-cover{
+  width: min(360px, 82vw);
+  height: auto;
+  margin: 0 auto 18px auto;
+  border: 2px solid rgba(244,181,28,0.68);
+  border-radius: 8px;
+  box-shadow:
+    0 20px 34px rgba(0,0,0,0.32),
+    0 0 0 6px rgba(255,255,255,0.05);
 }
 .title-card{
   border-color: rgba(244,181,28,0.48);
@@ -641,8 +651,9 @@ footer.site-footer .mission{
   <section id="start-screen" class="screen active" aria-labelledby="title-heading">
     <div class="story-card title-card">
       <img class="title-logo" src="/assets/images/brand/sparkle-shield-bros-logo.webp" alt="Sparkle Shield Bros" width="1448" height="1448">
-      <h1 id="title-heading" style="text-align:center;">Sparkle Shield Bros</h1>
-      <p class="tagline">Superhero adventures for kind hearts, brave choices, and growing families.</p>
+      <img class="adventure-cover" src="images/echo-ogre-choice-path-cover.webp" alt="Book cover for The Echo Ogre, showing the Sparkle Shield Bros facing the glowing Echo Ogre." width="1024" height="1536">
+      <h1 id="title-heading" style="text-align:center;">The Echo Ogre Choice Path</h1>
+      <p class="tagline">A choice-driven adventure about family, courage, kindness, and repair.</p>
 
       <div class="howto-grid">
         <div class="howto-card">
