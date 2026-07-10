@@ -830,7 +830,8 @@ button:focus-visible{
   }
 
   .adventure-card img.book-cover-art{
-    width: min(78vw, 300px);
+    width: min(68vw, 260px);
+    max-width: calc(100% - 48px);
   }
 }
 
