@@ -406,6 +406,12 @@ button:focus-visible{
   object-fit: cover;
 }
 
+.adventure-card img.book-cover-art{
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  background: var(--sparkle-navy);
+}
+
 .adventure-card.featured{
   grid-column: span 1;
   border-color: rgba(244,181,28,0.42);
