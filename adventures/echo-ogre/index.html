@@ -331,54 +331,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   pointer-events: none;
 }
 
-.flipbook-controls{
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0 0 18px 0;
-  background: rgba(6,18,37,0.62);
-  border: 1px solid rgba(244,181,28,0.30);
-  border-radius: var(--radius-md);
-  padding: 10px 12px;
-}
-.flipbook-controls.active{ display: flex; }
-.page-status{
-  font-weight: 800;
-  color: var(--sparkle-gold-light);
-  text-align: center;
-  min-width: 120px;
-}
-.page-hint{
-  display: block;
-  color: var(--sparkle-cream);
-  font-size: 0.74rem;
-  font-weight: 700;
-  opacity: 0.76;
-}
-.page-nav{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid rgba(244,181,28,0.48);
-  border-radius: 999px;
-  min-height: 42px;
-  padding: 8px 14px;
-  background: rgba(255,246,223,0.06);
-  color: var(--sparkle-cream);
-  font-weight: 800;
-  cursor: pointer;
-}
-.page-nav:hover:not(:disabled){ background: rgba(244,181,28,0.22); }
-.page-nav:disabled{
-  opacity: 0.38;
-  cursor: not-allowed;
-}
 @media (max-width: 560px){
-  .flipbook-controls{ gap: 8px; padding: 8px; }
-  .page-nav{ min-width: 44px; padding: 8px 11px; }
-  .page-nav .label{ display: none; }
-  .page-status{ min-width: 94px; font-size: 0.88rem; }
   .story-card{ min-height: 520px; }
 }
 
@@ -902,19 +855,6 @@ footer.site-footer .mission{
     </div>
   </div>
 
-  <div class="flipbook-controls" id="flipbook-controls" aria-label="Flipbook page controls">
-    <button class="page-nav" id="prev-page" type="button" onclick="previousPage()" aria-label="Previous page">
-      <span aria-hidden="true">&lt;</span><span class="label">Back</span>
-    </button>
-    <div class="page-status" id="page-status">
-      Page 1 
-      <span class="page-hint" id="page-hint">Turn the page to begin.</span>
-    </div>
-    <button class="page-nav" id="next-page" type="button" onclick="nextPage()" aria-label="Next page">
-      <span class="label">Next</span><span aria-hidden="true">&gt;</span>
-    </button>
-  </div>
-
   <!-- ============================================================
        AI-SAFE STORY CONTENT SECTION START — story pages live here.
        ============================================================ -->
@@ -955,8 +895,8 @@ footer.site-footer .mission{
         />
       </div>
       <div class="scene-copy">
-        <p class="eyebrow">Chapter 1 · Maplewood Terrace, Dusk</p>
-        <h1 id="opening-title">The Echo Ogre Appears</h1>
+        <p class="eyebrow visually-hidden">Chapter 1 · Maplewood Terrace, Dusk</p>
+        <h1 id="opening-title" class="visually-hidden">The Echo Ogre Appears</h1>
         <p class="story-text">
           Purple lights flickered on Maplewood Terrace.<br>
           A swirling Echo Ogre appeared by the mailbox.
@@ -980,8 +920,8 @@ footer.site-footer .mission{
         />
       </div>
       <div class="scene-copy">
-        <p class="eyebrow">Chapter 2 · The Rush Path</p>
-        <h2 id="rush-title">Fast Hands</h2>
+        <p class="eyebrow visually-hidden">Chapter 2 · The Rush Path</p>
+        <h2 id="rush-title" class="visually-hidden">Fast Hands</h2>
         <p class="story-text">
           Captain Cash rushed forward with rescue energy.<br>
           The Ogre copied him — bigger, louder, faster.
@@ -1008,8 +948,8 @@ footer.site-footer .mission{
         />
       </div>
       <div class="scene-copy">
-        <p class="eyebrow">Chapter 3 · A Hard Moment</p>
-        <h2 id="rush-realization-title">Noticing What Happened</h2>
+        <p class="eyebrow visually-hidden">Chapter 3 · A Hard Moment</p>
+        <h2 id="rush-realization-title" class="visually-hidden">Noticing What Happened</h2>
         <p class="story-text">
           Fast hands made the Ogre bigger.<br>
           Cash slowed down and noticed the pattern.
@@ -1033,8 +973,8 @@ footer.site-footer .mission{
         />
       </div>
       <div class="scene-copy">
-        <p class="eyebrow">Chapter 2 · The Pause Path</p>
-        <h2 id="pause-title">Watching the Pattern</h2>
+        <p class="eyebrow visually-hidden">Chapter 2 · The Pause Path</p>
+        <h2 id="pause-title" class="visually-hidden">Watching the Pattern</h2>
         <p class="story-text">
           Kairo took a slow breath and watched.<br>
           The Ogre wasn't attacking. It was copying.
@@ -1061,8 +1001,8 @@ footer.site-footer .mission{
         />
       </div>
       <div class="scene-copy">
-        <p class="eyebrow">Chapter 3 · The Pattern Becomes Clear</p>
-        <h2 id="pause-realization-title">Calm In, Calm Out</h2>
+        <p class="eyebrow visually-hidden">Chapter 3 · The Pattern Becomes Clear</p>
+        <h2 id="pause-realization-title" class="visually-hidden">Calm In, Calm Out</h2>
         <p class="story-text">
           <em>"It's an echo,"</em> Kairo whispered.<br>
           "It gives back whatever it gets."
@@ -1086,8 +1026,8 @@ footer.site-footer .mission{
         />
       </div>
       <div class="scene-copy">
-        <p class="eyebrow">Chapter 2 · The Ask-Dad Path</p>
-        <h2 id="dad-title">Dad Kneels Down</h2>
+        <p class="eyebrow visually-hidden">Chapter 2 · The Ask-Dad Path</p>
+        <h2 id="dad-title" class="visually-hidden">Dad Kneels Down</h2>
         <p class="story-text">
           Dad came outside and knelt between the boys.<br>
           <em>"I'm sorry,"</em> he said. <em>"Let me try again — calmly."</em>
@@ -1114,8 +1054,8 @@ footer.site-footer .mission{
         />
       </div>
       <div class="scene-copy">
-        <p class="eyebrow">Chapter 3 · A Breath Together</p>
-        <h2 id="dad-realization-title">Try It With Your Body</h2>
+        <p class="eyebrow visually-hidden">Chapter 3 · A Breath Together</p>
+        <h2 id="dad-realization-title" class="visually-hidden">Try It With Your Body</h2>
         <div class="breathing-widget">
           <div class="breathing-circle" aria-hidden="true"></div>
           <p class="breathing-text">
@@ -1645,6 +1585,7 @@ function nextPage(){
 
 function updateFlipbookControls(id){
   const controls = document.getElementById('flipbook-controls');
+  if (!controls) return;
   const prev = document.getElementById('prev-page');
   const next = document.getElementById('next-page');
   const status = document.getElementById('page-status');
@@ -1964,20 +1905,6 @@ updateMeter();
 renderBadges();
 document.getElementById('sparkle-meter').style.display = 'none';
 updateFlipbookControls('start-screen');
-
-document.addEventListener('keydown', function(event){
-  if (event.defaultPrevented) return;
-  const tag = document.activeElement && document.activeElement.tagName;
-  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
-
-  if (event.key === 'ArrowLeft'){
-    previousPage();
-    event.preventDefault();
-  } else if (event.key === 'ArrowRight'){
-    nextPage();
-    event.preventDefault();
-  }
-});
 </script>
 
 </body>
