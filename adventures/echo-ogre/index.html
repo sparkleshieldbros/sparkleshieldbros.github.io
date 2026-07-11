@@ -423,24 +423,118 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   padding-left: 12px;
 }
 
-.choice-grid{ display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 22px; }
-@media (min-width: 640px){ .choice-grid{ grid-template-columns: repeat(3, 1fr); } }
-
-.choice-btn{
-  background: var(--sparkle-blue);
-  color: var(--sparkle-cream);
-  border: 2px solid rgba(244,181,28,0.54);
-  border-radius: var(--radius-md);
-  padding: 18px 14px;
-  min-height: 64px;
+.hero-choice-panel{
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(244,181,28,0.28);
+}
+.hero-choice-prompt{
+  margin: 0 0 14px 0;
+  color: var(--sparkle-gold-light);
   font-family: var(--font-display);
-  font-size: 1rem;
-  cursor: pointer;
-  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  font-size: clamp(1.45rem, 4vw, 2rem);
+  line-height: 1.05;
   text-align: center;
 }
-.choice-btn:hover{ transform: translateY(-3px) scale(1.02); background: var(--cash-green); color: var(--night-indigo); border-color: var(--sparkle-gold); }
-.choice-btn .emoji{ display:block; font-size: 1.6rem; margin-bottom: 6px; }
+.hero-card-row{
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 2.4vw, 24px);
+}
+.hero-card{
+  position: relative;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  background: rgba(6,18,37,0.82);
+  color: var(--sparkle-cream);
+  border: 3px solid rgba(244,181,28,0.46);
+  border-radius: 28px;
+  box-shadow: 0 18px 34px rgba(0,0,0,0.24);
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, opacity 0.22s ease;
+  text-align: left;
+}
+.hero-card:hover,
+.hero-card.is-previewed{
+  transform: translateY(-5px) scale(1.04);
+  border-color: var(--sparkle-gold-light);
+  box-shadow: 0 22px 46px rgba(0,0,0,0.34), 0 0 0 5px rgba(244,181,28,0.12);
+}
+.hero-card-row.has-preview .hero-card:not(.is-previewed){
+  opacity: 0.82;
+  transform: scale(0.94);
+}
+.hero-card.is-tried::after{
+  content: "\2726";
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(244,181,28,0.86);
+  color: var(--night-indigo);
+  font-weight: 900;
+  box-shadow: 0 0 18px rgba(244,181,28,0.48);
+}
+.hero-card__visual{
+  display: block;
+  position: relative;
+  aspect-ratio: 4 / 3;
+}
+.hero-card__visual img{
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+.hero-card__confirm{
+  position: absolute;
+  inset: auto 12px 12px 12px;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  min-height: 42px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--sparkle-gold-light), var(--sparkle-gold));
+  color: var(--night-indigo);
+  font-family: var(--font-display);
+  font-weight: 900;
+  text-align: center;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.32);
+}
+.hero-card.is-previewed .hero-card__confirm{ display: flex; }
+.hero-card__label{
+  display: none;
+}
+.hero-card__hint{
+  display: block;
+  margin-top: 12px;
+  color: rgba(255,255,255,0.78);
+  font-size: 0.88rem;
+  text-align: center;
+}
+@media (max-width: 720px){
+  .hero-card-row{
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 4px 8vw 14px;
+    margin-inline: calc(clamp(18px, 4vw, 34px) * -1);
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .hero-card{
+    flex: 0 0 84%;
+    scroll-snap-align: center;
+  }
+  .hero-card-row.has-preview .hero-card:not(.is-previewed){
+    transform: none;
+  }
+}
 
 .continue-row{ display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
 
@@ -688,17 +782,7 @@ footer.site-footer .mission{
         The shape watched them. It waited.
       </p>
       <p class="story-text"><strong>Whatever they do next, it will copy — and grow.</strong></p>
-      <div class="choice-grid">
-        <button class="choice-btn" onclick="choosePath('rush')">
-          <span class="emoji" aria-hidden="true">⚡</span>Rush in quickly
-        </button>
-        <button class="choice-btn" onclick="choosePath('pause')">
-          <span class="emoji" aria-hidden="true">🫧</span>Pause and observe
-        </button>
-        <button class="choice-btn" onclick="choosePath('dad')">
-          <span class="emoji" aria-hidden="true">🏠</span>Ask Dad for help
-        </button>
-      </div>
+      <div class="hero-choice-panel" data-choice-group="decision-1" aria-live="polite"></div>
     </div>
   </section>
 
@@ -722,8 +806,8 @@ footer.site-footer .mission{
         Every quick move Cash made, the Ogre copied double.
       </p>
       <p class="story-text">Cash skidded to a stop, breathing hard.<br><em>"Um... it's copying me,"</em> he said.</p>
+      <div class="hero-choice-panel" data-choice-group="decision-2" aria-live="polite"></div>
       <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('scene-rush-realization')">Continue</button>
         <button class="btn-secondary" onclick="openCharacterHub()">Back to Hero Files</button>
       </div>
     </div>
@@ -748,9 +832,7 @@ footer.site-footer .mission{
         That's okay. Fast hands have hard moments sometimes.
       </p>
       <p class="story-text">And hard moments can always be repaired.</p>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('ending-fast-hands')">Continue</button>
-      </div>
+      <div class="hero-choice-panel" data-choice-group="decision-3" aria-live="polite"></div>
     </div>
   </section>
 
@@ -773,8 +855,8 @@ footer.site-footer .mission{
         The Ogre wasn't attacking. It was copying.
       </p>
       <p class="story-text">Loud became louder. Calm became calmer.</p>
+      <div class="hero-choice-panel" data-choice-group="decision-2" aria-live="polite"></div>
       <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('scene-pause-realization')">Continue</button>
         <button class="btn-secondary" onclick="openCharacterHub()">Back to Hero Files</button>
       </div>
     </div>
@@ -799,9 +881,7 @@ footer.site-footer .mission{
         "It gives back whatever it gets."
       </p>
       <p class="story-text">The Ogre's colors slowed down, curious about the quiet.</p>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('ending-bubble-pause')">Continue</button>
-      </div>
+      <div class="hero-choice-panel" data-choice-group="decision-3" aria-live="polite"></div>
     </div>
   </section>
 
@@ -824,8 +904,8 @@ footer.site-footer .mission{
         <em>"I used a loud voice earlier tonight,"</em> he said. <em>"I'm sorry. Let me try again — calmly."</em>
       </p>
       <p class="story-text">He turned to the Ogre and spoke softly. The shape flickered, listening.</p>
+      <div class="hero-choice-panel" data-choice-group="decision-2" aria-live="polite"></div>
       <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('scene-dad-realization')">Continue</button>
         <button class="btn-secondary" onclick="openCharacterHub()">Back to Hero Files</button>
       </div>
     </div>
@@ -854,9 +934,7 @@ footer.site-footer .mission{
         </p>
       </div>
       <p class="story-text">Kairo and Cash breathed slowly with Dad. Their shoulders came down.</p>
-      <div class="continue-row">
-        <button class="btn-primary" onclick="showScene('ending-sparkle-shield')">Continue</button>
-      </div>
+      <div class="hero-choice-panel" data-choice-group="final-repair" aria-live="polite"></div>
     </div>
   </section>
 
@@ -1086,6 +1164,138 @@ const sceneLabels = {
    STORY FLOW DATA END
    ============================================================ */
 
+const heroCards = {
+  'bubble-breath': {
+    character: 'Bubble Boy',
+    action: 'Breathe',
+    image: 'images/cards/bubble-breath-card.webp',
+    ariaLabel: 'Bubble Boy. Breathe slowly to help everyone calm down.',
+    previewText: 'Bubble Boy can help everyone breathe first.',
+    effects: { calm: 1, kindness: 0, courage: 0, repair: 0, impulse: -1, awareness: 1 }
+  },
+  'ninja-pause': {
+    character: 'Ninja Nugs',
+    action: 'Pause',
+    image: 'images/cards/ninja-pause-card.webp',
+    ariaLabel: 'Ninja Nugs. Pause before anyone acts.',
+    previewText: 'Ninja Nugs can help the team stop and wait.',
+    effects: { calm: 1, kindness: 0, courage: 0, repair: 0, impulse: -1, awareness: 1 }
+  },
+  'super-listening': {
+    character: 'Dad',
+    action: 'Listen',
+    image: 'images/cards/super-listening-card.webp',
+    ariaLabel: 'Dad. Listen closely to understand the Echo Ogre.',
+    previewText: 'Dad can listen for what is under the noise.',
+    effects: { calm: 1, kindness: 1, courage: 0, repair: 1, impulse: 0, awareness: 1 }
+  },
+  'bubble-shield': {
+    character: 'Bubble Boy',
+    action: 'Protect',
+    image: 'images/cards/bubble-shield-card.webp',
+    ariaLabel: 'Bubble Boy. Protect someone without attacking.',
+    previewText: 'Bubble Boy can make a safe bubble shield.',
+    effects: { calm: 0, kindness: 1, courage: 0, repair: 0, impulse: 0, awareness: 0 }
+  },
+  'helping-hand': {
+    character: 'Bubble Boy',
+    action: 'Help',
+    image: 'images/cards/helping-hand-card.webp',
+    ariaLabel: 'Bubble Boy. Help someone who is scared or struggling.',
+    previewText: 'Bubble Boy can offer a helping hand.',
+    effects: { calm: 0, kindness: 1, courage: 0, repair: 1, impulse: 0, awareness: 0 }
+  },
+  'brave-heart': {
+    character: 'Captain Cash',
+    action: 'Brave',
+    image: 'images/cards/brave-heart-card.webp',
+    ariaLabel: 'Captain Cash. Be brave and step closer without attacking.',
+    previewText: 'Captain Cash can step closer with brave hands.',
+    effects: { calm: 0, kindness: 0, courage: 1, repair: 0, impulse: 1, awareness: 0 }
+  },
+  'wise-mind': {
+    character: 'Ninja Nugs',
+    action: 'Think',
+    image: 'images/cards/wise-mind-card.webp',
+    ariaLabel: 'Ninja Nugs. Think carefully and connect the clues.',
+    previewText: 'Ninja Nugs can help connect the clues.',
+    effects: { calm: 0, kindness: 0, courage: 0, repair: 0, impulse: 0, awareness: 1 }
+  },
+  'hero-repair': {
+    character: 'Dad',
+    action: 'Sorry',
+    image: 'images/cards/hero-repair-card.webp',
+    ariaLabel: 'Dad. Say sorry and begin repair.',
+    previewText: 'Dad can model saying sorry and trying again.',
+    effects: { calm: 1, kindness: 1, courage: 0, repair: 1, impulse: 0, awareness: 0 }
+  },
+  'team-sparkle': {
+    character: 'Our Family',
+    action: 'Together',
+    image: 'images/cards/team-sparkle-card.webp',
+    ariaLabel: 'Our family. Work together to repair what happened.',
+    previewText: 'The whole family can repair together.',
+    effects: { calm: 1, kindness: 1, courage: 1, repair: 1, impulse: 0, awareness: 0 }
+  }
+};
+
+const heroChoiceGroups = {
+  'decision-1': {
+    prompt: 'Who can help?',
+    cards: ['bubble-breath', 'ninja-pause', 'super-listening']
+  },
+  'decision-2': {
+    prompt: 'Who can help now?',
+    cards: ['bubble-shield', 'helping-hand', 'brave-heart']
+  },
+  'decision-3': {
+    prompt: 'Who understands the echo?',
+    cards: ['wise-mind', 'super-listening', 'hero-repair']
+  },
+  'final-repair': {
+    prompt: 'Who can repair together?',
+    cards: ['hero-repair', 'helping-hand', 'team-sparkle']
+  }
+};
+
+const heroChoiceRoutes = {
+  opening: {
+    'bubble-breath': 'scene-pause-consequence',
+    'ninja-pause': 'scene-pause-consequence',
+    'super-listening': 'scene-dad-consequence'
+  },
+  'scene-rush-consequence': {
+    'bubble-shield': 'scene-rush-realization',
+    'helping-hand': 'scene-dad-realization',
+    'brave-heart': 'scene-rush-realization'
+  },
+  'scene-pause-consequence': {
+    'bubble-shield': 'scene-pause-realization',
+    'helping-hand': 'scene-dad-realization',
+    'brave-heart': 'scene-rush-realization'
+  },
+  'scene-dad-consequence': {
+    'bubble-shield': 'scene-pause-realization',
+    'helping-hand': 'scene-dad-realization',
+    'brave-heart': 'scene-rush-realization'
+  },
+  'scene-rush-realization': {
+    'wise-mind': 'ending-bubble-pause',
+    'super-listening': 'scene-dad-realization',
+    'hero-repair': 'scene-dad-realization'
+  },
+  'scene-pause-realization': {
+    'wise-mind': 'ending-bubble-pause',
+    'super-listening': 'scene-dad-realization',
+    'hero-repair': 'scene-dad-realization'
+  },
+  'scene-dad-realization': {
+    'hero-repair': 'ending-sparkle-shield',
+    'helping-hand': 'ending-bubble-pause',
+    'team-sparkle': 'ending-sparkle-shield'
+  }
+};
+
 /* ============================================================
    AI-SAFE CONTENT SECTION START — character data lives here.
    ============================================================ */
@@ -1199,6 +1409,7 @@ function showScene(id, options){
     lastStoryScene = id;
     recordStoryScene(id, options);
   }
+  renderHeroChoicePanels(target);
 
   const meterEl = document.getElementById('sparkle-meter');
   meterEl.style.display = storyScenes.has(id) && id !== 'start-screen' ? 'grid' : 'none';
@@ -1268,6 +1479,95 @@ function announceScene(target){
   const heading = target.querySelector('h1, h2');
   const announcer = document.getElementById('sr-announcer');
   if (heading && announcer) announcer.textContent = 'Now showing: ' + heading.textContent;
+}
+
+function renderHeroChoicePanels(root){
+  root.querySelectorAll('.hero-choice-panel').forEach(function(panel){
+    renderHeroChoicePanel(panel);
+  });
+}
+
+function renderHeroChoicePanel(panel){
+  const groupId = panel.getAttribute('data-choice-group');
+  const group = heroChoiceGroups[groupId];
+  if (!group) return;
+
+  const scene = panel.closest('section.screen');
+  const sceneId = scene ? scene.id : '';
+  const previewedId = panel.getAttribute('data-previewed-card') || '';
+  const hasPreview = Boolean(previewedId);
+
+  panel.innerHTML =
+    '<p class="hero-choice-prompt">' + group.prompt + '</p>' +
+    '<div class="hero-card-row' + (hasPreview ? ' has-preview' : '') + '"></div>' +
+    '<span class="hero-card__hint">' + (hasPreview ? 'Tap the glowing card again to choose it.' : 'Tap a card once to preview. Tap again to choose.') + '</span>';
+
+  const row = panel.querySelector('.hero-card-row');
+  group.cards.forEach(function(cardId){
+    const card = heroCards[cardId];
+    if (!card) return;
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'hero-card' +
+      (cardId === previewedId ? ' is-previewed' : '') +
+      (state.pathHistory.includes(cardId) ? ' is-tried' : '');
+    button.setAttribute('data-card-id', cardId);
+    button.setAttribute('data-character', card.character.toLowerCase().replace(/\s+/g, '-'));
+    button.setAttribute('data-action', card.action.toLowerCase());
+    button.setAttribute('aria-label', card.ariaLabel);
+    button.setAttribute('aria-pressed', cardId === previewedId ? 'true' : 'false');
+    button.innerHTML =
+      '<span class="hero-card__visual">' +
+        '<img src="' + card.image + '" alt="" width="1448" height="1086" loading="lazy">' +
+        '<span class="hero-card__confirm">Choose this hero</span>' +
+      '</span>' +
+      '<span class="hero-card__label"><strong>' + card.character + '</strong><span>' + card.action + '</span></span>';
+
+    button.addEventListener('click', function(){
+      handleHeroCardClick(panel, sceneId, groupId, cardId);
+    });
+    row.appendChild(button);
+  });
+}
+
+function handleHeroCardClick(panel, sceneId, groupId, cardId){
+  const previewedId = panel.getAttribute('data-previewed-card') || '';
+  const card = heroCards[cardId];
+  if (!card) return;
+
+  if (previewedId !== cardId){
+    panel.setAttribute('data-previewed-card', cardId);
+    renderHeroChoicePanel(panel);
+    const previewedCard = panel.querySelector('[data-card-id="' + cardId + '"]');
+    if (previewedCard) previewedCard.focus();
+    showToast(card.previewText + ' Tap again to choose.');
+    return;
+  }
+
+  chooseHeroCard(sceneId, groupId, cardId);
+}
+
+function chooseHeroCard(sceneId, groupId, cardId){
+  const card = heroCards[cardId];
+  const route = heroChoiceRoutes[sceneId] && heroChoiceRoutes[sceneId][cardId];
+  if (!card || !route) return;
+
+  state.currentPath = cardId;
+  state.pathHistory.push(cardId);
+  applyHeroCardEffects(card.effects);
+  updateMeter();
+  saveProgress();
+  showScene(route);
+}
+
+function applyHeroCardEffects(effects){
+  effects = effects || {};
+  ['calm', 'kindness', 'courage', 'repair', 'impulse', 'awareness'].forEach(function(key){
+    if (typeof effects[key] === 'number'){
+      state[key] = Math.max(0, state[key] + effects[key]);
+    }
+  });
 }
 
 function choosePath(path){
