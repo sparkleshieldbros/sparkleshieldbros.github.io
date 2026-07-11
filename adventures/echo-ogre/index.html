@@ -361,6 +361,12 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   letter-spacing: 0.01em;
 }
 .story-text br{ content: ""; display: block; margin-bottom: 0.4em; }
+.story-card:has(.hero-choice-panel) .scene-copy{
+  text-align: center;
+}
+.story-card:has(.hero-choice-panel) .scene-copy .story-text br{
+  display: none;
+}
 
 .unlock-banner{
   display: inline-block;
@@ -579,17 +585,16 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   section.screen.active .story-card:has(.hero-choice-panel) .scene-copy{
     grid-column: 1;
     grid-row: 1;
-    align-self: center;
-    justify-self: start;
+    align-self: end;
+    justify-self: center;
     position: relative;
     z-index: 1;
-    display: grid;
-    gap: 10px;
-    width: min(360px, calc(100% - 36px));
+    display: block;
+    width: min(920px, calc(100% - 48px));
     max-height: 100%;
     overflow: auto;
-    margin-left: clamp(14px, 2vw, 26px);
-    padding: 16px;
+    margin: 0 0 clamp(12px, 2vw, 24px);
+    padding: 12px 18px;
     border: 1px solid rgba(244,181,28,0.24);
     border-radius: 18px;
     background: rgba(6,18,37,0.58);
@@ -609,9 +614,18 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
 
   section.screen.active .story-card:has(.hero-choice-panel) .story-text,
   section.screen.active .story-card:has(.hero-choice-panel) .breathing-text{
-    font-size: clamp(1.02rem, 1.32vw, 1.2rem);
-    line-height: 1.38;
+    font-size: clamp(0.98rem, 1.22vw, 1.12rem);
+    line-height: 1.3;
     margin: 0;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .scene-copy > .story-text{
+    display: inline;
+    white-space: nowrap;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .scene-copy > .story-text + .story-text::before{
+    content: " ";
   }
 
   section.screen.active .story-card:has(.hero-choice-panel) .breathing-widget{
@@ -690,6 +704,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
 .btn-secondary:hover{ border-color: var(--sparkle-gold); }
 
 .adventure-cover{
+  display: block;
   width: min(360px, 82vw);
   height: auto;
   margin: 0 auto 18px auto;
@@ -700,6 +715,7 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
     0 0 0 6px rgba(255,255,255,0.05);
 }
 .title-card{
+  text-align: center;
   border-color: rgba(244,181,28,0.48);
   background:
     radial-gradient(circle at 17% 16%, rgba(244,119,24,0.22), transparent 34%),
@@ -898,10 +914,8 @@ footer.site-footer .mission{
         <p class="eyebrow visually-hidden">Chapter 1 · Maplewood Terrace, Dusk</p>
         <h1 id="opening-title" class="visually-hidden">The Echo Ogre Appears</h1>
         <p class="story-text">
-          Purple lights flickered on Maplewood Terrace.<br>
-          A swirling Echo Ogre appeared by the mailbox.
+          Purple lights flickered. The Echo Ogre copied every brave choice.
         </p>
-        <p class="story-text"><strong>Whatever the heroes do next, it will copy — and grow.</strong></p>
       </div>
       <div class="hero-choice-panel" data-choice-group="decision-1" aria-live="polite"></div>
     </div>
@@ -923,10 +937,8 @@ footer.site-footer .mission{
         <p class="eyebrow visually-hidden">Chapter 2 · The Rush Path</p>
         <h2 id="rush-title" class="visually-hidden">Fast Hands</h2>
         <p class="story-text">
-          Captain Cash rushed forward with rescue energy.<br>
-          The Ogre copied him — bigger, louder, faster.
+          Cash rushed in. The Echo Ogre copied him louder.
         </p>
-        <p class="story-text"><em>"Um... it's copying me,"</em> Cash said.</p>
       </div>
       <div class="hero-choice-panel" data-choice-group="decision-2" aria-live="polite"></div>
       <div class="continue-row">
@@ -951,10 +963,8 @@ footer.site-footer .mission{
         <p class="eyebrow visually-hidden">Chapter 3 · A Hard Moment</p>
         <h2 id="rush-realization-title" class="visually-hidden">Noticing What Happened</h2>
         <p class="story-text">
-          Fast hands made the Ogre bigger.<br>
-          Cash slowed down and noticed the pattern.
+          Cash slowed down. Hard moments can still be repaired.
         </p>
-        <p class="story-text">Hard moments can always be repaired.</p>
       </div>
       <div class="hero-choice-panel" data-choice-group="decision-3" aria-live="polite"></div>
     </div>
@@ -976,10 +986,8 @@ footer.site-footer .mission{
         <p class="eyebrow visually-hidden">Chapter 2 · The Pause Path</p>
         <h2 id="pause-title" class="visually-hidden">Watching the Pattern</h2>
         <p class="story-text">
-          Kairo took a slow breath and watched.<br>
-          The Ogre wasn't attacking. It was copying.
+          Kairo watched quietly. Calm made the Echo Ogre softer.
         </p>
-        <p class="story-text">Loud got louder. Calm got calmer.</p>
       </div>
       <div class="hero-choice-panel" data-choice-group="decision-2" aria-live="polite"></div>
       <div class="continue-row">
@@ -1004,10 +1012,8 @@ footer.site-footer .mission{
         <p class="eyebrow visually-hidden">Chapter 3 · The Pattern Becomes Clear</p>
         <h2 id="pause-realization-title" class="visually-hidden">Calm In, Calm Out</h2>
         <p class="story-text">
-          <em>"It's an echo,"</em> Kairo whispered.<br>
-          "It gives back whatever it gets."
+          The Echo Ogre echoed everything, even quiet.
         </p>
-        <p class="story-text">The Ogre grew curious about the quiet.</p>
       </div>
       <div class="hero-choice-panel" data-choice-group="decision-3" aria-live="polite"></div>
     </div>
@@ -1029,10 +1035,8 @@ footer.site-footer .mission{
         <p class="eyebrow visually-hidden">Chapter 2 · The Ask-Dad Path</p>
         <h2 id="dad-title" class="visually-hidden">Dad Kneels Down</h2>
         <p class="story-text">
-          Dad came outside and knelt between the boys.<br>
-          <em>"I'm sorry,"</em> he said. <em>"Let me try again — calmly."</em>
+          Dad said sorry. The Echo Ogre listened.
         </p>
-        <p class="story-text">The Echo Ogre flickered, listening.</p>
       </div>
       <div class="hero-choice-panel" data-choice-group="decision-2" aria-live="polite"></div>
       <div class="continue-row">
@@ -1059,9 +1063,7 @@ footer.site-footer .mission{
         <div class="breathing-widget">
           <div class="breathing-circle" aria-hidden="true"></div>
           <p class="breathing-text">
-            Put a hand on your belly.<br>
-            Breathe in... breathe out...<br>
-            Now choose kind hands.
+            Breathe in. Breathe out. Choose kind hands.
           </p>
         </div>
         <p class="story-text">The family breathed together. The street grew softer.</p>
@@ -1373,11 +1375,11 @@ const heroCards = {
 
 const heroChoiceGroups = {
   'decision-1': {
-    prompt: 'Who can help?',
+    prompt: '',
     cards: ['bubble-breath', 'ninja-pause', 'super-listening']
   },
   'decision-2': {
-    prompt: 'Who can help now?',
+    prompt: '',
     cards: ['bubble-shield', 'helping-hand', 'brave-heart']
   },
   'decision-3': {
@@ -1631,7 +1633,7 @@ function renderHeroChoicePanel(panel){
   const hasPreview = Boolean(previewedId);
 
   panel.innerHTML =
-    '<p class="hero-choice-prompt">' + group.prompt + '</p>' +
+    (group.prompt ? '<p class="hero-choice-prompt">' + group.prompt + '</p>' : '') +
     '<div class="hero-card-row' + (hasPreview ? ' has-preview' : '') + '"></div>' +
     '<span class="hero-card__hint">' + (hasPreview ? 'Tap the glowing card again to choose it.' : 'Tap a card once to preview. Tap again to choose.') + '</span>';
 
