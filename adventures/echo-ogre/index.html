@@ -20,7 +20,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -128,6 +128,7 @@
   --repair-rose: #f47718;
 
   --font-display: "Baloo 2", system-ui, sans-serif;
+  --font-story: "Fredoka", "Baloo 2", system-ui, sans-serif;
   --font-body: "Nunito", system-ui, sans-serif;
 
   --radius-lg: 28px;
@@ -400,7 +401,12 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   margin-bottom: 6px;
 }
 
-.story-text{ font-size: clamp(1rem, 2vw, 1.15rem); }
+.story-text{
+  font-family: var(--font-story);
+  font-size: clamp(1.08rem, 2vw, 1.24rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
 .story-text br{ content: ""; display: block; margin-bottom: 0.4em; }
 
 .unlock-banner{
@@ -521,18 +527,197 @@ section.screen.active{ display: block; animation: pageTurnIn 0.48s ease; }
   .hero-card-row{
     display: flex;
     overflow-x: auto;
-    gap: 16px;
-    padding: 4px 8vw 14px;
+    gap: 14px;
+    padding: 4px max(16px, 7vw) 14px;
     margin-inline: calc(clamp(18px, 4vw, 34px) * -1);
     scroll-snap-type: x mandatory;
+    scroll-padding-inline: max(16px, 7vw);
     -webkit-overflow-scrolling: touch;
   }
   .hero-card{
-    flex: 0 0 84%;
+    flex: 0 0 min(78vw, 300px);
     scroll-snap-align: center;
+  }
+  .hero-choice-prompt::after{
+    content: "Swipe to see each hero card";
+    display: block;
+    margin-top: 7px;
+    color: rgba(255,255,255,0.74);
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
   }
   .hero-card-row.has-preview .hero-card:not(.is-previewed){
     transform: none;
+  }
+}
+
+@media (min-width: 900px) and (min-height: 700px){
+  body:has(section.screen.active .hero-choice-panel){
+    overflow: hidden;
+  }
+
+  body:has(section.screen.active .hero-choice-panel) .breadcrumbs,
+  body:has(section.screen.active .hero-choice-panel) footer.site-footer{
+    display: none;
+  }
+
+  body:has(section.screen.active .hero-choice-panel) main{
+    max-width: min(1440px, 100vw);
+    height: calc(100svh - 58px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: hidden;
+    padding: 8px clamp(12px, 2vw, 28px) 10px;
+  }
+
+  body:has(section.screen.active .hero-choice-panel) section.screen.active{
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  body:has(section.screen.active .hero-choice-panel) .sparkle-meter{
+    flex: 0 0 auto;
+    width: min(720px, 68vw);
+    margin: 0 auto;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 18px;
+    background: rgba(6,18,37,0.56);
+  }
+
+  body:has(section.screen.active .hero-choice-panel) .meter-label{
+    font-size: 0.58rem;
+    letter-spacing: 0.06em;
+  }
+
+  body:has(section.screen.active .hero-choice-panel) .meter-bar{
+    height: 5px;
+    margin-top: 4px;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel){
+    height: 100%;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: clamp(12px, 1.5vw, 20px);
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel)::after{
+    display: none;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .scene-art{
+    grid-column: 1;
+    grid-row: 1;
+    height: 100%;
+    min-height: 0;
+    aspect-ratio: auto;
+    margin: 0;
+    border-radius: 20px;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .scene-copy{
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+    justify-self: start;
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: 10px;
+    width: min(360px, calc(100% - 36px));
+    max-height: 100%;
+    overflow: auto;
+    margin-left: clamp(14px, 2vw, 26px);
+    padding: 16px;
+    border: 1px solid rgba(244,181,28,0.24);
+    border-radius: 18px;
+    background: rgba(6,18,37,0.58);
+    box-shadow: 0 18px 38px rgba(0,0,0,0.22);
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .scene-copy > .eyebrow{
+    margin: 0;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .scene-copy > h1,
+  section.screen.active .story-card:has(.hero-choice-panel) .scene-copy > h2{
+    margin: 0;
+    font-size: clamp(1.7rem, 2.2vw, 2.55rem);
+    line-height: 0.98;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .story-text,
+  section.screen.active .story-card:has(.hero-choice-panel) .breathing-text{
+    font-size: clamp(1.02rem, 1.32vw, 1.2rem);
+    line-height: 1.38;
+    margin: 0;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .breathing-widget{
+    margin: 0;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .breathing-circle{
+    width: 110px;
+    height: 110px;
+    margin-bottom: 10px;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .hero-choice-panel{
+    grid-column: 1 / -1;
+    margin: 0;
+    padding-top: 10px;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .hero-choice-prompt{
+    margin-bottom: 6px;
+    font-size: clamp(1.15rem, 1.55vw, 1.45rem);
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .hero-card-row{
+    grid-template-columns: repeat(3, minmax(0, 220px));
+    justify-content: center;
+    gap: clamp(10px, 1.5vw, 18px);
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .hero-card{
+    border-width: 2px;
+    border-radius: 22px;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .hero-card:hover,
+  section.screen.active .story-card:has(.hero-choice-panel) .hero-card.is-previewed{
+    transform: translateY(-3px) scale(1.025);
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .hero-card__confirm{
+    inset: auto 10px 10px 10px;
+    min-height: 30px;
+    font-size: 0.76rem;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .continue-row{
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    z-index: 2;
+    margin: 0;
+  }
+
+  section.screen.active .story-card:has(.hero-choice-panel) .continue-row .btn-secondary{
+    min-height: 36px;
+    padding: 7px 12px;
+    font-size: 0.78rem;
+    background: rgba(6,18,37,0.62);
+    border-width: 1px;
   }
 }
 
@@ -769,19 +954,15 @@ footer.site-footer .mission{
           loading="eager"
         />
       </div>
-      <p class="eyebrow">Chapter 1 · Maplewood Terrace, Dusk</p>
-      <h1 id="opening-title">The Echo Ogre Appears</h1>
-      <p class="story-text">
-        The streetlights on Maplewood Terrace flickered purple.<br>
-        Between the porches and the garden gnomes, something new stood still.<br>
-        It was a swirling shadow, taller than the mailbox.<br>
-        It hummed with every sound on the block — a radio next door, a dog barking, Dad's wind chimes.
-      </p>
-      <p class="story-text">
-        Kairo and Captain Cash stopped building their blanket fort.<br>
-        The shape watched them. It waited.
-      </p>
-      <p class="story-text"><strong>Whatever they do next, it will copy — and grow.</strong></p>
+      <div class="scene-copy">
+        <p class="eyebrow">Chapter 1 · Maplewood Terrace, Dusk</p>
+        <h1 id="opening-title">The Echo Ogre Appears</h1>
+        <p class="story-text">
+          Purple lights flickered on Maplewood Terrace.<br>
+          A swirling Echo Ogre appeared by the mailbox.
+        </p>
+        <p class="story-text"><strong>Whatever the heroes do next, it will copy — and grow.</strong></p>
+      </div>
       <div class="hero-choice-panel" data-choice-group="decision-1" aria-live="polite"></div>
     </div>
   </section>
@@ -798,14 +979,15 @@ footer.site-footer .mission{
           loading="eager"
         />
       </div>
-      <p class="eyebrow">Chapter 2 · The Rush Path</p>
-      <h2 id="rush-title">Fast Hands</h2>
-      <p class="story-text">
-        Captain Cash rushed in and swung his rescue energy at the shape.<br>
-        The Ogre swung back — bigger, louder, faster.<br>
-        Every quick move Cash made, the Ogre copied double.
-      </p>
-      <p class="story-text">Cash skidded to a stop, breathing hard.<br><em>"Um... it's copying me,"</em> he said.</p>
+      <div class="scene-copy">
+        <p class="eyebrow">Chapter 2 · The Rush Path</p>
+        <h2 id="rush-title">Fast Hands</h2>
+        <p class="story-text">
+          Captain Cash rushed forward with rescue energy.<br>
+          The Ogre copied him — bigger, louder, faster.
+        </p>
+        <p class="story-text"><em>"Um... it's copying me,"</em> Cash said.</p>
+      </div>
       <div class="hero-choice-panel" data-choice-group="decision-2" aria-live="polite"></div>
       <div class="continue-row">
         <button class="btn-secondary" onclick="openCharacterHub()">Back to Hero Files</button>
@@ -825,13 +1007,15 @@ footer.site-footer .mission{
           loading="lazy"
         />
       </div>
-      <p class="eyebrow">Chapter 3 · A Hard Moment</p>
-      <h2 id="rush-realization-title">Noticing What Happened</h2>
-      <p class="story-text">
-        Cash noticed his fast hands made the Ogre bigger, not smaller.<br>
-        That's okay. Fast hands have hard moments sometimes.
-      </p>
-      <p class="story-text">And hard moments can always be repaired.</p>
+      <div class="scene-copy">
+        <p class="eyebrow">Chapter 3 · A Hard Moment</p>
+        <h2 id="rush-realization-title">Noticing What Happened</h2>
+        <p class="story-text">
+          Fast hands made the Ogre bigger.<br>
+          Cash slowed down and noticed the pattern.
+        </p>
+        <p class="story-text">Hard moments can always be repaired.</p>
+      </div>
       <div class="hero-choice-panel" data-choice-group="decision-3" aria-live="polite"></div>
     </div>
   </section>
@@ -848,13 +1032,15 @@ footer.site-footer .mission{
           loading="lazy"
         />
       </div>
-      <p class="eyebrow">Chapter 2 · The Pause Path</p>
-      <h2 id="pause-title">Watching the Pattern</h2>
-      <p class="story-text">
-        Kairo took a slow breath. He just watched.<br>
-        The Ogre wasn't attacking. It was copying.
-      </p>
-      <p class="story-text">Loud became louder. Calm became calmer.</p>
+      <div class="scene-copy">
+        <p class="eyebrow">Chapter 2 · The Pause Path</p>
+        <h2 id="pause-title">Watching the Pattern</h2>
+        <p class="story-text">
+          Kairo took a slow breath and watched.<br>
+          The Ogre wasn't attacking. It was copying.
+        </p>
+        <p class="story-text">Loud got louder. Calm got calmer.</p>
+      </div>
       <div class="hero-choice-panel" data-choice-group="decision-2" aria-live="polite"></div>
       <div class="continue-row">
         <button class="btn-secondary" onclick="openCharacterHub()">Back to Hero Files</button>
@@ -874,13 +1060,15 @@ footer.site-footer .mission{
           loading="lazy"
         />
       </div>
-      <p class="eyebrow">Chapter 3 · The Pattern Becomes Clear</p>
-      <h2 id="pause-realization-title">Calm In, Calm Out</h2>
-      <p class="story-text">
-        <em>"It's an echo,"</em> Kairo whispered.<br>
-        "It gives back whatever it gets."
-      </p>
-      <p class="story-text">The Ogre's colors slowed down, curious about the quiet.</p>
+      <div class="scene-copy">
+        <p class="eyebrow">Chapter 3 · The Pattern Becomes Clear</p>
+        <h2 id="pause-realization-title">Calm In, Calm Out</h2>
+        <p class="story-text">
+          <em>"It's an echo,"</em> Kairo whispered.<br>
+          "It gives back whatever it gets."
+        </p>
+        <p class="story-text">The Ogre grew curious about the quiet.</p>
+      </div>
       <div class="hero-choice-panel" data-choice-group="decision-3" aria-live="polite"></div>
     </div>
   </section>
@@ -897,13 +1085,15 @@ footer.site-footer .mission{
           loading="lazy"
         />
       </div>
-      <p class="eyebrow">Chapter 2 · The Ask-Dad Path</p>
-      <h2 id="dad-title">Dad Kneels Down</h2>
-      <p class="story-text">
-        Dad came outside and knelt between the boys.<br>
-        <em>"I used a loud voice earlier tonight,"</em> he said. <em>"I'm sorry. Let me try again — calmly."</em>
-      </p>
-      <p class="story-text">He turned to the Ogre and spoke softly. The shape flickered, listening.</p>
+      <div class="scene-copy">
+        <p class="eyebrow">Chapter 2 · The Ask-Dad Path</p>
+        <h2 id="dad-title">Dad Kneels Down</h2>
+        <p class="story-text">
+          Dad came outside and knelt between the boys.<br>
+          <em>"I'm sorry,"</em> he said. <em>"Let me try again — calmly."</em>
+        </p>
+        <p class="story-text">The Echo Ogre flickered, listening.</p>
+      </div>
       <div class="hero-choice-panel" data-choice-group="decision-2" aria-live="polite"></div>
       <div class="continue-row">
         <button class="btn-secondary" onclick="openCharacterHub()">Back to Hero Files</button>
@@ -923,17 +1113,19 @@ footer.site-footer .mission{
           loading="lazy"
         />
       </div>
-      <p class="eyebrow">Chapter 3 · A Breath Together</p>
-      <h2 id="dad-realization-title">Try It With Your Body</h2>
-      <div class="breathing-widget">
-        <div class="breathing-circle" aria-hidden="true"></div>
-        <p class="breathing-text">
-          Put a hand on your belly.<br>
-          Breathe in... breathe out...<br>
-          Now choose kind hands.
-        </p>
+      <div class="scene-copy">
+        <p class="eyebrow">Chapter 3 · A Breath Together</p>
+        <h2 id="dad-realization-title">Try It With Your Body</h2>
+        <div class="breathing-widget">
+          <div class="breathing-circle" aria-hidden="true"></div>
+          <p class="breathing-text">
+            Put a hand on your belly.<br>
+            Breathe in... breathe out...<br>
+            Now choose kind hands.
+          </p>
+        </div>
+        <p class="story-text">The family breathed together. The street grew softer.</p>
       </div>
-      <p class="story-text">Kairo and Cash breathed slowly with Dad. Their shoulders came down.</p>
       <div class="hero-choice-panel" data-choice-group="final-repair" aria-live="polite"></div>
     </div>
   </section>
