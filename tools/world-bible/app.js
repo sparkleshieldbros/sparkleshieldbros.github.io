@@ -1295,13 +1295,46 @@
     const formatTier = (label, ids) => ids
       .map((assetId) => assetById.get(assetId))
       .filter(Boolean)
-      .map((asset) => `- [${label}] ${asset.id}: ${asset.title} - ${asset.purpose}`)
+      .map((asset) => `- [${label}] ${asset.id}: ${asset.title} - ${asset.purpose} Influence: ${referenceInfluencePhrase(asset, label)}`)
       .join("\n");
     return [
       formatTier("Mandatory", tiers.mandatory),
       formatTier("Conditional", tiers.conditional),
       formatTier("Inspirational", tiers.inspirational)
     ].filter(Boolean).join("\n");
+  }
+
+  function referenceInfluencePhrase(asset, tierLabel) {
+    const title = `${asset.title || ""} ${asset.group || ""} ${asset.purpose || ""}`.toLowerCase();
+    const tier = tierLabel.toLowerCase();
+    const strength = tier === "mandatory"
+      ? "directly and visibly"
+      : tier === "conditional"
+        ? "only where it supports the scene"
+        : "loosely and atmospherically";
+
+    if (asset.type === "character" || title.includes("model") || title.includes("expression") || title.includes("pose") || title.includes("construction")) {
+      const mode = title.includes("expression")
+        ? "expressively"
+        : title.includes("pose") || title.includes("action")
+          ? "gesturally"
+          : "proportionally";
+      return `${mode}, use this reference ${strength} to keep the character on-model, emotionally clear, and consistent with approved costume, silhouette, face, and body language.`;
+    }
+
+    if (asset.type === "environment" || title.includes("location") || title.includes("maplewood") || title.includes("green") || title.includes("kitchen") || title.includes("garden")) {
+      return `environmentally, use this reference ${strength} to preserve location layout, camera logic, landmark placement, scale, lighting, and lived-in Maplewood Terrace details.`;
+    }
+
+    if (asset.type === "guide" || title.includes("environmental") || title.includes("continuity") || title.includes("world") || title.includes("state")) {
+      return `systemically, use this reference ${strength} to guide emotional state, color progression, world rules, environmental reactions, continuity, and story geography.`;
+    }
+
+    if (asset.type === "story" || title.includes("scene") || title.includes("ending") || title.includes("cover")) {
+      return `compositionally, use this reference ${strength} for the story beat's staging, mood, action clarity, lighting direction, and visual continuity without copying it mechanically.`;
+    }
+
+    return `selectively, use this reference ${strength} to clarify the spread's composition, mood, continuity, and emotional read.`;
   }
 
   function formatBriefReferences(spread) {
