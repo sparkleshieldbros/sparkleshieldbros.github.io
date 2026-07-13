@@ -2,6 +2,8 @@
 
 This folder is for production bible and illustration-reference assets. These are source-of-truth files for character consistency, environment continuity, story beats, prompts, and future art direction. They are not intended to be used directly as public website images unless a specific file is later selected and optimized for the live site.
 
+For day-to-day spread creation, start with `Quick_Find_Asset_Map.md`.
+
 ## Folder System
 
 - `01_Characters/` contains character model sheets, action sheets, expression sheets, costume sheets, and pose references.

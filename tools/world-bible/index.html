@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sparkle Shield World Bible</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="World Bible navigation">
+      <a class="brand" href="#dashboard" data-view="dashboard">
+        <img src="../../assets/images/brand/sparkle-shield-bros-logo.webp" alt="Sparkle Shield Bros" width="96" height="96">
+        <span>
+          <strong>World Bible</strong>
+          <small>Production GUI</small>
+        </span>
+      </a>
+      <nav class="nav-list">
+        <button class="nav-link active" type="button" data-view="dashboard">Dashboard</button>
+        <button class="nav-link" type="button" data-view="book">Books</button>
+        <button class="nav-link" type="button" data-view="prompt">Prompt Builder</button>
+        <button class="nav-link" type="button" data-view="library">Asset Library</button>
+        <button class="nav-link" type="button" data-view="pipeline">KDP Pipeline</button>
+      </nav>
+      <div class="sidebar-note">
+        <strong>Local first</strong>
+        <span>No public publishing is needed. Progress saves in this browser on this Mac.</span>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Sparkle Shield Bros Production</p>
+          <h1 id="view-title">Dashboard</h1>
+        </div>
+        <label class="search-box">
+          <span>Search</span>
+          <input id="global-search" type="search" placeholder="Find a beat, character, asset, or location">
+        </label>
+      </header>
+
+      <section class="view active" id="dashboard-view" data-view-panel="dashboard" aria-labelledby="dashboard-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Production Overview</p>
+            <h2 id="dashboard-heading">Resume without hunting through folders</h2>
+          </div>
+          <button class="ghost-button" type="button" id="export-progress">Export progress</button>
+        </div>
+        <div class="dashboard-grid" id="dashboard-grid"></div>
+        <div class="two-column">
+          <section class="panel">
+            <h3>Active Book</h3>
+            <div id="active-book-card"></div>
+          </section>
+          <section class="panel">
+            <h3>Current Spread Package</h3>
+            <div id="current-package"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="book-view" data-view-panel="book" aria-labelledby="book-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Book Repository</p>
+            <h2 id="book-heading">Book and spread tracker</h2>
+          </div>
+          <div class="toolbar-group">
+            <select id="book-select" aria-label="Choose book"></select>
+            <button class="ghost-button" type="button" id="add-book">Add book</button>
+            <button class="primary-button" type="button" id="add-spread">Add spread</button>
+          </div>
+        </div>
+        <div class="section-heading compact-heading">
+          <p class="eyebrow">Selected Spread</p>
+          <select id="spread-select" aria-label="Choose spread"></select>
+        </div>
+        <div class="spread-workspace">
+          <section class="spread-list panel" aria-label="Spread list">
+            <h3>Spreads</h3>
+            <div id="spread-list"></div>
+          </section>
+          <section class="spread-detail panel">
+            <div id="spread-detail"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="prompt-view" data-view-panel="prompt" aria-labelledby="prompt-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Prompt Builder</p>
+            <h2 id="prompt-heading">Copy one clean illustration brief</h2>
+          </div>
+          <div class="button-row">
+            <button class="primary-button" type="button" id="copy-prompt">Copy prompt</button>
+            <button class="ghost-button" type="button" id="download-prompt">Download .md</button>
+          </div>
+        </div>
+        <textarea id="prompt-output" spellcheck="false" aria-label="Generated illustration prompt"></textarea>
+      </section>
+
+      <section class="view" id="library-view" data-view-panel="library" aria-labelledby="library-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Asset Library</p>
+            <h2 id="library-heading">Approved references by character, location, and guide</h2>
+          </div>
+          <select id="asset-filter" aria-label="Filter asset library">
+            <option value="all">All groups</option>
+            <option value="character">Characters</option>
+            <option value="environment">Environment</option>
+            <option value="story">Story scenes</option>
+            <option value="guide">Production guides</option>
+          </select>
+        </div>
+        <div class="asset-grid" id="asset-grid"></div>
+      </section>
+
+      <section class="view" id="pipeline-view" data-view-panel="pipeline" aria-labelledby="pipeline-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">KDP Pipeline</p>
+            <h2 id="pipeline-heading">Track illustration through InDesign and publication</h2>
+          </div>
+          <button class="ghost-button" type="button" id="reset-progress">Reset local progress</button>
+        </div>
+        <div id="pipeline-board" class="pipeline-board"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="asset-dialog">
+    <button class="dialog-close" type="button" aria-label="Close preview">x</button>
+    <div id="asset-dialog-body"></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
