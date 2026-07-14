@@ -62,7 +62,7 @@ window.SSB_WORLD_BIBLE = {
       "currentSpreadId": "EO-SP01",
       "coverAssetId": "EO_COVER",
       "manifestPath": "assets/images/production/SparkleShieldUniverse/03_StoryContinuity/EchoOgre/spreads.json",
-      "goal": "Create a simple, emotionally satisfying first read where Bubble Boy and Captain Cash learn repair, with Maplewood Terrace worldbuilding layered as second-look discovery.",
+      "goal": "Create a simple, emotionally satisfying first read where Bubble Boy and Captain Cash learn repair, with Maplewood Terrace worldbuilding layered as second-look discovery. Use the locked camera schedule to preserve page-turn rhythm, visual variety, and Maplewood Terrace geography.",
       "printTarget": "KDP paperback production through Photoshop cleanup and InDesign layout."
     }
   ],
@@ -382,9 +382,9 @@ window.SSB_WORLD_BIBLE = {
       "beat": "EO-B01",
       "sceneAssetId": "EO_OPENING",
       "status": "prompt",
-      "location": "Maplewood Terrace, descending toward the brothers' backyard and the glowing story tree",
+      "location": "Maplewood Terrace overview: Community Plaza (MT-07), Neighborhood Green (MT-04), Family Home (MT-01), Community Mural (MT-05), and Floating Garden (MT-06)",
       "environmentState": "Healthy / Wonder",
-      "camera": "High cinematic establishing shot descending toward the brothers' backyard",
+      "camera": "EO-SP01-CAM-W01 - Maplewood Terrace POV. Elevated above the southern Market District approach, facing north-northwest toward Neighborhood Green and the connected neighborhood system; 100-120 ft high, azimuth 340 deg, pitch 30 deg down, 24-28 mm lens, about 300 ft from the Green; extreme-wide establishing environmental portrait, high visible horizon, deep focus.",
       "storyText": "Maplewood Terrace was where tomorrow grew from kindness.",
       "objective": "Introduce Maplewood Terrace as warm, wondrous, and alive without overloading the first read.",
       "references": [
@@ -412,7 +412,7 @@ window.SSB_WORLD_BIBLE = {
       "visualInfo": "Show nature and technology working together peacefully through three memorable systems only; every detail should support community warmth and the boys entering the story.",
       "withheld": "Do not reveal the Echo Ogre as a full character yet.",
       "avoid": "Avoid a generic futuristic city, battle staging, dark danger, tourist-brochure clutter, or showing every Maplewood Terrace invention at once.",
-      "illustrationPrompt": "Create a breathtaking full-spread opening image of Maplewood Terrace at golden sunrise, seen from a high cinematic view that descends toward Bubble Boy Kairo and Captain Cash's backyard and the glowing story tree. Keep the first read simple and child-centered by featuring only three memorable world systems: Sparkle Grid sidewalk mosaics glowing under children's footsteps, the Community story mural/tree holding neighborhood memory, and solar baobab garden life collecting warm sunlight. Bubble Boy and Captain Cash should be small enough to show the neighborhood scale but readable enough to feel like the emotional center. Captain Cash races toward the glowing story tree while Kairo follows with curious caution. Hide one tiny purple watcher inside the roots as a page-turn clue. Any floating gardens, drones, living homes, or wind sculptures should be distant background atmosphere only if they do not compete with the main action. Leave calm sky or garden space for one short line of text.",
+      "illustrationPrompt": "Locked camera direction: Use the locked opening camera: elevated above the southern Market District approach, facing north-northwest across Community Plaza (MT-07) into Neighborhood Green (MT-04), with Family Home (MT-01) upper-left, Community Mural (MT-05) north of the Green, Floating Garden (MT-06) upper-right, and connected Sparkle Grid paths. Lead the eye Plaza -> Green -> Mural -> Floating Garden. Keep the neighborhood as protagonist; the children should be about 15-20% of the visual emphasis. Let the circular Green or one broad pathway cross the gutter, keep all faces outside the protected center band, reserve open morning sky or foliage for text, and place one nearly invisible purple flicker near the mural or far-right Grid node on the recto. Keep the existing narrative action: Create a breathtaking full-spread opening image of Maplewood Terrace at golden sunrise, seen from a high cinematic view that descends toward Bubble Boy Kairo and Captain Cash's backyard and the glowing story tree. Keep the first read simple and child-centered by featuring only three memorable world systems: Sparkle Grid sidewalk mosaics glowing under children's footsteps, the Community story mural/tree holding neighborhood memory, and solar baobab garden life collecting warm sunlight. Bubble Boy and Captain Cash should be small enough to show the neighborhood scale but readable enough to feel like the emotional center. Captain Cash races toward the glowing story tree while Kairo follows with curious caution. Hide one tiny purple watcher inside the roots as a page-turn clue. Any floating gardens, drones, living homes, or wind sculptures should be distant background atmosphere only if they do not compete with the main action. Leave calm sky or garden space for one short line of text.",
       "referenceTiers": {
         "mandatory": [
           "MT01_HOME",
@@ -428,7 +428,7 @@ window.SSB_WORLD_BIBLE = {
         ],
         "inspirational": []
       },
-      "canonicalDecision": "Refined on July 13, 2026 from the story-team simplification review: first read simple, worldbuilding layered for rereads.",
+      "canonicalDecision": "Refined on July 13, 2026 from the story-team simplification review: first read simple, worldbuilding layered for rereads. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "qualityGates": {
         "imageComplement": true,
         "thumbnailRead": true,
@@ -439,7 +439,18 @@ window.SSB_WORLD_BIBLE = {
       },
       "sourceFiles": [
         "Beat01/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP01-CAM-W01",
+      "cameraOwner": "Maplewood Terrace",
+      "locationIds": [
+        "MT-07",
+        "MT-04",
+        "MT-01",
+        "MT-05",
+        "MT-06"
+      ],
+      "cameraDirection": "Use the locked opening camera: elevated above the southern Market District approach, facing north-northwest across Community Plaza (MT-07) into Neighborhood Green (MT-04), with Family Home (MT-01) upper-left, Community Mural (MT-05) north of the Green, Floating Garden (MT-06) upper-right, and connected Sparkle Grid paths. Lead the eye Plaza -> Green -> Mural -> Floating Garden. Keep the neighborhood as protagonist; the children should be about 15-20% of the visual emphasis. Let the circular Green or one broad pathway cross the gutter, keep all faces outside the protected center band, reserve open morning sky or foliage for text, and place one nearly invisible purple flicker near the mural or far-right Grid node on the recto.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP02",
@@ -451,10 +462,10 @@ window.SSB_WORLD_BIBLE = {
       "sceneAssetId": "EO_OPENING",
       "status": "prompt",
       "approvedCanonical": true,
-      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board.",
-      "location": "Maplewood Terrace neighborhood light sculpture near the Green",
+      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
+      "location": "Neighborhood Green (MT-04), east-southeast edge near Market Way and the community light sculpture",
       "environmentState": "Healthy with first subtle crack",
-      "camera": "Warm medium-wide community scene with Dad at child-eye readability",
+      "camera": "EO-SP02-CAM-G01 - children watching Dad. East-southeast edge of Neighborhood Green near Market Way, facing west-northwest toward Dad and two neighbors at the community light sculpture; 46 in child-eye camera, azimuth 290 deg, pitch 2 deg down, 50 mm lens, 16-20 ft distance; medium-wide group scene, level horizon, Dad/neighbors sharp with children and environment slightly softer but readable.",
       "storyText": "Strong heroes do not just fix machines. They help people shine again.",
       "objective": "State the emotional philosophy without stopping the story.",
       "primaryRead": "Dad is repairing a relationship, and the technology brightens because the people repair first.",
@@ -511,10 +522,17 @@ window.SSB_WORLD_BIBLE = {
       "worldBuilding": "A neighborhood light sculpture relights when people reconcile. The Sparkle Grid responds to emotional repair, not only mechanics.",
       "rereadDiscovery": "The light sculpture brightens from the neighbors' peace, not from Dad's tool.",
       "rectoHook": "The sculpture glows brilliantly while a tiny purple crack appears beneath it.",
-      "illustrationPrompt": "Create a warm, emotionally specific spread near the Neighborhood Green where Dad repairs a neighborhood light sculpture by helping two arguing neighbors reconcile. Dad should be kneeling or leaning in calmly, open-handed, listening first. The neighbors should visibly soften toward each other as the sculpture relights with gold. Bubble Boy and Captain Cash watch from nearby, impressed but still too young to understand the full rule. Make the technology beautiful but secondary to the relationship repair. Add one tiny purple crack beneath the sculpture, almost hidden in the mosaic path, as a visual hook. Use Dad's expression guide for calm leadership and the Maplewood Terrace environment references for exact neighborhood continuity.",
+      "illustrationPrompt": "Locked camera direction: Use the locked child-eye camera from the east-southeast edge of Neighborhood Green (MT-04), facing west-northwest at Dad helping two neighbors reconcile beside the community light sculpture. Stage Dad and neighbors as the principal triangle on the verso, with Bubble Boy and Captain Cash observing from lower-left or center-left. Place the relighting sculpture on the recto and let only the beam cross the gutter; no face or joined hand crosses the center band. Keep Dad warm and accountable, not larger or more heroic than the children. Add a hairline violet crack beneath the sculpture near the far-right safe area as the recto hook. Keep the existing narrative action: Create a warm, emotionally specific spread near the Neighborhood Green where Dad repairs a neighborhood light sculpture by helping two arguing neighbors reconcile. Dad should be kneeling or leaning in calmly, open-handed, listening first. The neighbors should visibly soften toward each other as the sculpture relights with gold. Bubble Boy and Captain Cash watch from nearby, impressed but still too young to understand the full rule. Make the technology beautiful but secondary to the relationship repair. Add one tiny purple crack beneath the sculpture, almost hidden in the mosaic path, as a visual hook. Use Dad's expression guide for calm leadership and the Maplewood Terrace environment references for exact neighborhood continuity.",
       "sourceFiles": [
         "Beat02/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP02-CAM-G01",
+      "cameraOwner": "The children watching Dad",
+      "locationIds": [
+        "MT-04"
+      ],
+      "cameraDirection": "Use the locked child-eye camera from the east-southeast edge of Neighborhood Green (MT-04), facing west-northwest at Dad helping two neighbors reconcile beside the community light sculpture. Stage Dad and neighbors as the principal triangle on the verso, with Bubble Boy and Captain Cash observing from lower-left or center-left. Place the relighting sculpture on the recto and let only the beam cross the gutter; no face or joined hand crosses the center band. Keep Dad warm and accountable, not larger or more heroic than the children. Add a hairline violet crack beneath the sculpture near the far-right safe area as the recto hook.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP03",
@@ -525,9 +543,9 @@ window.SSB_WORLD_BIBLE = {
       "beat": "EO-B03",
       "sceneAssetId": "EO_RUSH",
       "status": "prompt",
-      "location": "Backyard and nearby Maplewood Terrace play path",
+      "location": "Family Home backyard and family garden (MT-01), looking toward Floating Garden (MT-06)",
       "environmentState": "Joyful / Aspirational",
-      "camera": "Bright kinetic ensemble spread with separate readable action zones",
+      "camera": "EO-SP03-CAM-H01 - childhood invention. Family Home backyard and garden, facing east-northeast toward Floating Garden; 44 in child-eye camera, azimuth 70 deg, pitch 3 deg down, 32-35 mm lens, 22-28 ft from central play area; wide ensemble environmental scene, upper-third horizon, deep focus with separate readable activity zones.",
       "storyText": "Kairo built worlds in bubbles. Cash made the whole street move.",
       "objective": "Introduce the brothers' gifts and the family rhythm before conflict erupts, with fewer inventions competing for attention.",
       "references": [
@@ -557,7 +575,7 @@ window.SSB_WORLD_BIBLE = {
       "visualInfo": "Make each gift clear: Kairo protects and creates with bubbles; Cash energizes and accelerates; the Sparkle Grid responds when their powers overlap.",
       "withheld": "Do not show the full consequence of the disagreement yet.",
       "avoid": "Avoid making either brother look mean, introducing extra seed boards or new gadgets, or making the gifts feel like weapons.",
-      "illustrationPrompt": "Create a joyful, organized spread showing Bubble Boy Kairo and Captain Cash using their gifts in ordinary Maplewood Terrace family life. Kairo creates tiny living bubble ecosystems with plants, light, and gentle motion safely floating inside. Captain Cash powers one kinetic street sculpture or glowing play path by running in bright green-and-gold trails. The Sparkle Grid should glow most brightly where Kairo's orange bubble light and Cash's green motion trail overlap. Mom and Dad may appear warmly in the background as family support, but do not introduce a separate invention, seed board, or extra technology system. End the composition with the brothers facing each other in playful disagreement, each proud of his own gift. Use the Bubble Boy and Captain Cash action sheets for body language and the Maplewood Terrace environment sheets for continuity.",
+      "illustrationPrompt": "Locked camera direction: Use the locked child-eye panorama in the Family Home backyard and family garden (MT-01), facing east-northeast toward the Floating Garden (MT-06). Build a seek-and-find ensemble with readable zones: Bubble Boy on the verso, Mom/community support center-left, shared play or invention details center-right, and Captain Cash on the recto. Keep the brothers wholly outside the gutter; a broad garden path or bubble arc may cross the center. Let Bubble Boy orange effects and Captain Cash green-yellow effects overlap subtly near the right side so friendly competition begins to read without becoming a fight. Keep the existing narrative action: Create a joyful, organized spread showing Bubble Boy Kairo and Captain Cash using their gifts in ordinary Maplewood Terrace family life. Kairo creates tiny living bubble ecosystems with plants, light, and gentle motion safely floating inside. Captain Cash powers one kinetic street sculpture or glowing play path by running in bright green-and-gold trails. The Sparkle Grid should glow most brightly where Kairo's orange bubble light and Cash's green motion trail overlap. Mom and Dad may appear warmly in the background as family support, but do not introduce a separate invention, seed board, or extra technology system. End the composition with the brothers facing each other in playful disagreement, each proud of his own gift. Use the Bubble Boy and Captain Cash action sheets for body language and the Maplewood Terrace environment sheets for continuity.",
       "referenceTiers": {
         "mandatory": [
           "BBK_ACTION",
@@ -575,7 +593,7 @@ window.SSB_WORLD_BIBLE = {
         ],
         "inspirational": []
       },
-      "canonicalDecision": "Refined on July 13, 2026 from the story-team simplification review: first read simple, worldbuilding layered for rereads.",
+      "canonicalDecision": "Refined on July 13, 2026 from the story-team simplification review: first read simple, worldbuilding layered for rereads. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "qualityGates": {
         "imageComplement": true,
         "thumbnailRead": true,
@@ -586,7 +604,15 @@ window.SSB_WORLD_BIBLE = {
       },
       "sourceFiles": [
         "Beat03/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP03-CAM-H01",
+      "cameraOwner": "Childhood invention and possibility",
+      "locationIds": [
+        "MT-01",
+        "MT-06"
+      ],
+      "cameraDirection": "Use the locked child-eye panorama in the Family Home backyard and family garden (MT-01), facing east-northeast toward the Floating Garden (MT-06). Build a seek-and-find ensemble with readable zones: Bubble Boy on the verso, Mom/community support center-left, shared play or invention details center-right, and Captain Cash on the recto. Keep the brothers wholly outside the gutter; a broad garden path or bubble arc may cross the center. Let Bubble Boy orange effects and Captain Cash green-yellow effects overlap subtly near the right side so friendly competition begins to read without becoming a fight.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP04",
@@ -597,9 +623,9 @@ window.SSB_WORLD_BIBLE = {
       "beat": "EO-B04",
       "sceneAssetId": "EO_PAUSE",
       "status": "prompt",
-      "location": "Maplewood Terrace play path connected to the Sparkle Grid",
+      "location": "Neighborhood Green (MT-04), southeast play path",
       "environmentState": "Concern / First disturbance",
-      "camera": "Child-level action close enough to read Captain Cash's shout and the environmental reaction",
+      "camera": "EO-SP04-CAM-G02 - Bubble Boy witnessing Cash's action. Southeast play path of Neighborhood Green, facing northwest toward Captain Cash at the instant of his shout; 44 in camera, azimuth 315 deg, pitch 4 deg down, 55 mm lens, about 9 ft from Cash; medium-wide two-character action shot from Bubble Boy's left-rear three-quarter over-the-shoulder angle, Bubble Boy and Cash sharp, background about 25% softer.",
       "storyText": "Cash shouted. The street answered.",
       "objective": "Show the catalyst: one impulsive shout travels through the Sparkle Grid and starts changing the environment.",
       "references": [
@@ -626,7 +652,7 @@ window.SSB_WORLD_BIBLE = {
       "visualInfo": "Show cause and effect clearly: shout, pulse, flicker, closing flowers, stopped music, first fragments.",
       "withheld": "Do not show the full Echo Ogre yet.",
       "avoid": "Avoid making Cash cruel; this should feel like a normal impulsive child moment with outsized magical consequences.",
-      "illustrationPrompt": "Create the catalyst spread. Captain Cash, in the middle of a brotherly disagreement, shouts impulsively. Show a visible emotional pulse leaving his body and traveling through the Sparkle Grid embedded in the sidewalk. The pulse should affect multiple systems at once: lights flicker, flowers close, music notes from wind sculptures stop midair, and small purple geometric fragments appear near the path and mural. Bubble Boy reacts with surprise, not blame. Nobody in the scene fully understands the danger yet, but readers should. Use Captain Cash expression references for impulsive frustration, the Environmental State Guide for first disturbance, and the Neighborhood Green/continuity maps for world accuracy.",
+      "illustrationPrompt": "Locked camera direction: Use the locked intimate child POV from Bubble Boy's left-rear side on the southeast play path of Neighborhood Green (MT-04), facing northwest toward Captain Cash at the instant of his shout. Visual hierarchy: Cash shouting, Sparkle Grid pulse, Bubble Boy reacting, one closing flower, one stopped sound sculpture, then small violet fragments. Put Bubble Boy on the verso and Cash on the recto inside the trim. Only the Grid pulse and pathway may cross the gutter, traveling left-to-right toward a far-right Grid node where the purple interference becomes visible to the reader. Keep the existing narrative action: Create the catalyst spread. Captain Cash, in the middle of a brotherly disagreement, shouts impulsively. Show a visible emotional pulse leaving his body and traveling through the Sparkle Grid embedded in the sidewalk. The pulse should affect multiple systems at once: lights flicker, flowers close, music notes from wind sculptures stop midair, and small purple geometric fragments appear near the path and mural. Bubble Boy reacts with surprise, not blame. Nobody in the scene fully understands the danger yet, but readers should. Use Captain Cash expression references for impulsive frustration, the Environmental State Guide for first disturbance, and the Neighborhood Green/continuity maps for world accuracy.",
       "referenceTiers": {
         "mandatory": [
           "CC_EXP",
@@ -641,7 +667,7 @@ window.SSB_WORLD_BIBLE = {
         ],
         "inspirational": []
       },
-      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board.",
+      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "qualityGates": {
         "imageComplement": true,
         "thumbnailRead": true,
@@ -652,7 +678,14 @@ window.SSB_WORLD_BIBLE = {
       },
       "sourceFiles": [
         "Beat04/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP04-CAM-G02",
+      "cameraOwner": "Bubble Boy witnessing Cash's action",
+      "locationIds": [
+        "MT-04"
+      ],
+      "cameraDirection": "Use the locked intimate child POV from Bubble Boy's left-rear side on the southeast play path of Neighborhood Green (MT-04), facing northwest toward Captain Cash at the instant of his shout. Visual hierarchy: Cash shouting, Sparkle Grid pulse, Bubble Boy reacting, one closing flower, one stopped sound sculpture, then small violet fragments. Put Bubble Boy on the verso and Cash on the recto inside the trim. Only the Grid pulse and pathway may cross the gutter, traveling left-to-right toward a far-right Grid node where the purple interference becomes visible to the reader.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP05",
@@ -663,9 +696,9 @@ window.SSB_WORLD_BIBLE = {
       "beat": "EO-B05",
       "sceneAssetId": "EO_HELP",
       "status": "prompt",
-      "location": "Maplewood Terrace neighborhood systems: gardens, murals, drones, and paths",
+      "location": "Walkway between Neighborhood Green (MT-04) and Floating Garden (MT-06)",
       "environmentState": "Disturbed / Debate",
-      "camera": "Wide neighborhood troubleshooting spread with the boys moving through visible malfunction clues",
+      "camera": "EO-SP05-CAM-FG01 - disturbed environment. Northwestern walkway between the Neighborhood Green and Floating Garden, facing east-southeast; 36 in flower-level low camera, azimuth 115 deg, pitch 8 deg upward, 35-40 mm lens, 18-24 ft distance; wide environmental troubleshooting shot, slightly low horizon, foreground/children/selected background clues readable.",
       "storyText": "They checked the tech. But the trouble was not in the wires.",
       "objective": "Make the debate visual: the brothers think the technology is broken, but readers see the neighborhood reacting emotionally.",
       "references": [
@@ -693,7 +726,7 @@ window.SSB_WORLD_BIBLE = {
       "visualInfo": "Show several small malfunctions without making the neighborhood feel destroyed.",
       "withheld": "Do not let the boys name the emotional rule yet.",
       "avoid": "Avoid overwhelming chaos, broken-apocalypse visuals, or explanatory labels.",
-      "illustrationPrompt": "Create a visually rich debate spread where Bubble Boy and Captain Cash investigate Maplewood Terrace as if the technology is broken. Show floating gardens drifting slightly lower, animated murals distorting, bird drones losing rhythm, Sparkle Grid lights skipping beats, and wind sculptures falling out of tune. The boys should be looking at tools, panels, bubbles, or pathway lights, trying to diagnose a technical problem. Readers should see that the neighborhood is reacting emotionally: purple patterns gather around places where feelings were ignored. In the broken Community Mural, hide a clear pair of purple eyes opening while the boys look away. Keep the tone mysterious but still child-safe and beautiful.",
+      "illustrationPrompt": "Locked camera direction: Use the locked flower-level low camera on the walkway between Neighborhood Green (MT-04) and Floating Garden (MT-06), facing east-southeast. Limit the visible failures to three dominant systems: one drooping flower with irregular Grid light, one stalled or rhythm-confused bird drone, and the Floating Garden hanging noticeably lower. Put the drooping flower in the near-left foreground, Bubble Boy left of center, Captain Cash right of center, and Floating Garden in the background. Keep the boys separated because each is diagnosing a different machine. Let a wide pathway cross the gutter, keep both children away from the fold, and place only a cropped reflective surface or narrow mural sliver on the far-right with two small purple eyes opening. Keep the existing narrative action: Create a visually rich debate spread where Bubble Boy and Captain Cash investigate Maplewood Terrace as if the technology is broken. Show floating gardens drifting slightly lower, animated murals distorting, bird drones losing rhythm, Sparkle Grid lights skipping beats, and wind sculptures falling out of tune. The boys should be looking at tools, panels, bubbles, or pathway lights, trying to diagnose a technical problem. Readers should see that the neighborhood is reacting emotionally: purple patterns gather around places where feelings were ignored. In the broken Community Mural, hide a clear pair of purple eyes opening while the boys look away. Keep the tone mysterious but still child-safe and beautiful.",
       "referenceTiers": {
         "mandatory": [
           "MT04_GREEN",
@@ -709,7 +742,7 @@ window.SSB_WORLD_BIBLE = {
         ],
         "inspirational": []
       },
-      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board.",
+      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "qualityGates": {
         "imageComplement": true,
         "thumbnailRead": true,
@@ -720,7 +753,15 @@ window.SSB_WORLD_BIBLE = {
       },
       "sourceFiles": [
         "Beat05/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP05-CAM-FG01",
+      "cameraOwner": "The disturbed environment",
+      "locationIds": [
+        "MT-04",
+        "MT-06"
+      ],
+      "cameraDirection": "Use the locked flower-level low camera on the walkway between Neighborhood Green (MT-04) and Floating Garden (MT-06), facing east-southeast. Limit the visible failures to three dominant systems: one drooping flower with irregular Grid light, one stalled or rhythm-confused bird drone, and the Floating Garden hanging noticeably lower. Put the drooping flower in the near-left foreground, Bubble Boy left of center, Captain Cash right of center, and Floating Garden in the background. Keep the boys separated because each is diagnosing a different machine. Let a wide pathway cross the gutter, keep both children away from the fold, and place only a cropped reflective surface or narrow mural sliver on the far-right with two small purple eyes opening.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP06",
@@ -731,9 +772,9 @@ window.SSB_WORLD_BIBLE = {
       "beat": "EO-B06",
       "sceneAssetId": "EO_RUSH_REALIZATION",
       "status": "prompt",
-      "location": "Community Mural and Sparkle Grid junction",
+      "location": "Community Mural (MT-05) at the north rim of Neighborhood Green (MT-04)",
       "environmentState": "Manifestation",
-      "camera": "Low cinematic reveal with children small but brave in the foreground",
+      "camera": "EO-SP06-CAM-M01 - reader discovery with the children. North rim of Neighborhood Green, immediately south of Community Mural, facing north-northeast toward the Echo Ogre emerging from mural light, roots, flowers, and Sparkle Grid; 34-36 in low camera, azimuth 20 deg, pitch 12 deg upward, 28-32 mm lens, 22-26 ft from emergence point; wide low-angle revelation shot, low horizon, enough depth to connect the Ogre physically to the environment.",
       "storyText": "Every angry word made the shape bigger.",
       "objective": "Reveal the Echo Ogre as fractured light made of unresolved emotion, not a monster from outside.",
       "references": [
@@ -762,7 +803,7 @@ window.SSB_WORLD_BIBLE = {
       "visualInfo": "Make the Ogre kind giant/emotional reflection rather than a horror creature. Keep his expression readable and layered.",
       "withheld": "Do not show the solution or make the Ogre fully malicious.",
       "avoid": "Avoid generic villain monster anatomy, sharp horror, attacks on children, or disconnected fantasy effects.",
-      "illustrationPrompt": "Create the first full reveal of the Echo Ogre at the Community Mural and Sparkle Grid junction. The Echo Ogre should emerge as fractured living light: broken neighborhood stories, shattered geometric patterns, distorted sound waves, floating ancestral symbols, mural fragments, and corrupted Sparkle Grid glow forming a giant purple emotional figure. Bubble Boy and Captain Cash stand small in the foreground, stunned but not defeated. Every angry word around them appears to add a fragment to the Ogre. Show Maplewood Terrace beginning to break rhythm around him, but do not make it apocalyptic. Use the Echo Ogre construction, action, and expression references directly; use the environmental guides to make his body feel connected to the world rules.",
+      "illustrationPrompt": "Locked camera direction: Use the locked low revelation camera at Community Mural (MT-05) on the north rim of Neighborhood Green (MT-04), facing north-northeast. Keep the brothers small on the lower-left verso while the Echo Ogre rises on the recto, sacred, wounded, curious, and newly conscious rather than like a boss monster. Connect the Ogre body physically to Sparkle Grid roots, flower stems, community patterns, mural fragments, and living pathways. Transparent light or a broad central part of the Ogre may cross the fold, but the Ogre face/eyes/hair coils stay fully on the recto and the children expressions stay fully on the verso. Avoid concrete explosion or destructive debris. Keep the existing narrative action: Create the first full reveal of the Echo Ogre at the Community Mural and Sparkle Grid junction. The Echo Ogre should emerge as fractured living light: broken neighborhood stories, shattered geometric patterns, distorted sound waves, floating ancestral symbols, mural fragments, and corrupted Sparkle Grid glow forming a giant purple emotional figure. Bubble Boy and Captain Cash stand small in the foreground, stunned but not defeated. Every angry word around them appears to add a fragment to the Ogre. Show Maplewood Terrace beginning to break rhythm around him, but do not make it apocalyptic. Use the Echo Ogre construction, action, and expression references directly; use the environmental guides to make his body feel connected to the world rules.",
       "referenceTiers": {
         "mandatory": [
           "EOG_MODEL",
@@ -781,7 +822,7 @@ window.SSB_WORLD_BIBLE = {
           "EO_OPENING"
         ]
       },
-      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board.",
+      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "qualityGates": {
         "imageComplement": true,
         "thumbnailRead": true,
@@ -792,7 +833,15 @@ window.SSB_WORLD_BIBLE = {
       },
       "sourceFiles": [
         "Beat06/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP06-CAM-M01",
+      "cameraOwner": "The reader discovering the Ogre with the children",
+      "locationIds": [
+        "MT-05",
+        "MT-04"
+      ],
+      "cameraDirection": "Use the locked low revelation camera at Community Mural (MT-05) on the north rim of Neighborhood Green (MT-04), facing north-northeast. Keep the brothers small on the lower-left verso while the Echo Ogre rises on the recto, sacred, wounded, curious, and newly conscious rather than like a boss monster. Connect the Ogre body physically to Sparkle Grid roots, flower stems, community patterns, mural fragments, and living pathways. Transparent light or a broad central part of the Ogre may cross the fold, but the Ogre face/eyes/hair coils stay fully on the recto and the children expressions stay fully on the verso. Avoid concrete explosion or destructive debris.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP07",
@@ -803,9 +852,9 @@ window.SSB_WORLD_BIBLE = {
       "beat": "EO-B07",
       "sceneAssetId": "EO_PAUSE_REALIZATION",
       "status": "prompt",
-      "location": "Neighborhood Green and Sparkle Grid pathways",
+      "location": "Neighborhood Green (MT-04), southeast ring near the Story Kiosk route, facing Community Mural (MT-05)",
       "environmentState": "Escalation",
-      "camera": "Dynamic action spread with clear cause/effect and a quiet emotional clue at the end",
+      "camera": "EO-SP07-CAM-G03 - heroes discovering their mistake. Southeast ring of Neighborhood Green near the Story Kiosk route, facing northwest toward Community Mural and the Ogre; 60-72 in slightly elevated camera, azimuth 315 deg, pitch 5 deg down, 28-32 mm lens, 32-40 ft distance; wide kinetic action panorama, upper-third horizon, 0 deg roll with instability from action diagonals, deep focus with controlled atmospheric separation.",
       "storyText": "The harder they pushed, the louder the Ogre became.",
       "objective": "Show the old superhero strategy failing because the problem is emotional, not physical.",
       "references": [
@@ -834,7 +883,7 @@ window.SSB_WORLD_BIBLE = {
       "visualInfo": "Use action spectacle, but keep the emotional clue stronger than the effects.",
       "withheld": "Do not let the characters fully understand the clue yet.",
       "avoid": "Avoid violence, punches, weapons, or making the powers look like the correct solution.",
-      "illustrationPrompt": "Create a kinetic action spread where Bubble Boy and Captain Cash try every familiar hero tool against the Echo Ogre. Bubble Boy launches protective bubbles, light shields, decoys, and gravity bubbles. Captain Cash creates green speed trails and tries quick rescue moves. The Echo Ogre copies everything bigger, louder, and more chaotic. Show the Sparkle Grid darkening or skipping with each forceful attempt. At the far side of the spread or as the emotional focal point, show Bubble Boy pausing to comfort Captain Cash with one hand on his shoulder. That one gentle action causes a small part of the Echo Ogre to soften and pause. The page-turn should come from that unexpected emotional clue, not from a battle victory.",
+      "illustrationPrompt": "Locked camera direction: Use the locked slightly elevated wide action camera on the southeast ring of Neighborhood Green (MT-04), facing northwest toward Community Mural (MT-05). Include exactly one Bubble Boy, one Captain Cash, and one Echo Ogre: no montage copies. Use one principal effect per brother: one major Bubble Boy shield/ecosystem and one major Captain Cash speed maneuver or kinetic trail. Broad effects may cross the gutter, but faces and hands may not. Let the action start on the left and escalate across the spread as the Ogre grows toward the right. On the far-right, Cash’s attempt fails and his shoulders drop while Bubble Boy begins reaching toward him instead of attacking again. Keep the existing narrative action: Create a kinetic action spread where Bubble Boy and Captain Cash try every familiar hero tool against the Echo Ogre. Bubble Boy launches protective bubbles, light shields, decoys, and gravity bubbles. Captain Cash creates green speed trails and tries quick rescue moves. The Echo Ogre copies everything bigger, louder, and more chaotic. Show the Sparkle Grid darkening or skipping with each forceful attempt. At the far side of the spread or as the emotional focal point, show Bubble Boy pausing to comfort Captain Cash with one hand on his shoulder. That one gentle action causes a small part of the Echo Ogre to soften and pause. The page-turn should come from that unexpected emotional clue, not from a battle victory.",
       "referenceTiers": {
         "mandatory": [
           "BBK_ACTION",
@@ -853,7 +902,7 @@ window.SSB_WORLD_BIBLE = {
           "EO_RUSH"
         ]
       },
-      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board.",
+      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "qualityGates": {
         "imageComplement": true,
         "thumbnailRead": true,
@@ -864,7 +913,15 @@ window.SSB_WORLD_BIBLE = {
       },
       "sourceFiles": [
         "Beat07/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP07-CAM-G03",
+      "cameraOwner": "The heroes, until the camera discovers their mistake",
+      "locationIds": [
+        "MT-04",
+        "MT-05"
+      ],
+      "cameraDirection": "Use the locked slightly elevated wide action camera on the southeast ring of Neighborhood Green (MT-04), facing northwest toward Community Mural (MT-05). Include exactly one Bubble Boy, one Captain Cash, and one Echo Ogre: no montage copies. Use one principal effect per brother: one major Bubble Boy shield/ecosystem and one major Captain Cash speed maneuver or kinetic trail. Broad effects may cross the gutter, but faces and hands may not. Let the action start on the left and escalate across the spread as the Ogre grows toward the right. On the far-right, Cash’s attempt fails and his shoulders drop while Bubble Boy begins reaching toward him instead of attacking again.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP08",
@@ -875,9 +932,9 @@ window.SSB_WORLD_BIBLE = {
       "beat": "EO-B08",
       "sceneAssetId": "EO_DAD_REALIZATION",
       "status": "prompt",
-      "location": "Neighborhood Green near the Community Mural",
+      "location": "Neighborhood Green (MT-04), southwest interior path facing Community Mural (MT-05)",
       "environmentState": "Repair clue / Midpoint",
-      "camera": "Medium emotional beat with environmental reaction radiating outward",
+      "camera": "EO-SP08-CAM-G04 - brothers' relationship. Southwest interior path of Neighborhood Green, facing north-northeast toward Community Mural; 44 in child-eye camera, azimuth 25 deg, level pitch, 85 mm lens, 12-15 ft from brothers; medium two-shot with environmental reaction, level horizon, shallow-to-moderate depth with recognizable softened background.",
       "storyText": "“Thanks,” Cash said. The Ogre went quiet.",
       "objective": "Make the midpoint realization feel earned: kindness creates a clue, not an instant fix.",
       "references": [
@@ -906,7 +963,7 @@ window.SSB_WORLD_BIBLE = {
       "visualInfo": "Show one thank-you creating one or two small repairs only; keep most of Maplewood Terrace visibly disturbed.",
       "withheld": "Do not make the problem fully solved yet.",
       "avoid": "Avoid instant total restoration, applause, multiple systems fully healing, or making gratitude a magic button that replaces accountability.",
-      "illustrationPrompt": "Create a warm midpoint spread where Captain Cash sincerely thanks Bubble Boy. Keep the action small, intimate, and emotionally readable. Bubble Boy should smile or soften in surprise. The Echo Ogre should pause rather than shrink dramatically: his expression becomes curious, his edges soften slightly, and the purple echo waves go quiet for a moment. Show only one or two tiny environmental responses, such as one Sparkle Grid pulse steadying under the brothers' feet, one mural seam warming gold, or one closed flower beginning to open. Most of Maplewood Terrace should remain disturbed so this feels like a clue, not a solution. End the composition with the brothers noticing the effect and wondering what else kindness might change. Use character expression references for vulnerability and the Environmental State Guide for the first subtle transition from disturbance into repair.",
+      "illustrationPrompt": "Locked camera direction: Use the locked 85 mm child-eye relationship camera on the southwest interior path of Neighborhood Green (MT-04), facing Community Mural (MT-05). Put the brothers left-center with Bubble Boy's hand clearly on Captain Cash's shoulder and Cash releasing tension. Place the Ogre in the right third with meaningful negative space between him and the children; do not fill the scene with effects. Show exactly five healing cues: one flower reopening, one Grid path stabilizing, one mural section repairing, one floating fragment returning, and one wind chime moving correctly. Let negative space and a stabilized light path cross the gutter, keep the comforting hand at least 0.75 in from the fold, and keep the Ogre expression fully on the right page. Keep the existing narrative action: Create a warm midpoint spread where Captain Cash sincerely thanks Bubble Boy. Keep the action small, intimate, and emotionally readable. Bubble Boy should smile or soften in surprise. The Echo Ogre should pause rather than shrink dramatically: his expression becomes curious, his edges soften slightly, and the purple echo waves go quiet for a moment. Show only one or two tiny environmental responses, such as one Sparkle Grid pulse steadying under the brothers' feet, one mural seam warming gold, or one closed flower beginning to open. Most of Maplewood Terrace should remain disturbed so this feels like a clue, not a solution. End the composition with the brothers noticing the effect and wondering what else kindness might change. Use character expression references for vulnerability and the Environmental State Guide for the first subtle transition from disturbance into repair.",
       "referenceTiers": {
         "mandatory": [
           "BBK_EXP",
@@ -924,7 +981,7 @@ window.SSB_WORLD_BIBLE = {
           "EO_DAD_REALIZATION"
         ]
       },
-      "canonicalDecision": "Refined on July 13, 2026 from the story-team simplification review: first read simple, worldbuilding layered for rereads.",
+      "canonicalDecision": "Refined on July 13, 2026 from the story-team simplification review: first read simple, worldbuilding layered for rereads. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "qualityGates": {
         "imageComplement": true,
         "thumbnailRead": true,
@@ -935,7 +992,15 @@ window.SSB_WORLD_BIBLE = {
       },
       "sourceFiles": [
         "Beat08/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP08-CAM-G04",
+      "cameraOwner": "The brothers' relationship",
+      "locationIds": [
+        "MT-04",
+        "MT-05"
+      ],
+      "cameraDirection": "Use the locked 85 mm child-eye relationship camera on the southwest interior path of Neighborhood Green (MT-04), facing Community Mural (MT-05). Put the brothers left-center with Bubble Boy's hand clearly on Captain Cash's shoulder and Cash releasing tension. Place the Ogre in the right third with meaningful negative space between him and the children; do not fill the scene with effects. Show exactly five healing cues: one flower reopening, one Grid path stabilizing, one mural section repairing, one floating fragment returning, and one wind chime moving correctly. Let negative space and a stabilized light path cross the gutter, keep the comforting hand at least 0.75 in from the fold, and keep the Ogre expression fully on the right page.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP09",
@@ -947,9 +1012,9 @@ window.SSB_WORLD_BIBLE = {
       "sceneAssetId": "EO_PAUSE_REALIZATION",
       "status": "prompt",
       "approvedCanonical": true,
-      "location": "Maplewood Terrace landmarks connected by Sparkle Grid paths",
+      "location": "Community Mural (MT-05) and Neighborhood Green (MT-04), observed toward Community Plaza (MT-07)",
       "environmentState": "Stalled repair / Bad Guys Close In",
-      "camera": "Modular full-spread cause/effect composition with three visible experiments and one reversal",
+      "camera": "EO-SP09-CAM-M02 - Echo Ogre listening perspective. Immediately behind and slightly west of the Ogre at Community Mural, facing south-southeast across Neighborhood Green toward Community Plaza; 7-9 ft Ogre listening height, azimuth 160 deg, pitch 2 deg down, 180-200 mm lens, 70-90 ft to primary human action; compressed observational environmental shot, level horizon, soft Ogre fragments in foreground and human action isolated in compressed distance.",
       "storyText": "Help made him smaller. Listening made him smaller. Selfishness made him grow.",
       "objective": "Make the cause-and-effect rule clear to children: real kindness repairs; shallow or selfish action fractures the neighborhood again.",
       "storyFunction": "Bad Guys Close In: the children experiment. Helping shrinks the Ogre, sharing shrinks him, listening shrinks him, but one selfish moment fractures the neighborhood again.",
@@ -964,7 +1029,7 @@ window.SSB_WORLD_BIBLE = {
       "visualInfo": "Show helping, sharing, and listening as distinct, child-readable actions. The reversal must be clear without needing labels.",
       "withheld": "Do not reveal Dad's apology or the final community repair yet.",
       "avoid": "Avoid making kindness look transactional, preachy, or like a points system.",
-      "illustrationPrompt": "Create a full-spread experiment sequence in Maplewood Terrace where the brothers test what makes the Echo Ogre smaller. Show three clear child-readable moments: helping someone with a real need, sharing something valued, and listening before acting. Each moment should visibly shrink or soften part of the Echo Ogre while golden seams repair a corresponding neighborhood system. Then show one selfish or performative moment that makes the neighborhood fracture again: a flower recloses, a mural line splits, and a Sparkle Grid node pulses out of rhythm. Keep the composition elegant, not cluttered. The reader should understand that real repair changes the world, while shallow kindness does not last.",
+      "illustrationPrompt": "Locked camera direction: Use the locked telephoto observation camera from the Echo Ogre perspective near Community Mural (MT-05), facing south-southeast across Neighborhood Green (MT-04) toward Community Plaza (MT-07). Keep a translucent part of the Ogre in the near-left foreground while the Green and Plaza feel visually compressed in the distance. Preserve the existing cause-and-effect lesson, but stage the kindness tests and the selfish reversal as something the Ogre watches and reflects rather than an action montage. Keep open Green/path space in the gutter, never place the Ogre eye in the fold, keep the troubling human interaction on the recto, and send a new violet line from that interaction back toward the Ogre. Keep the existing narrative action: Create a full-spread experiment sequence in Maplewood Terrace where the brothers test what makes the Echo Ogre smaller. Show three clear child-readable moments: helping someone with a real need, sharing something valued, and listening before acting. Each moment should visibly shrink or soften part of the Echo Ogre while golden seams repair a corresponding neighborhood system. Then show one selfish or performative moment that makes the neighborhood fracture again: a flower recloses, a mural line splits, and a Sparkle Grid node pulses out of rhythm. Keep the composition elegant, not cluttered. The reader should understand that real repair changes the world, while shallow kindness does not last.",
       "references": [
         "BBK_EXP",
         "CC_EXP",
@@ -1010,10 +1075,19 @@ window.SSB_WORLD_BIBLE = {
       "conflict": "The brothers confuse performative niceness with real repair, and the world reveals the difference.",
       "rectoHook": "Then one selfish choice cracked everything open again.",
       "pageTurn": "End with the cleanest visible reversal so the reader wants to know why kindness was not enough.",
-      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board.",
+      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "sourceFiles": [
         "Beat09/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP09-CAM-M02",
+      "cameraOwner": "The Echo Ogre",
+      "locationIds": [
+        "MT-05",
+        "MT-04",
+        "MT-07"
+      ],
+      "cameraDirection": "Use the locked telephoto observation camera from the Echo Ogre perspective near Community Mural (MT-05), facing south-southeast across Neighborhood Green (MT-04) toward Community Plaza (MT-07). Keep a translucent part of the Ogre in the near-left foreground while the Green and Plaza feel visually compressed in the distance. Preserve the existing cause-and-effect lesson, but stage the kindness tests and the selfish reversal as something the Ogre watches and reflects rather than an action montage. Keep open Green/path space in the gutter, never place the Ogre eye in the fold, keep the troubling human interaction on the recto, and send a new violet line from that interaction back toward the Ogre.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP10",
@@ -1025,9 +1099,9 @@ window.SSB_WORLD_BIBLE = {
       "sceneAssetId": "ENV_DETERIORATION",
       "status": "prompt",
       "approvedCanonical": true,
-      "location": "Maplewood Terrace overhead with the Grid nearly collapsed",
+      "location": "Maplewood Terrace system view centered on Neighborhood Green (MT-04), with Family Home (MT-01), Community Mural (MT-05), Floating Garden (MT-06), Community Plaza (MT-07), Play Park, and Story Kiosk visible",
       "environmentState": "All Is Lost",
-      "camera": "High overhead 35 mm view with the neighborhood as the main subject and Dad entering without gadgets",
+      "camera": "EO-SP10-CAM-OH01 - Maplewood Terrace system view. Centered above Neighborhood Green with north at top, 100 ft high, azimuth 0 deg map alignment, pitch 80-85 deg downward, 35 mm lens; near-top-down neighborhood system view, broadly readable rather than shallow cinematic focus.",
       "storyText": "The Ogre towered because kindness had disappeared.",
       "objective": "Create the emotional low point: the Ogre is not stronger because of power, but because repair has vanished.",
       "storyFunction": "All Is Lost: the Grid nearly collapses, sky loses color, solar trees stop, gardens wilt, floating homes descend, and Dad walks forward with no gadget.",
@@ -1043,7 +1117,7 @@ window.SSB_WORLD_BIBLE = {
       "visualInfo": "Show the collapse through systems slowing and descending, not through destruction.",
       "withheld": "Do not show the apology yet; save it for the next spread.",
       "avoid": "Avoid apocalypse, rubble, horror tone, punishment, or Dad looking like a superhero about to fight.",
-      "illustrationPrompt": "Create the All Is Lost spread from a high overhead view of Maplewood Terrace. The Sparkle Grid is nearly collapsed, the sky has lost much of its color, solar baobab trees no longer collect light, gardens wilt, floating homes and garden structures descend safely, and the Echo Ogre towers over the neighborhood. The Ogre is huge not because he is stronger, but because kindness and repair have disappeared. Bubble Boy and Captain Cash should feel small and uncertain. Dad walks forward from the edge of the scene with no gadget, no weapon, no shield, and no glowing technology. His empty hands and calm posture should be the emotional hook. Use the Environmental Deterioration Strip and Environmental State Guide directly, but keep the scene child-safe and emotionally readable.",
+      "illustrationPrompt": "Locked camera direction: Use the locked near-top-down camera centered above Neighborhood Green (MT-04), with north at the top and the whole Maplewood Terrace system readable: Family Home (MT-01) northwest, Community Mural (MT-05) north, Floating Garden (MT-06) northeast, Community Plaza (MT-07) south, Play Park southwest, Story Kiosk southeast, and routes joining them. The community is emotionally stalled, not destroyed: Grid segments dim, music stops, paths lose rhythm, people stand apart, Floating Garden hangs low, mural remains incomplete, and the brothers are small inside a system they have not understood. Put the Green’s broad center, roads, and open lawn in the gutter; keep recognizable faces outside it and circulate the reader around the spread toward the lower-right recto hook. Keep the existing narrative action: Create the All Is Lost spread from a high overhead view of Maplewood Terrace. The Sparkle Grid is nearly collapsed, the sky has lost much of its color, solar baobab trees no longer collect light, gardens wilt, floating homes and garden structures descend safely, and the Echo Ogre towers over the neighborhood. The Ogre is huge not because he is stronger, but because kindness and repair have disappeared. Bubble Boy and Captain Cash should feel small and uncertain. Dad walks forward from the edge of the scene with no gadget, no weapon, no shield, and no glowing technology. His empty hands and calm posture should be the emotional hook. Use the Environmental Deterioration Strip and Environmental State Guide directly, but keep the scene child-safe and emotionally readable.",
       "references": [
         "DAD_ACTION",
         "DAD_EXP",
@@ -1091,10 +1165,21 @@ window.SSB_WORLD_BIBLE = {
       "primaryRead": "Maplewood Terrace almost goes still because the emotional system is starving.",
       "conflict": "The children cannot fix this by force or quick niceness; the adults must model honest repair without taking over the children's role.",
       "pageTurn": "End with Dad stepping toward repair, not toward battle.",
-      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board.",
+      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "sourceFiles": [
         "Beat10/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP10-CAM-OH01",
+      "cameraOwner": "Maplewood Terrace",
+      "locationIds": [
+        "MT-04",
+        "MT-01",
+        "MT-05",
+        "MT-06",
+        "MT-07"
+      ],
+      "cameraDirection": "Use the locked near-top-down camera centered above Neighborhood Green (MT-04), with north at the top and the whole Maplewood Terrace system readable: Family Home (MT-01) northwest, Community Mural (MT-05) north, Floating Garden (MT-06) northeast, Community Plaza (MT-07) south, Play Park southwest, Story Kiosk southeast, and routes joining them. The community is emotionally stalled, not destroyed: Grid segments dim, music stops, paths lose rhythm, people stand apart, Floating Garden hangs low, mural remains incomplete, and the brothers are small inside a system they have not understood. Put the Green’s broad center, roads, and open lawn in the gutter; keep recognizable faces outside it and circulate the reader around the spread toward the lower-right recto hook.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP11",
@@ -1105,9 +1190,9 @@ window.SSB_WORLD_BIBLE = {
       "beat": "EO-B11",
       "sceneAssetId": "EO_HELP",
       "status": "prompt",
-      "location": "Neighborhood Green near Mom, Dad, and the children",
+      "location": "Western entrance to Neighborhood Green (MT-04) along the Family Home (MT-01) to Green route",
       "environmentState": "Repair begins",
-      "camera": "Intimate emotional composition that can carry the story's quietest turn",
+      "camera": "EO-SP11-CAM-R01 - children choosing a different kind of heroism. Western entrance to Neighborhood Green along the Family Home-to-Green route, facing east-southeast; 42 in child-eye camera, azimuth 110 deg, level pitch, 50-55 mm lens, 16-18 ft distance; medium-wide relationship group, children and Dad sharp with Green and mural softly readable.",
       "storyText": "Dad began. Mom joined. Then the boys knew what to do.",
       "objective": "Let adults model honest repair while Bubble Boy and Captain Cash become the decisive emotional agents.",
       "storyFunction": "Break into Act III: Dad and Mom begin real repair, then Bubble Boy and Captain Cash choose to join in, apologize, help, and invite others. The children turn repair from a private model into a neighborhood action.",
@@ -1121,7 +1206,7 @@ window.SSB_WORLD_BIBLE = {
       "rereadDiscovery": "The Grid repairs outward from the children's joined action, with the parents' apology as the first spark rather than the final answer.",
       "visualInfo": "Mom and Dad should be emotionally honest, but Bubble Boy and Captain Cash's realization and first repair action must be central.",
       "avoid": "Avoid Dad as sole hero, adult lecture, parents solving the conflict, instant perfect forgiveness, or sentimental overposing.",
-      "illustrationPrompt": "Create the quiet emotional turning-point spread. Dad and Mom begin a real mutual apology in the midground, open-handed and sincere, modeling repair without taking over the story. Bubble Boy and Captain Cash should be the emotional center: they step forward toward each other or toward another child, choosing to apologize, help, listen, or repair in their own childlike way. As the boys choose repair, show the Sparkle Grid repairing outward from their feet, the Community Mural healing with golden seams, music returning softly, and children nearby beginning to help one another because the brothers inspired them. The Echo Ogre should still be present, but visibly less jagged and less burdened. Keep the composition intimate and emotionally clear, with warm repair light coming from faces, hands, and the ground-level grid.",
+      "illustrationPrompt": "Locked camera direction: Use the locked medium-wide relationship camera at the western entrance to Neighborhood Green (MT-04) along the Family Home (MT-01) route, facing east-southeast. Make this one continuous scene, not three disconnected panels: Dad lowers himself to child level and apologizes on the verso; Bubble Boy listens rather than immediately fixing; Captain Cash notices calm words stabilizing a nearby Grid light; on the recto the brothers exchange the look that means they understand what to do. Dad supplies accountability, but the children make the deduction and lead the solution. Let a wide path or soft band of returning light cross the center, keep Dad face/gesture on the left, keep the brothers’ realization on the right, and reactivate one light node near Cash’s feet. Keep the existing narrative action: Create the quiet emotional turning-point spread. Dad and Mom begin a real mutual apology in the midground, open-handed and sincere, modeling repair without taking over the story. Bubble Boy and Captain Cash should be the emotional center: they step forward toward each other or toward another child, choosing to apologize, help, listen, or repair in their own childlike way. As the boys choose repair, show the Sparkle Grid repairing outward from their feet, the Community Mural healing with golden seams, music returning softly, and children nearby beginning to help one another because the brothers inspired them. The Echo Ogre should still be present, but visibly less jagged and less burdened. Keep the composition intimate and emotionally clear, with warm repair light coming from faces, hands, and the ground-level grid.",
       "references": [
         "BBK_EXP",
         "CC_EXP",
@@ -1169,7 +1254,7 @@ window.SSB_WORLD_BIBLE = {
       "rectoHook": "And then the children stepped forward.",
       "pageTurn": "End with the boys choosing repair so the finale belongs to them and the community they inspire.",
       "withheld": "Do not fully dissolve the Ogre yet.",
-      "canonicalDecision": "Refined on July 13, 2026 from the story-team simplification review: first read simple, worldbuilding layered for rereads.",
+      "canonicalDecision": "Refined on July 13, 2026 from the story-team simplification review: first read simple, worldbuilding layered for rereads. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "qualityGates": {
         "imageComplement": true,
         "thumbnailRead": true,
@@ -1180,7 +1265,15 @@ window.SSB_WORLD_BIBLE = {
       },
       "sourceFiles": [
         "Beat11/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP11-CAM-R01",
+      "cameraOwner": "The children choosing a different kind of heroism",
+      "locationIds": [
+        "MT-04",
+        "MT-01"
+      ],
+      "cameraDirection": "Use the locked medium-wide relationship camera at the western entrance to Neighborhood Green (MT-04) along the Family Home (MT-01) route, facing east-southeast. Make this one continuous scene, not three disconnected panels: Dad lowers himself to child level and apologizes on the verso; Bubble Boy listens rather than immediately fixing; Captain Cash notices calm words stabilizing a nearby Grid light; on the recto the brothers exchange the look that means they understand what to do. Dad supplies accountability, but the children make the deduction and lead the solution. Let a wide path or soft band of returning light cross the center, keep Dad face/gesture on the left, keep the brothers’ realization on the right, and reactivate one light node near Cash’s feet.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP12",
@@ -1191,9 +1284,9 @@ window.SSB_WORLD_BIBLE = {
       "beat": "EO-B12",
       "sceneAssetId": "EO_HELP",
       "status": "prompt",
-      "location": "Neighborhood Green, Community Mural, Floating Garden, and connected Maplewood Terrace paths",
+      "location": "Floating Garden perimeter (MT-06), looking across Neighborhood Green (MT-04) toward Community Plaza (MT-07), Community Mural (MT-05), and Family Home (MT-01)",
       "environmentState": "Finale / Active repair",
-      "camera": "Dynamic wide finale with one dominant emotional focal point and readable community actions",
+      "camera": "EO-SP12-CAM-FG02 - community as a living whole. Elevated service ring or perimeter near Floating Garden, facing southwest across Neighborhood Green toward Community Plaza; 20-25 ft above local path, azimuth 225 deg, pitch 18 deg down, 32-35 mm lens, 130-160 ft to Plaza; elevated reverse environmental group shot, upper-third horizon, deep focus.",
       "storyText": "Every repair gave the Ogre one less echo to carry.",
       "objective": "Show the community solving the problem together and the children inspiring others instead of defeating an enemy.",
       "storyFunction": "Finale: neighbors help, children apologize and share, robots assist, gardens bloom, the Grid shines brighter than ever, and the Ogre dissolves into glowing memory fragments that become stars.",
@@ -1208,7 +1301,7 @@ window.SSB_WORLD_BIBLE = {
       "rectoHook": "The last echo rose like a star.",
       "visualInfo": "Show Bubble Boy and Captain Cash using powers differently: bubbles protect fragile repair; speed supports people without taking over.",
       "avoid": "Avoid superhero attacks, weapons, victory poses, adult command center staging, or confetti that hides the repair actions.",
-      "illustrationPrompt": "Create the finale spread where Maplewood Terrace repairs itself together. Bubble Boy uses transparent bubbles as gentle tools that protect fragile objects, carry water, lower mural fragments, and create quiet listening spaces. Captain Cash uses speed carefully to deliver tools, bring people together, and support repairs without taking over. Neighbors help, children apologize and share, robots assist, gardens bloom, the Floating Garden rises, the Community Mural restores with golden seams, and the Sparkle Grid shines brighter because relationships are reconnecting. The Echo Ogre remains large and central, but his body releases glowing memory fragments as each unfinished repair is completed. Those fragments should dissolve upward into purple-and-gold stars. Make the emotional center collective care, not combat.",
+      "illustrationPrompt": "Locked camera direction: Use the locked elevated reverse environmental camera from the Floating Garden perimeter (MT-06), facing southwest across Neighborhood Green (MT-04) toward Community Plaza (MT-07), with Community Mural (MT-05), Family Home (MT-01), connected paths, gardens, homes, and residents readable. Make this feel like a communal exhale, not a superhero victory lineup. Show residents listening, apologizing, replanting, reconnecting a path, helping someone stand, repairing part of the mural, and restoring music together. Keep the brothers modest in scale and participating in one small shared task. Let broad Green space or a major pathway cross the gutter, keep principal faces out of the fold, leave repaired golden seams visible, and lead a restored path toward the far-right and visually home. Keep the existing narrative action: Create the finale spread where Maplewood Terrace repairs itself together. Bubble Boy uses transparent bubbles as gentle tools that protect fragile objects, carry water, lower mural fragments, and create quiet listening spaces. Captain Cash uses speed carefully to deliver tools, bring people together, and support repairs without taking over. Neighbors help, children apologize and share, robots assist, gardens bloom, the Floating Garden rises, the Community Mural restores with golden seams, and the Sparkle Grid shines brighter because relationships are reconnecting. The Echo Ogre remains large and central, but his body releases glowing memory fragments as each unfinished repair is completed. Those fragments should dissolve upward into purple-and-gold stars. Make the emotional center collective care, not combat.",
       "references": [
         "BBK_ACTION",
         "BBK_EXP",
@@ -1258,7 +1351,7 @@ window.SSB_WORLD_BIBLE = {
       "conflict": "The repair must be collective, not performed by the heroes alone.",
       "pageTurn": "Let the final confrontation generate emotion through collective repair, not battle.",
       "withheld": "Do not frame the Ogre's ending as destruction; he transforms into memory and lesson.",
-      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board.",
+      "canonicalDecision": "Updated from the July 2026 revised 13-beat Echo Ogre picture-book board. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "qualityGates": {
         "imageComplement": true,
         "thumbnailRead": true,
@@ -1269,7 +1362,18 @@ window.SSB_WORLD_BIBLE = {
       },
       "sourceFiles": [
         "Beat12/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP12-CAM-FG02",
+      "cameraOwner": "The community as a living whole",
+      "locationIds": [
+        "MT-06",
+        "MT-04",
+        "MT-07",
+        "MT-05",
+        "MT-01"
+      ],
+      "cameraDirection": "Use the locked elevated reverse environmental camera from the Floating Garden perimeter (MT-06), facing southwest across Neighborhood Green (MT-04) toward Community Plaza (MT-07), with Community Mural (MT-05), Family Home (MT-01), connected paths, gardens, homes, and residents readable. Make this feel like a communal exhale, not a superhero victory lineup. Show residents listening, apologizing, replanting, reconnecting a path, helping someone stand, repairing part of the mural, and restoring music together. Keep the brothers modest in scale and participating in one small shared task. Let broad Green space or a major pathway cross the gutter, keep principal faces out of the fold, leave repaired golden seams visible, and lead a restored path toward the far-right and visually home.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP13",
@@ -1280,9 +1384,9 @@ window.SSB_WORLD_BIBLE = {
       "beat": "EO-B13",
       "sceneAssetId": "EO_PAUSE_REALIZATION",
       "status": "prompt",
-      "location": "Maplewood Terrace at golden evening beneath glowing baobab trees",
+      "location": "Maplewood Terrace restored overview: Community Plaza (MT-07), Neighborhood Green (MT-04), Family Home (MT-01), Community Mural (MT-05), and Floating Garden (MT-06)",
       "environmentState": "Restored / Final image",
-      "camera": "Wide golden-evening final image echoing the opening with warmer, wiser behavior",
+      "camera": "EO-SP13-CAM-W01-RETURN - opening camera bookend, transformed. Same camera position, lens, azimuth, pitch, and framing as Spread 1: elevated above southern Market District approach, facing north-northwest, 100-120 ft high, azimuth 340 deg, pitch 30 deg down, 24-28 mm lens, about 300 ft distance; extreme-wide restored environmental portrait, deep focus.",
       "storyText": "Tomorrow grows here.",
       "objective": "Close with a final image that reflects the opening and shows a more beautiful, more connected neighborhood.",
       "storyFunction": "Final Image: Maplewood Terrace is more beautiful than the opening; children discover the repaired mural naturally; the brothers watch beneath glowing baobab trees; a tiny purple butterfly-light reminds everyone to keep choosing kindness.",
@@ -1296,7 +1400,7 @@ window.SSB_WORLD_BIBLE = {
       "rereadDiscovery": "The purple watcher from the opening has transformed into a butterfly-light instead of disappearing, and the mural hides tiny visual callbacks to earlier repairs.",
       "visualInfo": "Echo the opening composition but show changed behavior: the brothers are together, slower, more observant, and part of the community. Let the mural tell the story visually, without labels or slogans.",
       "avoid": "Avoid a moral banner, explicit lesson text, “the day kindness saved Maplewood Terrace,” large villain eyes, hero worship, or a perfectly untouched reset.",
-      "illustrationPrompt": "Create the final image of The Echo Ogre at golden evening. Maplewood Terrace should feel more beautiful than the opening because the community has repaired together. Use glowing baobab trees, restored Sparkle Grid paths, reopened gardens, repaired murals with golden seams, and children playing beneath warm light. The Community Mural should be repaired and quietly alive, with small wordless visual echoes of the journey for children to discover, but no explanatory mural text, no slogan, and no written phrase like 'the day kindness saved Maplewood Terrace.' Bubble Boy and Captain Cash watch together, calmer and more connected than they were at the beginning. Their body language should show that they learned to pause, listen, help, and repair. Include one tiny purple butterfly-light as a gentle reminder that kindness must keep being chosen. Leave elegant negative space for the final line, “Tomorrow grows here.”",
+      "illustrationPrompt": "Locked camera direction: Use the exact opening camera as a bookend: elevated above the southern Market District approach, facing north-northwest over Community Plaza (MT-07), Neighborhood Green (MT-04), Family Home (MT-01), Community Mural (MT-05), and Floating Garden (MT-06). Show the same world transformed: residents interact rather than merely occupy the space, the mural has repaired golden seams, the Floating Garden is elevated and healthy, the Sparkle Grid is stable but not mechanically perfect, and the boys help with a modest community task. Do not present the Ogre as defeated; if any trace remains, make it subtle violet-gold memory integrated into mural, light, or neighborhood pattern. Match Spread 1 gutter structure with the Green, paths, and atmosphere crossing the center, and reserve calm sky or open foliage for the final line. Keep the existing narrative action: Create the final image of The Echo Ogre at golden evening. Maplewood Terrace should feel more beautiful than the opening because the community has repaired together. Use glowing baobab trees, restored Sparkle Grid paths, reopened gardens, repaired murals with golden seams, and children playing beneath warm light. The Community Mural should be repaired and quietly alive, with small wordless visual echoes of the journey for children to discover, but no explanatory mural text, no slogan, and no written phrase like 'the day kindness saved Maplewood Terrace.' Bubble Boy and Captain Cash watch together, calmer and more connected than they were at the beginning. Their body language should show that they learned to pause, listen, help, and repair. Include one tiny purple butterfly-light as a gentle reminder that kindness must keep being chosen. Leave elegant negative space for the final line, “Tomorrow grows here.”",
       "references": [
         "BBK_MODEL",
         "CC_MODEL",
@@ -1341,7 +1445,7 @@ window.SSB_WORLD_BIBLE = {
       "rectoHook": "Back matter can invite readers to practice repair in their own family.",
       "pageTurn": "Let the final line breathe and leave emotional closure.",
       "withheld": "Do not set up a scary sequel threat.",
-      "canonicalDecision": "Refined on July 13, 2026 from the story-team simplification review: first read simple, worldbuilding layered for rereads.",
+      "canonicalDecision": "Refined on July 13, 2026 from the story-team simplification review: first read simple, worldbuilding layered for rereads. Locked camera schedule applied July 14, 2026; narrative text unchanged.",
       "qualityGates": {
         "imageComplement": true,
         "thumbnailRead": true,
@@ -1352,7 +1456,18 @@ window.SSB_WORLD_BIBLE = {
       },
       "sourceFiles": [
         "Beat13/README.md"
-      ]
+      ],
+      "cameraId": "EO-SP13-CAM-W01-RETURN",
+      "cameraOwner": "Maplewood Terrace, now changed",
+      "locationIds": [
+        "MT-07",
+        "MT-04",
+        "MT-01",
+        "MT-05",
+        "MT-06"
+      ],
+      "cameraDirection": "Use the exact opening camera as a bookend: elevated above the southern Market District approach, facing north-northwest over Community Plaza (MT-07), Neighborhood Green (MT-04), Family Home (MT-01), Community Mural (MT-05), and Floating Garden (MT-06). Show the same world transformed: residents interact rather than merely occupy the space, the mural has repaired golden seams, the Floating Garden is elevated and healthy, the Sparkle Grid is stable but not mechanically perfect, and the boys help with a modest community task. Do not present the Ogre as defeated; if any trace remains, make it subtle violet-gold memory integrated into mural, light, or neighborhood pattern. Match Spread 1 gutter structure with the Green, paths, and atmosphere crossing the center, and reserve calm sky or open foliage for the final line.",
+      "printNotes": "Two-page full-bleed illustration: 17.25 x 8.75 in / 5175 x 2625 px at 300 DPI. Protect the 450 px center gutter band around x=2363-2813: only roads, broad paths, Sparkle Grid light, atmosphere, foliage, unimportant architecture, or broad translucent Echo Ogre body may cross it; keep faces, eyes, meaningful hands, chest emblems, small clues, dialogue, and the emotional center outside the band."
     },
     {
       "id": "EO-SP14",
