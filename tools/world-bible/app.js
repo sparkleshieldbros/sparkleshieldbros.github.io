@@ -9,7 +9,7 @@
   let bookById = new Map(books.map((book) => [book.id, book]));
   const progressKey = "ssb-world-bible-progress-v1";
 
-  let selectedView = "dashboard";
+  let selectedView = "book";
   let selectedBookId = data.books[0].id;
   let selectedSpreadId = data.books[0].currentSpreadId;
   let searchTerm = "";
@@ -32,6 +32,10 @@
     spreadSelect: document.getElementById("spread-select"),
     spreadList: document.getElementById("spread-list"),
     spreadDetail: document.getElementById("spread-detail"),
+    intakeAttributeGrid: document.getElementById("intake-attribute-grid"),
+    intakePromptOutput: document.getElementById("intake-prompt-output"),
+    copyIntakePrompt: document.getElementById("copy-intake-prompt"),
+    downloadIntakePrompt: document.getElementById("download-intake-prompt"),
     promptOutput: document.getElementById("prompt-output"),
     copyPrompt: document.getElementById("copy-prompt"),
     downloadPrompt: document.getElementById("download-prompt"),
@@ -80,6 +84,8 @@
 
     els.copyPrompt.addEventListener("click", copyPrompt);
     els.downloadPrompt.addEventListener("click", downloadPrompt);
+    els.copyIntakePrompt.addEventListener("click", copyIntakePrompt);
+    els.downloadIntakePrompt.addEventListener("click", downloadIntakePrompt);
     els.addBook.addEventListener("click", addBook);
     els.addSpread.addEventListener("click", addSpread);
     els.exportProgress.addEventListener("click", exportProgress);
@@ -132,6 +138,11 @@
         copyPathForAsset(copyAssetPath.dataset.copyAssetPath);
       }
 
+      const copyCurrentPrompt = event.target.closest("[data-copy-current-prompt]");
+      if (copyCurrentPrompt) {
+        copySelectedPrompt(copyCurrentPrompt.dataset.copyCurrentPrompt);
+      }
+
       const selectSpread = event.target.closest("[data-select-spread]");
       if (selectSpread) {
         selectedSpreadId = selectSpread.dataset.selectSpread;
@@ -161,8 +172,9 @@
   function titleForView(view) {
     return {
       dashboard: "Dashboard",
-      book: "Books",
-      prompt: "Prompt Builder",
+      book: "Prompt Desk",
+      intake: "Book Intake",
+      prompt: "Full Prompt",
       library: "Asset Library",
       pipeline: "KDP Pipeline"
     }[view] || "World Bible";
@@ -235,6 +247,7 @@
     renderSpreadSelect();
     renderDashboard();
     renderBook();
+    renderIntake();
     renderPrompt();
     renderAssetLibrary();
     renderPipeline();
@@ -247,7 +260,7 @@
       acc[stage.id] = bookSpreads.filter((spread) => isStageDone(spread.id, stage.id)).length;
       return acc;
     }, {});
-    const listedRefs = new Set(bookSpreads.flatMap((spread) => spread.references || [])).size;
+    const listedRefs = new Set(bookSpreads.flatMap(referenceIdsForSpread)).size;
     const missing = getMissingReferences(bookSpreads).length;
     const nextSpread = bookSpreads.find((spread) => getSpreadBlockers(spread).length)
       || bookSpreads.find((spread) => !isStageDone(spread.id, "final"))
@@ -312,12 +325,14 @@
   }
 
   function renderSpreadButton(spread) {
+    const blockers = getSpreadBlockers(spread);
     return `
       <button class="spread-button ${spread.id === selectedSpreadId ? "active" : ""}" type="button" data-select-spread="${spread.id}">
         <span class="spread-number">${pad(spread.spread)}</span>
         <span>
           <strong>${escapeHtml(spread.title)}</strong>
           <span>${escapeHtml(spread.beat)} | Pages ${escapeHtml(spread.pages)}</span>
+          <span class="spread-status ${blockers.length ? "needs" : "ready"}">${blockers.length ? blockers[0] : "Ready for prompt work"}</span>
         </span>
       </button>
     `;
@@ -343,6 +358,8 @@
     const brief = markdownCache[spread.id] || buildBriefMarkdown(spread);
     const briefStatus = markdownStatus[spread.id] || "generated fallback";
     const briefPath = markdownPathForSpread(spread);
+    const prompt = buildPrompt(spread);
+    const refs = referenceIdsForSpread(spread);
     const stageChecks = data.pipelineStages.map((stage) => (
       `<label class="check-item">
         <input type="checkbox" data-stage-toggle="${stage.id}" data-spread-id="${spread.id}" ${isStageDone(spread.id, stage.id) ? "checked" : ""}>
@@ -351,117 +368,140 @@
     )).join("");
 
     return `
-      <article>
-        <div class="spread-hero">
-          ${actualSpread ? `<button class="asset-card spread-art-card" type="button" data-preview-asset="${actualSpread.id}" aria-label="Preview ${escapeHtml(actualSpread.title)}">
-            <img class="scene-preview" src="${actualSpread.path}" alt="${escapeHtml(actualSpread.title)}">
-            <strong>${escapeHtml(actualSpread.title)}</strong>
-            <small>Actual spread artwork</small>
-          </button>` : `<div class="spread-art-placeholder"><strong>Not Started</strong><small>No actual spread artwork has been attached yet.</small></div>`}
-          <div class="spread-copy">
-            <p class="eyebrow">${escapeHtml(spread.beat)} | Spread ${pad(spread.spread)} | Pages ${escapeHtml(spread.pages)}</p>
-            <h2>${escapeHtml(spread.title)}</h2>
-            <div class="meta-row">
-              <span class="pill gold">${escapeHtml(spread.status)}</span>
-              <span class="pill green">${escapeHtml(spread.environmentState)}</span>
-              <span class="pill orange">${escapeHtml(spread.location)}</span>
-              <span class="pill ${blockers.length ? "orange" : "green"}">${blockers.length ? "Needs attention" : "Ready for next step"}</span>
-            </div>
-            <p><strong>Story text:</strong> ${escapeHtml(spread.storyText)}</p>
-            <p><strong>Illustration purpose:</strong> ${escapeHtml(spread.objective)}</p>
-            <p><strong>Camera:</strong> ${escapeHtml(spread.camera)}</p>
-            <p><strong>Next action:</strong> ${escapeHtml(nextAction)}</p>
-            ${missing.length ? `<p class="pill orange">Missing reference IDs: ${missing.map(escapeHtml).join(", ")}</p>` : `<p class="pill green">All listed reference IDs resolve in the tool.</p>`}
-            <div class="button-row">
-              <button class="primary-button" type="button" data-view-jump="prompt" onclick="window.SSB_APP.setView('prompt')">Build prompt</button>
-              <button class="ghost-button" type="button" onclick="window.SSB_APP.downloadManifest('${spread.id}')">Download reference manifest</button>
-            </div>
+      <article class="prompt-desk">
+        <section class="desk-main">
+          <div class="workflow-strip" aria-label="Prompt workflow">
+            ${["Spread", "References", "Prompt", "Artwork", "Layout"].map((step, index) => `
+              <span class="${index < 3 && !blockers.length ? "ready" : index === 0 ? "active" : ""}">${escapeHtml(step)}</span>
+            `).join("")}
           </div>
-        </div>
-        <section class="readiness-grid">
-          <div class="readiness-card ${blockers.length ? "warning" : "ready"}">
-            <h3>${blockers.length ? "Readiness blockers" : "Ready check"}</h3>
+          <section class="spread-focus-card">
+            ${actualSpread ? `<button class="focus-art" type="button" data-preview-asset="${actualSpread.id}" aria-label="Preview ${escapeHtml(actualSpread.title)}">
+              <img src="${actualSpread.path}" alt="${escapeHtml(actualSpread.title)}">
+              <span>Actual spread artwork</span>
+            </button>` : `<div class="focus-art placeholder"><strong>Not Started</strong><span>No finished spread image is attached yet.</span></div>`}
+            <div class="focus-summary">
+              <p class="eyebrow">Spread ${pad(spread.spread)} | Pages ${escapeHtml(spread.pages || "not set")}</p>
+              <h2>${escapeHtml(spread.title)}</h2>
+              <p class="story-caption">${escapeHtml(optionalText(spread.storyText, "Add the short on-page caption for this spread."))}</p>
+              <div class="meta-row">
+                <span class="pill gold">${escapeHtml(spread.status)}</span>
+                <span class="pill green">${escapeHtml(optionalText(spread.location, "Location needed"))}</span>
+                <span class="pill orange">${escapeHtml(optionalText(spread.camera, "Camera needed"))}</span>
+              </div>
+              <p><strong>Spread job:</strong> ${escapeHtml(optionalText(spread.objective))}</p>
+              <p><strong>World details:</strong> ${escapeHtml(optionalText(spread.worldBuilding, "Add the world-building elements this spread must preserve."))}</p>
+              <p><strong>Next action:</strong> ${escapeHtml(nextAction)}</p>
+            </div>
+          </section>
+          <section class="prompt-card">
+            <div class="brief-header">
+              <div>
+                <h3>Copy-ready prompt</h3>
+                <p>Generated from this spread, its references, and the picture-book rules.</p>
+              </div>
+              <div class="button-row">
+                <button class="primary-button" type="button" data-copy-current-prompt="${spread.id}">Copy prompt</button>
+                <button class="ghost-button" type="button" onclick="window.SSB_APP.downloadManifest('${spread.id}')">Download package</button>
+              </div>
+            </div>
+            <textarea class="prompt-preview" readonly spellcheck="false" aria-label="Generated prompt for ${escapeHtml(spread.title)}">${escapeHtml(prompt)}</textarea>
+          </section>
+        </section>
+        <aside class="desk-rail">
+          <section class="rail-card ${blockers.length ? "warning" : "ready"}">
+            <h3>${blockers.length ? "Needs attention" : "Ready to copy"}</h3>
             ${blockers.length
               ? `<ul>${blockers.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
-              : `<p>This spread has the basic brief, references, and asset links needed for prompt work.</p>`}
-          </div>
-          <div class="readiness-card">
-            <h3>Neighbor context</h3>
-            <div class="neighbor-row">
+              : `<p>This spread has enough story, reference, and production context for a strong prompt.</p>`}
+            ${missing.length ? `<p class="pill orange">Missing: ${missing.map(escapeHtml).join(", ")}</p>` : `<p class="pill green">All references resolve</p>`}
+          </section>
+          <section class="rail-card">
+            <h3>Reference package</h3>
+            <p>${refs.length} image references are connected to this spread.</p>
+            ${renderReferenceRail(spread)}
+          </section>
+          <section class="rail-card">
+            <h3>Adjacent spreads</h3>
+            <div class="neighbor-row compact">
               ${renderNeighborCard("Previous", neighbors.previous)}
               ${renderNeighborCard("Current", spread)}
               ${renderNeighborCard("Next", neighbors.next)}
             </div>
-          </div>
-        </section>
-        <section class="readiness-grid canon-grid">
-          ${renderCanonCard(spread)}
-          ${renderQualityGateCard(spread)}
-        </section>
-        <section class="asset-section brief-panel">
-          <div class="brief-header">
-            <div>
-              <h3>Spread setup</h3>
+          </section>
+          <section class="rail-card">
+            <h3>Production checklist</h3>
+            <div class="checklist compact">${stageChecks}</div>
+          </section>
+        </aside>
+        <section class="desk-advanced">
+          <details class="advanced-panel">
+            <summary>Spread setup</summary>
+            <div class="brief-header">
               <p>Edit the spread record used by the tracker and prompt builder.</p>
+              <button class="primary-button" type="button" data-save-spread="${spread.id}">Save spread setup</button>
             </div>
-            <button class="primary-button" type="button" data-save-spread="${spread.id}">Save spread setup</button>
-          </div>
-          <div class="form-grid">
-            ${fieldInput(spread.id, "title", "Title", spread.title)}
-            ${fieldInput(spread.id, "pages", "Pages", spread.pages)}
-            ${fieldInput(spread.id, "beat", "Beat", spread.beat)}
-            ${fieldInput(spread.id, "location", "Location", spread.location)}
-            ${fieldInput(spread.id, "environmentState", "Environment state", spread.environmentState)}
-            ${fieldInput(spread.id, "camera", "Camera", spread.camera)}
-            ${assetSelectInput(spread.id, "artAssetId", "Actual spread image", spread.artAssetId)}
-            ${fieldInput(spread.id, "lighting", "Lighting", spread.lighting)}
-            ${fieldInput(spread.id, "colorScript", "Color script", spread.colorScript)}
-            ${fieldInput(spread.id, "storyText", "Short caption/story text", spread.storyText)}
-            ${fieldInput(spread.id, "objective", "Illustration purpose", spread.objective)}
-            ${fieldInput(spread.id, "primaryRead", "Primary visual read", spread.primaryRead)}
-            ${fieldInput(spread.id, "emotionalTurn", "Emotional turn", spread.emotionalTurn)}
-            ${fieldInput(spread.id, "conflict", "Conflict or tension", spread.conflict)}
-            ${fieldInput(spread.id, "readerDiscovery", "Reader discovery", spread.readerDiscovery)}
-            ${fieldInput(spread.id, "pageTurn", "Page-turn intent", spread.pageTurn)}
-            ${fieldInput(spread.id, "visualInfo", "Important visual information", spread.visualInfo)}
-            ${fieldInput(spread.id, "withheld", "What to withhold", spread.withheld)}
-            ${fieldInput(spread.id, "avoid", "Avoid", spread.avoid)}
-            ${fieldInput(spread.id, "printNotes", "Photoshop / InDesign notes", spread.printNotes)}
-          </div>
-        </section>
-        <section class="asset-section">
-          <div class="brief-header">
-            <div>
-              <h3>Prompt photos and references</h3>
-              <p>Select the images that should travel with this spread's prompt.</p>
+            <div class="form-grid">
+              ${fieldInput(spread.id, "title", "Title", spread.title)}
+              ${fieldInput(spread.id, "pages", "Pages", spread.pages)}
+              ${fieldInput(spread.id, "beat", "Beat", spread.beat)}
+              ${fieldInput(spread.id, "location", "Location", spread.location)}
+              ${fieldInput(spread.id, "environmentState", "Environment state", spread.environmentState)}
+              ${fieldInput(spread.id, "camera", "Camera", spread.camera)}
+              ${assetSelectInput(spread.id, "artAssetId", "Actual spread image", spread.artAssetId)}
+              ${fieldInput(spread.id, "lighting", "Lighting", spread.lighting)}
+              ${fieldInput(spread.id, "colorScript", "Color script", spread.colorScript)}
+              ${fieldInput(spread.id, "storyText", "Short caption/story text", spread.storyText)}
+              ${fieldInput(spread.id, "objective", "Illustration purpose", spread.objective)}
+              ${fieldInput(spread.id, "storyFunction", "Story function", spread.storyFunction)}
+              ${fieldInput(spread.id, "worldBuilding", "World-building details", spread.worldBuilding)}
+              ${fieldInput(spread.id, "primaryRead", "Primary visual read", spread.primaryRead)}
+              ${fieldInput(spread.id, "emotionalTurn", "Emotional turn", spread.emotionalTurn)}
+              ${fieldInput(spread.id, "conflict", "Conflict or tension", spread.conflict)}
+              ${fieldInput(spread.id, "readerDiscovery", "Reader discovery", spread.readerDiscovery)}
+              ${fieldInput(spread.id, "rereadDiscovery", "Reread discovery", spread.rereadDiscovery)}
+              ${fieldInput(spread.id, "rectoHook", "Recto hook", spread.rectoHook)}
+              ${fieldInput(spread.id, "illustrationPrompt", "Illustration direction", spread.illustrationPrompt)}
+              ${fieldInput(spread.id, "pageTurn", "Page-turn intent", spread.pageTurn)}
+              ${fieldInput(spread.id, "visualInfo", "Important visual information", spread.visualInfo)}
+              ${fieldInput(spread.id, "withheld", "What to withhold", spread.withheld)}
+              ${fieldInput(spread.id, "avoid", "Avoid", spread.avoid)}
+              ${fieldInput(spread.id, "printNotes", "Photoshop / InDesign notes", spread.printNotes)}
             </div>
-            <div class="reference-picker">
-              <select id="reference-picker-${spread.id}" aria-label="Choose image reference">
-                ${assets.map((asset) => `<option value="${asset.id}">${escapeHtml(asset.title)} (${escapeHtml(asset.group)})</option>`).join("")}
-              </select>
-              <button class="ghost-button" type="button" data-add-reference="${spread.id}">Add image</button>
-              <button class="ghost-button" type="button" data-add-custom-reference="${spread.id}">Add image path</button>
+          </details>
+          <details class="advanced-panel">
+            <summary>Reference picker</summary>
+            <div class="brief-header">
+              <p>Select images that should travel with this spread's prompt.</p>
+              <div class="reference-picker">
+                <select id="reference-picker-${spread.id}" aria-label="Choose image reference">
+                  ${assets.map((asset) => `<option value="${asset.id}">${escapeHtml(asset.title)} (${escapeHtml(asset.group)})</option>`).join("")}
+                </select>
+                <button class="ghost-button" type="button" data-add-reference="${spread.id}">Add image</button>
+                <button class="ghost-button" type="button" data-add-custom-reference="${spread.id}">Add image path</button>
+              </div>
             </div>
-          </div>
-          ${renderReferenceTierSummary(spread)}
-          <div class="reference-grid">${(spread.references || []).map((assetId) => renderAttachedAssetCard(spread.id, assetId)).join("")}</div>
-        </section>
-        <section class="asset-section brief-panel">
-          <div class="brief-header">
-            <div>
-              <h3>Living spread brief</h3>
+            ${renderReferenceTierSummary(spread)}
+            <div class="reference-grid">${referenceIdsForSpread(spread).map((assetId) => renderAttachedAssetCard(spread.id, assetId)).join("")}</div>
+          </details>
+          <details class="advanced-panel">
+            <summary>Living spread brief</summary>
+            <div class="brief-header">
               <p>${escapeHtml(briefPath)} | ${escapeHtml(briefStatus)}</p>
+              <div class="button-row">
+                <button class="primary-button" type="button" data-save-brief="${spread.id}">Save .md</button>
+                <button class="ghost-button" type="button" data-reload-brief="${spread.id}">Reload .md</button>
+              </div>
             </div>
-            <div class="button-row">
-              <button class="primary-button" type="button" data-save-brief="${spread.id}">Save .md</button>
-              <button class="ghost-button" type="button" data-reload-brief="${spread.id}">Reload .md</button>
+            <textarea class="brief-editor" id="brief-editor-${spread.id}" spellcheck="true" aria-label="Markdown brief for ${escapeHtml(spread.title)}">${escapeHtml(brief)}</textarea>
+          </details>
+          <details class="advanced-panel">
+            <summary>Canon and quality checks</summary>
+            <div class="readiness-grid canon-grid">
+              ${renderCanonCard(spread)}
+              ${renderQualityGateCard(spread)}
             </div>
-          </div>
-          <textarea class="brief-editor" id="brief-editor-${spread.id}" spellcheck="true" aria-label="Markdown brief for ${escapeHtml(spread.title)}">${escapeHtml(brief)}</textarea>
-        </section>
-        <section class="asset-section">
-          <h3>Production checklist</h3>
-          <div class="checklist">${stageChecks}</div>
+          </details>
         </section>
       </article>
     `;
@@ -471,10 +511,15 @@
     const longText = [
       "storyText",
       "objective",
+      "storyFunction",
+      "worldBuilding",
       "primaryRead",
       "emotionalTurn",
       "conflict",
       "readerDiscovery",
+      "rereadDiscovery",
+      "rectoHook",
+      "illustrationPrompt",
       "pageTurn",
       "visualInfo",
       "withheld",
@@ -518,7 +563,7 @@
         <p>${escapeHtml(spread.objective)}</p>
         <p><strong>Next action:</strong> ${escapeHtml(getNextAction(spread))}</p>
         <div class="pill-row">
-          <span class="pill gold">${(spread.references || []).length} required refs</span>
+          <span class="pill gold">${referenceIdsForSpread(spread).length} reference links</span>
           <span class="pill ${missing.length ? "orange" : "green"}">${missing.length ? missing.length + " missing IDs" : "references resolved"}</span>
           <span class="pill ${blockers.length ? "orange" : "green"}">${blockers.length ? blockers.length + " blockers" : "brief ready"}</span>
           <span class="pill ${unresolvedConflicts.length ? "orange" : "green"}">${unresolvedConflicts.length ? "canon conflict" : "canon clear"}</span>
@@ -591,6 +636,38 @@
     `;
   }
 
+  function renderReferenceRail(spread) {
+    const tiers = referenceTiersForSpread(spread);
+    const rows = [
+      ["Mandatory", tiers.mandatory],
+      ["Conditional", tiers.conditional],
+      ["Inspirational", tiers.inspirational]
+    ];
+    return `
+      <div class="reference-rail-list">
+        ${rows.map(([label, ids]) => `
+          <div class="reference-rail-group">
+            <span>${escapeHtml(label)}</span>
+            ${ids.length
+              ? ids.map((assetId) => renderReferenceRailAsset(assetId)).join("")
+              : `<small>None listed</small>`}
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  function renderReferenceRailAsset(assetId) {
+    const asset = assetById.get(assetId);
+    if (!asset) return `<small class="missing-reference">${escapeHtml(assetId)} is missing</small>`;
+    return `
+      <button class="rail-asset" type="button" data-preview-asset="${asset.id}">
+        <img src="${asset.path}" alt="${escapeHtml(asset.title)}" loading="lazy">
+        <strong>${escapeHtml(asset.title)}</strong>
+      </button>
+    `;
+  }
+
   function renderAssetCard(assetId) {
     const asset = assetById.get(assetId);
     if (!asset) {
@@ -643,6 +720,103 @@
     els.promptOutput.value = spread ? buildPrompt(spread) : "Add a spread first, then the prompt will appear here.";
   }
 
+  function renderIntake() {
+    const intake = getNewBookIntake();
+    els.intakeAttributeGrid.innerHTML = intake.attributeGroups.map((group) => `
+      <article class="intake-attribute-card">
+        <span>${escapeHtml(group.label)}</span>
+        <p>${escapeHtml(group.purpose)}</p>
+        <ul>
+          ${group.fields.map((field) => `<li>${escapeHtml(field)}</li>`).join("")}
+        </ul>
+      </article>
+    `).join("");
+    els.intakePromptOutput.value = buildNewBookIntakePrompt(intake);
+  }
+
+  function getNewBookIntake() {
+    return data.newBookIntake || {
+      title: "Sparkle Shield New Book Intake",
+      purpose: "Create a production-ready story package for a new children's picture book.",
+      attributeGroups: [],
+      outputFields: []
+    };
+  }
+
+  function buildNewBookIntakePrompt(intake) {
+    const fieldList = intake.outputFields.map((field) => `- ${field}`).join("\n");
+    const attributeList = intake.attributeGroups.map((group) => [
+      `## ${group.label}`,
+      group.purpose,
+      ...group.fields.map((field) => `- ${field}`)
+    ].join("\n")).join("\n\n");
+
+    return [
+      `# ${intake.title}`,
+      "",
+      "You are a senior children's picture-book story architect, visual-development producer, and Sparkle Shield Bros continuity editor. Help me turn a brand-new children's book idea into a production-ready package that fits my Sparkle Shield World Bible app.",
+      "",
+      "Use the questions and attributes below to infer what is missing. Ask only essential clarifying questions if the story cannot be structured responsibly; otherwise make clear, useful assumptions and label them.",
+      "",
+      "## My starting idea",
+      "- Working title: [new book title]",
+      "- Series connection: [how this fits Sparkle Shield Bros, or say new branch]",
+      "- Target reader: [age range, reading level, emotional need]",
+      "- Core premise: [one sentence]",
+      "- Main child protagonist(s): [who changes through the story]",
+      "- Central feeling or relationship problem: [fear, jealousy, impatience, exclusion, shame, grief, etc.]",
+      "- Setting or community space: [home, school, neighborhood, library, garden, market, etc.]",
+      "- Must-include characters or new characters: [names and roles]",
+      "- Must-avoid content: [anything that does not belong]",
+      "- Publication goal: [KDP paperback, picture book dummy, website adventure, etc.]",
+      "",
+      "## Attributes to populate",
+      attributeList,
+      "",
+      "## Output format",
+      "Return clean Markdown with copyable JSON blocks. Use concise, production-ready language. The result must be easy to transfer into my World Bible app, beat README files, image prompts, and KDP production tracker.",
+      "",
+      "### 1. Book record",
+      "Create a JSON object for the book with: id, title, subtitle, status, currentSpreadId, coverAssetId, manifestPath, goal, printTarget, audience, wordCountTarget, pagePlan, and coreEmotionalRule.",
+      "",
+      "### 2. Story spine",
+      "Give me: logline, promise to the reader, protagonist want, protagonist need, emotional wound, antagonist/problem force, child-led solution, final image, and the exact lesson without moralizing.",
+      "",
+      "### 3. Spread records",
+      "Create 13 story spreads for a 32-page picture book, beginning on pages 6-7 and ending on pages 30-31, plus optional page 32 back matter. Each spread must include these fields:",
+      fieldList,
+      "",
+      "For every odd/right-hand page, include a stronger page-turn question or emotional hook. Make the visual subtext add information beyond the words. Keep captions short enough for ages 5-8, ideally one clear sentence or phrase per spread.",
+      "",
+      "### 4. Reference image recommendations",
+      "Recommend the exact reference images needed before illustration begins. Separate them into character model sheets, expression sheets, action/pose sheets, costume sheets, recurring location sheets, environment state guides, props, hero cards or ability cards, cover art, and final spread art.",
+      "",
+      "For each recommended reference, include: assetId, proposed filename, folder path, purpose, dimensions, priority, and which spreads need it. Explain how the reference should influence the spread in adverbial phrases such as compositionally, emotionally, architecturally, chromatically, texturally, cinematically, and proportionally.",
+      "",
+      "### 5. Consistency language",
+      "Write reusable continuity rules for the book: character continuity, world continuity, color language, camera language, emotional-environment rules, typography/safe-zone notes, and what not to draw.",
+      "",
+      "### 6. Prompt starters",
+      "For each spread, write a first-pass illustration prompt that uses the spread fields, recommends the right references, protects child-readable emotion, and leaves room for typography and gutter safety.",
+      "",
+      "### 7. Quality gates",
+      "For each spread, list pass/fail checks for: first-read clarity, child agency, page-turn drama, visual subtext, second-look discovery, reference continuity, emotional safety, image-text balance, and KDP/InDesign readiness.",
+      "",
+      "## Professional constraints",
+      "- Target a commercially readable 32-page picture book for ages 5-8 unless I specify otherwise.",
+      "- Keep the story between 700 and 1,100 words unless I specify an early-reader format.",
+      "- Let the child protagonist solve the central conflict; adults may model, support, or repair but should not steal the climax.",
+      "- Use the rhythm of threes when the protagonist tries and fails.",
+      "- Alternate camera scale across spreads: establishing, medium action, close emotional read, hero shot, quiet repair, final image.",
+      "- Avoid over-explaining the lesson; let images and choices carry meaning.",
+      "- Keep worldbuilding readable on first pass and richer on reread.",
+      "- Recommend missing reference images before asking for final spread art.",
+      "",
+      "## Final check",
+      "End with a short implementation checklist: what to add to the World Bible app first, what reference images to generate first, what spreads need editorial review, and what can move into Photoshop/InDesign production."
+    ].join("\n");
+  }
+
   function buildPrompt(spread) {
     const book = bookById.get(spread.bookId) || activeBook();
     const neighbors = getNeighborSpreads(spread);
@@ -664,6 +838,9 @@
       "Spread purpose:",
       optionalText(spread.objective),
       "",
+      "World-building details that must appear:",
+      optionalText(spread.worldBuilding, "Use the approved references to keep Maplewood Terrace, the Sparkle Grid, emotional repair, and character/world continuity specific."),
+      "",
       "Primary visual read:",
       optionalText(spread.primaryRead, "Make the main story action readable at thumbnail size."),
       "",
@@ -675,6 +852,17 @@
       "",
       "Reader discovery:",
       optionalText(spread.readerDiscovery, "Include one visual detail a child can notice after the first read."),
+      "",
+      "Picture-book page-turn engineering:",
+      [
+        `Story function: ${optionalText(spread.storyFunction, "Clarify this spread's job in the 32-page picture-book arc.")}`,
+        `Visual hierarchy: ${formatListText(spread.visualHierarchy, "Lead with one clear emotional focal point.")}`,
+        `Reread discovery: ${optionalText(spread.rereadDiscovery, "Add one meaningful second-look detail without cluttering the spread.")}`,
+        `Recto hook: ${optionalText(spread.rectoHook, "If this spread ends on an odd page, leave the reader with a bigger question or unresolved emotional turn.")}`
+      ].join("\n"),
+      "",
+      "Copy-ready illustration direction:",
+      optionalText(spread.illustrationPrompt, "Use the story goal, camera, references, and emotional target to create a specific full-spread illustration brief."),
       "",
       "Lighting and color:",
       [
@@ -702,7 +890,10 @@
       optionalText(spread.avoid, "Avoid extra public-facing text, off-model characters, harsh violence, horror tone, and cluttered details that compete with the emotional beat."),
       "",
       "Sparkle Shield Bros art direction:",
-      "Create a polished children's book spread in the Sparkle Shield Bros visual system. Keep characters on-model, prioritize clear emotion, readable silhouettes, warm family-centered stakes, Afrofuturist warmth, and a hopeful sense of repair.",
+      [
+        "Create a polished children's book spread in the Sparkle Shield Bros visual system. Keep characters on-model, prioritize clear emotion, readable silhouettes, warm family-centered stakes, Afrofuturist warmth, and a hopeful sense of repair.",
+        sparkleShieldContinuityBlock()
+      ].join("\n"),
       "",
       "Required references:",
       refs || "- Add photos/reference images from the spread setup screen.",
@@ -737,8 +928,20 @@
       `Emotional turn: ${optionalText(spread.emotionalTurn)}`,
       `Conflict: ${optionalText(spread.conflict)}`,
       "",
+      "## World Building",
+      optionalText(spread.worldBuilding),
+      "",
+      "## Picture-Book Engineering",
+      `Story function: ${optionalText(spread.storyFunction)}`,
+      `Visual hierarchy: ${formatListText(spread.visualHierarchy)}`,
+      `Reread discovery: ${optionalText(spread.rereadDiscovery)}`,
+      `Recto hook: ${optionalText(spread.rectoHook)}`,
+      "",
       "## Reader Discovery",
       optionalText(spread.readerDiscovery),
+      "",
+      "## Illustration Direction",
+      optionalText(spread.illustrationPrompt),
       "",
       "## Visual Direction",
       `Location: ${spread.location}`,
@@ -853,9 +1056,37 @@
     }
   }
 
+  async function copyIntakePrompt() {
+    try {
+      await navigator.clipboard.writeText(els.intakePromptOutput.value);
+      toast("New book intake prompt copied.");
+    } catch (error) {
+      els.intakePromptOutput.select();
+      toast("Intake prompt selected. Use copy from the keyboard.");
+    }
+  }
+
+  async function copySelectedPrompt(spreadId) {
+    const spread = spreadById.get(spreadId);
+    if (!spread) return;
+    try {
+      await navigator.clipboard.writeText(buildPrompt(spread));
+      toast("Prompt copied from the desk.");
+    } catch (error) {
+      els.promptOutput.value = buildPrompt(spread);
+      els.promptOutput.select();
+      toast("Prompt selected in the Full Prompt view. Use copy from the keyboard.");
+      setView("prompt");
+    }
+  }
+
   function downloadPrompt() {
     const spread = spreadById.get(selectedSpreadId);
     downloadText(`${spread.id}_Prompt.md`, els.promptOutput.value);
+  }
+
+  function downloadIntakePrompt() {
+    downloadText("SparkleShield_NewBook_IntakePrompt.md", els.intakePromptOutput.value);
   }
 
   function downloadManifest(spreadId) {
@@ -936,6 +1167,8 @@
       colorScript: "",
       storyText: "",
       objective: "",
+      storyFunction: "",
+      worldBuilding: "",
       artAssetId: "",
       approvedCanonical: false,
       canonicalDecision: "",
@@ -943,6 +1176,9 @@
       emotionalTurn: "",
       conflict: "",
       readerDiscovery: "",
+      rereadDiscovery: "",
+      rectoHook: "",
+      illustrationPrompt: "",
       pageTurn: "",
       visualInfo: "",
       withheld: "",
@@ -980,10 +1216,15 @@
       colorScript: fieldValue(spreadId, "colorScript"),
       storyText: fieldValue(spreadId, "storyText"),
       objective: fieldValue(spreadId, "objective"),
+      storyFunction: fieldValue(spreadId, "storyFunction"),
+      worldBuilding: fieldValue(spreadId, "worldBuilding"),
       primaryRead: fieldValue(spreadId, "primaryRead"),
       emotionalTurn: fieldValue(spreadId, "emotionalTurn"),
       conflict: fieldValue(spreadId, "conflict"),
       readerDiscovery: fieldValue(spreadId, "readerDiscovery"),
+      rereadDiscovery: fieldValue(spreadId, "rereadDiscovery"),
+      rectoHook: fieldValue(spreadId, "rectoHook"),
+      illustrationPrompt: fieldValue(spreadId, "illustrationPrompt"),
       pageTurn: fieldValue(spreadId, "pageTurn"),
       visualInfo: fieldValue(spreadId, "visualInfo"),
       withheld: fieldValue(spreadId, "withheld"),
@@ -1017,12 +1258,20 @@
   async function removeReferenceFromSpread(spreadId, assetId) {
     const spread = spreadById.get(spreadId);
     const references = (spread.references || []).filter((id) => id !== assetId);
+    const tiers = spread.referenceTiers || {};
     const updated = {
       ...spread,
       references,
-      sceneAssetId: spread.sceneAssetId === assetId ? (references[0] || "") : spread.sceneAssetId,
+      referenceTiers: {
+        mandatory: (tiers.mandatory || []).filter((id) => id !== assetId),
+        conditional: (tiers.conditional || []).filter((id) => id !== assetId),
+        inspirational: (tiers.inspirational || []).filter((id) => id !== assetId)
+      },
       artAssetId: spread.artAssetId === assetId ? "" : spread.artAssetId
     };
+    updated.sceneAssetId = spread.sceneAssetId === assetId
+      ? (referenceIdsForSpread(updated)[0] || "")
+      : spread.sceneAssetId;
     upsertProjectItem("spreads", updated);
     await saveProjectData();
     selectedSpreadId = spreadId;
@@ -1221,10 +1470,15 @@
       spread.colorScript,
       spread.storyText,
       spread.objective,
+      spread.storyFunction,
+      spread.worldBuilding,
       spread.primaryRead,
       spread.emotionalTurn,
       spread.conflict,
       spread.readerDiscovery,
+      spread.rereadDiscovery,
+      spread.rectoHook,
+      spread.illustrationPrompt,
       spread.pageTurn,
       spread.visualInfo,
       spread.withheld,
@@ -1232,7 +1486,7 @@
       spread.printNotes,
       spread.canonicalDecision,
       (spread.conflicts || []).map((item) => `${item.source || ""} ${item.issue || ""} ${item.decision || ""}`).join(" "),
-      (spread.references || []).join(" ")
+      referenceIdsForSpread(spread).join(" ")
     ].join(" ").toLowerCase();
   }
 
@@ -1254,7 +1508,7 @@
     const blockers = required
       .filter(([field]) => !String(spread[field] || "").trim())
       .map(([, label]) => label);
-    if (!(spread.references || []).length) blockers.push("Attach required references");
+    if (!referenceIdsForSpread(spread).length) blockers.push("Attach required references");
     const missing = getMissingReferences([spread]);
     if (missing.length) blockers.push(`Resolve missing references: ${missing.join(", ")}`);
     const unresolved = getUnresolvedConflicts(spread);
@@ -1276,7 +1530,7 @@
       ["imageComplement", "Image adds story value beyond the caption"],
       ["thumbnailRead", "Main action reads at thumbnail size"],
       ["characterPerformance", "Character acting is specific and on-model"],
-      ["worldSpecificity", "Maplewood Terrace / Sparkle Shield world details are present"],
+      ["worldSpecificity", "World detail supports the emotional action instead of crowding it"],
       ["rereadDiscovery", "There is a second-look detail for rereads"],
       ["bookRhythm", "Spread rhythm differs from neighboring spreads"]
     ].map(([key, label]) => ({ key, label, done: Boolean(gates[key]) }));
@@ -1284,10 +1538,20 @@
 
   function referenceTiersForSpread(spread) {
     const tiers = spread.referenceTiers || {};
-    const mandatory = Array.from(new Set(tiers.mandatory || spread.references || []));
+    const mandatory = Array.from(new Set([...(spread.references || []), ...(tiers.mandatory || [])]));
     const conditional = Array.from(new Set(tiers.conditional || []));
     const inspirational = Array.from(new Set(tiers.inspirational || []));
     return { mandatory, conditional, inspirational };
+  }
+
+  function referenceIdsForSpread(spread) {
+    const tiers = referenceTiersForSpread(spread);
+    return Array.from(new Set([
+      ...(spread.references || []),
+      ...tiers.mandatory,
+      ...tiers.conditional,
+      ...tiers.inspirational
+    ]));
   }
 
   function formatPromptReferences(spread) {
@@ -1413,10 +1677,29 @@
     return text || fallback;
   }
 
+  function formatListText(value, fallback = "Not set yet.") {
+    if (Array.isArray(value) && value.length) {
+      return value.map((item, index) => `${index + 1}. ${item}`).join(" ");
+    }
+    return optionalText(value, fallback);
+  }
+
+  function sparkleShieldContinuityBlock() {
+    return [
+      "Maintain exact continuity with approved character model sheets, construction guides, costume sheets, action sheets, expression sheets, Maplewood Terrace maps, recurring-location sheets, and Environmental State Guide.",
+      "Character continuity: Bubble Boy Kairo is age 7 in an orange hero suit, thoughtful, inventive, protective, and emotionally observant. Captain Cash is age 5 in a yellow-and-green hero suit, fast, impulsive, emotionally transparent, and childlike. Dad and Mom support without solving the children's problem. The Echo Ogre is living emotional architecture made from fractured stories, repeated patterns, distorted sound, mural fragments, ancestral imagery, and corrupted Sparkle Grid light, never a generic evil monster.",
+      "Environment continuity: keep Maplewood Terrace geographically recognizable, preserving the Family Home, Neighborhood Green, Community Mural, Floating Garden, Community Plaza, Sparkle Grid pathways, recurring trees, benches, gardens, and neighborhood architecture.",
+      "Series engine: the Sparkle Grid connects the community; technology amplifies values but does not replace them; emotional repair visibly changes the world; each story explores a different part of the community through Afrofuturist inventions.",
+      "Picture-book simplicity: the first read must stay emotionally clear for ages 5-8. Use no more than three featured world systems in a single spread unless the brief explicitly calls for a finale, keep mythology as second-look discovery, and let Bubble Boy and Captain Cash make the decisive repair while adults model and support.",
+      "Print requirements: full spread 17.25 x 8.75 inches, 5175 x 2625 pixels at 300 DPI, 8.5 x 8.5 inch trim, preserve bleed, keep faces/hands/props/text/critical clues at least 0.75 inches from the center gutter, and use the gutter only for atmosphere, background architecture, sky, landscape, or broad effects.",
+      "Storytelling standard: the illustration must add information the manuscript does not state directly, include one meaningful reread discovery, leave negative space for typography, and avoid unrelated futuristic spectacle."
+    ].join("\n");
+  }
+
   function getMissingReferences(spreads) {
     const missing = [];
     spreads.forEach((spread) => {
-      (spread.references || []).forEach((assetId) => {
+      referenceIdsForSpread(spread).forEach((assetId) => {
         if (!assetById.has(assetId) && !missing.includes(assetId)) missing.push(assetId);
       });
     });
@@ -1496,6 +1779,7 @@
   window.SSB_APP = {
     setView,
     downloadManifest,
-    addSpread
+    addSpread,
+    copySelectedPrompt
   };
 })();

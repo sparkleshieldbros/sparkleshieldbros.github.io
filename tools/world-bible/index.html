@@ -10,7 +10,7 @@
 <body>
   <div class="app-shell">
     <aside class="sidebar" aria-label="World Bible navigation">
-      <a class="brand" href="#dashboard" data-view="dashboard">
+      <a class="brand" href="#book" data-view="book">
         <img src="../../assets/images/brand/sparkle-shield-bros-logo.webp" alt="Sparkle Shield Bros" width="96" height="96">
         <span>
           <strong>World Bible</strong>
@@ -18,9 +18,10 @@
         </span>
       </a>
       <nav class="nav-list">
-        <button class="nav-link active" type="button" data-view="dashboard">Dashboard</button>
-        <button class="nav-link" type="button" data-view="book">Books</button>
-        <button class="nav-link" type="button" data-view="prompt">Prompt Builder</button>
+        <button class="nav-link active" type="button" data-view="book">Prompt Desk</button>
+        <button class="nav-link" type="button" data-view="intake">Book Intake</button>
+        <button class="nav-link" type="button" data-view="dashboard">Dashboard</button>
+        <button class="nav-link" type="button" data-view="prompt">Full Prompt</button>
         <button class="nav-link" type="button" data-view="library">Asset Library</button>
         <button class="nav-link" type="button" data-view="pipeline">KDP Pipeline</button>
       </nav>
@@ -34,7 +35,7 @@
       <header class="topbar">
         <div>
           <p class="eyebrow">Sparkle Shield Bros Production</p>
-          <h1 id="view-title">Dashboard</h1>
+          <h1 id="view-title">Prompt Desk</h1>
         </div>
         <label class="search-box">
           <span>Search</span>
@@ -42,7 +43,7 @@
         </label>
       </header>
 
-      <section class="view active" id="dashboard-view" data-view-panel="dashboard" aria-labelledby="dashboard-heading">
+      <section class="view" id="dashboard-view" data-view-panel="dashboard" aria-labelledby="dashboard-heading">
         <div class="section-heading">
           <div>
             <p class="eyebrow">Production Overview</p>
@@ -63,11 +64,11 @@
         </div>
       </section>
 
-      <section class="view" id="book-view" data-view-panel="book" aria-labelledby="book-heading">
+      <section class="view active" id="book-view" data-view-panel="book" aria-labelledby="book-heading">
         <div class="section-heading">
           <div>
-            <p class="eyebrow">Book Repository</p>
-            <h2 id="book-heading">Book and spread tracker</h2>
+            <p class="eyebrow">Prompt Desk</p>
+            <h2 id="book-heading">Build one spread package at a time</h2>
           </div>
           <div class="toolbar-group">
             <select id="book-select" aria-label="Choose book"></select>
@@ -76,7 +77,7 @@
           </div>
         </div>
         <div class="section-heading compact-heading">
-          <p class="eyebrow">Selected Spread</p>
+          <p class="eyebrow">Current Spread</p>
           <select id="spread-select" aria-label="Choose spread"></select>
         </div>
         <div class="spread-workspace">
@@ -86,6 +87,35 @@
           </section>
           <section class="spread-detail panel">
             <div id="spread-detail"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="intake-view" data-view-panel="intake" aria-labelledby="intake-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">New Book Setup</p>
+            <h2 id="intake-heading">Shape a story before it enters production</h2>
+          </div>
+          <div class="button-row">
+            <button class="primary-button" type="button" id="copy-intake-prompt">Copy intake prompt</button>
+            <button class="ghost-button" type="button" id="download-intake-prompt">Download .md</button>
+          </div>
+        </div>
+        <div class="intake-layout">
+          <section class="panel intake-summary">
+            <h3>What the prompt asks for</h3>
+            <p>Use this when starting a new Sparkle Shield Bros picture book. It asks an LLM to return a story package that already fits this app: book setup, spread records, reference image needs, consistency language, and production checkpoints.</p>
+            <div class="intake-attribute-grid" id="intake-attribute-grid"></div>
+          </section>
+          <section class="panel intake-prompt-panel">
+            <div class="brief-header">
+              <div>
+                <h3>Copy-ready LLM prompt</h3>
+                <p>Paste this into your LLM, then replace the bracketed inputs with your new book idea.</p>
+              </div>
+            </div>
+            <textarea id="intake-prompt-output" class="prompt-preview intake-prompt-output" readonly spellcheck="false" aria-label="New book intake LLM prompt"></textarea>
           </section>
         </div>
       </section>
