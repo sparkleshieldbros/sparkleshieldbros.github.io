@@ -126,6 +126,11 @@ button {
   line-height: 1.45;
 }
 
+.sidebar-note a {
+  color: var(--gold);
+  font-weight: 700;
+}
+
 .workspace {
   min-width: 0;
   padding: 28px;

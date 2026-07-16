@@ -742,6 +742,11 @@ button:focus-visible{
   font-size: 0.92rem;
 }
 
+.privacy-note a{
+  color: var(--sparkle-gold-light);
+  font-weight: 700;
+}
+
 @media (max-width: 940px){
   .site-header{
     align-items: flex-start;
