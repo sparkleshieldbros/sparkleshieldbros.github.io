@@ -73,7 +73,7 @@ window.SSB_WORLD_BIBLE = {
       "type": "story",
       "group": "Book cover",
       "purpose": "Public-facing cover and adventure identity.",
-      "path": "../../adventures/echo-ogre/images/echo-ogre-choice-path-cover.webp"
+      "path": "../../adventures/echo-ogre/images/echo-ogre-book-cover.jpg"
     },
     {
       "id": "EO_OPENING",
