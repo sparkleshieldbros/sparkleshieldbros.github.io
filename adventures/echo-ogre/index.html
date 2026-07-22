@@ -1758,7 +1758,14 @@ function choosePath(path){
   updateMeter();
 }
 
-function playAgain(){ showScene('opening'); }
+function playAgain(){
+  document.querySelectorAll('.hero-choice-panel').forEach(function(panel){
+    panel.removeAttribute('data-previewed-card');
+  });
+  state.currentPath = null;
+  showScene('opening');
+  showToast('Choose a new path. Your unlocked endings are still saved.');
+}
 
 function returnToAdventure(){ showScene(lastStoryScene || 'start-screen'); }
 

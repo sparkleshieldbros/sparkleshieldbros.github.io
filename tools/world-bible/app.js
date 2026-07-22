@@ -19,6 +19,7 @@
   const markdownStatus = {};
 
   const els = {
+    brand: document.querySelector(".brand[data-view]"),
     viewTitle: document.getElementById("view-title"),
     search: document.getElementById("global-search"),
     navLinks: Array.from(document.querySelectorAll(".nav-link")),
@@ -54,6 +55,10 @@
 
   async function init() {
     await loadProjectData();
+    els.brand.addEventListener("click", (event) => {
+      event.preventDefault();
+      setView(els.brand.dataset.view);
+    });
     els.navLinks.forEach((link) => {
       link.addEventListener("click", () => setView(link.dataset.view));
     });
