@@ -110,6 +110,26 @@ gtag('config', 'G-LD7XH6WBYE');
         "propertyID": "ASIN",
         "value": "B0H93RX971"
       },
+      "offers": [
+        {
+          "@type": "Offer",
+          "url": "https://shop.ingramspark.com/b/084?params=RSex7HG693dcyJxM80KLnRz3DLVORT68TewZtz3vr0m",
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "IngramSpark"
+          }
+        },
+        {
+          "@type": "Offer",
+          "url": "https://www.amazon.com/dp/B0H93RX971",
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "Amazon"
+          }
+        }
+      ],
       "audience": {
         "@type": "PeopleAudience",
         "suggestedMinAge": 5,
@@ -138,7 +158,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="#characters">Characters</a>
     <a href="#grown-ups">Parents</a>
     <a href="#contact">News</a>
-    <a class="nav-cta" href="https://shop.ingramspark.com/b/084?params=RSex7HG693dcyJxM80KLnRz3DLVORT68TewZtz3vr0m" target="_blank" rel="noopener noreferrer" aria-label="Buy The Echo Ogre direct from IngramSpark">Buy Direct</a>
+    <a class="nav-cta" href="https://shop.ingramspark.com/b/084?params=RSex7HG693dcyJxM80KLnRz3DLVORT68TewZtz3vr0m" target="_blank" rel="noopener noreferrer" aria-label="Buy The Echo Ogre direct from IngramSpark" data-purchase-channel="ingramspark">Buy Direct</a>
   </nav>
 </header>
 
@@ -186,8 +206,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <h3>The Echo Ogre</h3>
           <p>A branching story where every choice teaches something about listening, pausing, helping, and repairing.</p>
           <a class="text-link" href="adventures/echo-ogre/index.html">Play now <span aria-hidden="true">-&gt;</span></a>
-          <a class="text-link" href="https://www.amazon.com/dp/B0H93RX971" target="_blank" rel="noopener noreferrer">BUY PAPERBACK</a>
-          <a class="text-link" href="https://shop.ingramspark.com/b/084?params=RSex7HG693dcyJxM80KLnRz3DLVORT68TewZtz3vr0m" target="_blank" rel="noopener noreferrer">BUY DIRECT</a>
+          <a class="text-link" href="https://www.amazon.com/dp/B0H93RX971" target="_blank" rel="noopener noreferrer" data-purchase-channel="amazon">BUY PAPERBACK</a>
+          <a class="text-link" href="https://shop.ingramspark.com/b/084?params=RSex7HG693dcyJxM80KLnRz3DLVORT68TewZtz3vr0m" target="_blank" rel="noopener noreferrer" data-purchase-channel="ingramspark">BUY DIRECT</a>
         </div>
       </article>
       <article class="adventure-card">
@@ -360,8 +380,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <h3>The Echo Ogre</h3>
         <p><strong>A Sparkle Shield Bros Adventure</strong> is a picture-book story about how words echo, feelings grow, and kindness helps repair the world.</p>
         <p>Every echo holds a story. Every story holds a lesson.</p>
-        <a class="btn primary" href="https://www.amazon.com/dp/B0H93RX971" target="_blank" rel="noopener noreferrer">BUY PAPERBACK</a>
-        <a class="btn secondary" href="https://shop.ingramspark.com/b/084?params=RSex7HG693dcyJxM80KLnRz3DLVORT68TewZtz3vr0m" target="_blank" rel="noopener noreferrer" aria-label="Buy The Echo Ogre direct from IngramSpark">BUY DIRECT</a>
+        <div class="purchase-options" aria-labelledby="where-to-buy-title">
+          <h4 id="where-to-buy-title">Where to Buy</h4>
+          <a class="btn primary" href="https://shop.ingramspark.com/b/084?params=RSex7HG693dcyJxM80KLnRz3DLVORT68TewZtz3vr0m" target="_blank" rel="noopener noreferrer" aria-label="Buy The Echo Ogre direct from IngramSpark" data-purchase-channel="ingramspark">BUY DIRECT</a>
+          <a class="btn secondary" href="https://www.amazon.com/dp/B0H93RX971" target="_blank" rel="noopener noreferrer" data-purchase-channel="amazon">BUY ON AMAZON</a>
+          <p class="purchase-note">Buy direct to support the author, or choose Amazon if that is more convenient. Prices, shipping, and delivery estimates are shown by the selected retailer.</p>
+        </div>
       </article>
       <article class="sales-card">
         <h3>Interactive Storybook</h3>
@@ -377,6 +401,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <h3>Grown-Up Guide</h3>
         <p>Conversation prompts, repair scripts, and calm practice pages for parents and educators.</p>
         <a class="btn secondary" href="#guide">Preview guide topics</a>
+      </article>
+      <article class="sales-card buying-guide-card">
+        <h3>Find It at a Library or Local Bookstore</h3>
+        <div class="buying-guide-grid">
+          <div>
+            <h4>Request at Your Library</h4>
+            <p>Ask a librarian to search for <cite>The Echo Ogre</cite> by Spurgeon Thomas Jr. Share this page so the title, cover, and purchase information are easy to reference.</p>
+          </div>
+          <div>
+            <h4>Ask Your Local Bookstore</h4>
+            <p>Independent bookstores can search for the book through Ingram. Ask the bookseller to look up the title and author and confirm current availability.</p>
+          </div>
+        </div>
       </article>
     </div>
   </section>
@@ -453,5 +490,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <p id="accessibility" class="privacy-note">Accessibility Commitment: core page content is readable as text, navigation works with standard links, and the Echo Ogre adventure includes keyboard focus states, reduced-motion support, and a skip link.</p>
   </div>
 </footer>
+<script>
+document.querySelectorAll('[data-purchase-channel]').forEach(function(link){
+  link.addEventListener('click', function(){
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'purchase_link_click',
+      purchase_channel: link.getAttribute('data-purchase-channel'),
+      book_title: 'The Echo Ogre',
+      link_url: link.href
+    });
+  });
+});
+</script>
 </body>
 </html>
