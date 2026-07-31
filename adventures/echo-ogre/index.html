@@ -924,7 +924,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="start-cta">
         <button class="btn-primary" onclick="showScene('opening')">Turn the Page</button>
-        <a class="btn-secondary" href="https://www.amazon.com/dp/B0H93RX971" target="_blank" rel="noopener noreferrer">BUY PAPERBACK</a>
+        <a class="btn-secondary" href="https://www.amazon.com/dp/B0H93RX971" target="_blank" rel="noopener noreferrer" data-purchase-channel="amazon">BUY PAPERBACK</a>
+        <a class="btn-secondary" href="https://shop.ingramspark.com/b/084?params=RSex7HG693dcyJxM80KLnRz3DLVORT68TewZtz3vr0m" target="_blank" rel="noopener noreferrer" aria-label="Buy The Echo Ogre direct from IngramSpark" data-purchase-channel="ingramspark">BUY DIRECT</a>
       </div>
     </div>
   </section>
@@ -1939,6 +1940,18 @@ function showProfile(characterId){
 }
 
 function openParentGuide(){ showScene('parent-guide'); }
+
+document.querySelectorAll('[data-purchase-channel]').forEach(function(link){
+  link.addEventListener('click', function(){
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'purchase_link_click',
+      purchase_channel: link.getAttribute('data-purchase-channel'),
+      book_title: 'The Echo Ogre',
+      link_url: link.href
+    });
+  });
+});
 
 loadProgress();
 updateMeter();
