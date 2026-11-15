@@ -974,11 +974,9 @@ class Adventure extends Phaser.Scene{
     .setBackgroundColor('#211a32').setPadding(5,3);
    return {marker,sign};
   });
-  s.playerIndicators=[this.player,s.partner].filter(Boolean).map((hero,index)=>({
-   marker:this.label(String(index+1),hero.x,hero.y,15).setDepth(30)
-    .setBackgroundColor(index?'#793c89':'#164c69').setPadding(5,2),
-   meter:this.obj(this.add.graphics().setScrollFactor(0).setDepth(46))
-  }));
+  s.playerMeters=[this.player,s.partner].filter(Boolean).map(()=>
+   this.obj(this.add.graphics().setScrollFactor(0).setDepth(46))
+  );
   if(resumeCheckpoint){
    let district=0;
    try{district=Number(localStorage.getItem('sparkle-play-lab:cash-portal:'+this.level));}catch{}
@@ -1015,16 +1013,14 @@ class Adventure extends Phaser.Scene{
  }
  updateCashIndicators(s){
   const colors=[0x79e8ff,0xffabed];
-  for(const [index,indicator] of s.playerIndicators.entries()){
+  for(const [index,meter] of s.playerMeters.entries()){
    const hero=index?s.partner:this.player;
    const name=index?s.partnerHero:this.hero;
-   const height=(CASH_HERO_SCALE[name]??.88)*60;
-   indicator.marker.setPosition(hero.x,hero.y-height-9);
    const x=index?864:16,y=78,w=80;
    const dash=index?s.partnerDash.charge:this.charge;
    const charge=name==='cash'?s.cleanMs:s.heroCleanMs[index];
    const counter=this.echoStep==='duel'&&this.duel.chargeOwner===hero;
-   const meter=indicator.meter.clear();
+   meter.clear();
    meter.fillStyle(0x151e35,.9).fillRoundedRect(x,y,w,20,5);
    meter.fillStyle(colors[index]).fillRect(x+4,y+4,(w-8)*dash/100,4);
    meter.fillStyle(counter?0xffffff:0xffd36e)
