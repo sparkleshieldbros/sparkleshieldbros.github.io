@@ -890,29 +890,29 @@ class Adventure extends Phaser.Scene{
   this.showcase.bumpGrace=0;
   const springX=[530,1165,1358][this.level];
   this.showcase.spring=this.obj(this.add.rectangle(springX,505,54,12,0xef8c62).setStrokeStyle(3,0xffedc0));
-  this.label('↑ SPRING',springX,470,14);
+  this.label('↑',springX,470,14);
   this.obj(this.add.image(springX,498,'cash-launch').setDisplaySize(62,23).setDepth(7));
   this.showcase.extraSpring=this.obj(this.add.image(2790,498,'cash-launch').setDisplaySize(62,23).setDepth(7));
-  this.label('SPRING + DASH →',2760,440,17);
+  this.label('↑  »',2760,440,17);
   this.box(springX+88,401,110,13,0x537475);
   this.box(springX+285,365,96,13,0x537475);
-  this.label('ROOFTOP SHORTCUT',springX+88,374,13);
+  this.label('★',springX+88,374,13);
   for(const roof of this.walls.slice(-2)){
    this.levelColliders.push(this.physics.add.collider(this.player,roof));
    if(this.showcase.partner)this.levelColliders.push(this.physics.add.collider(this.showcase.partner,roof));
   }
   if(this.level>0){
    const gap=this.level===1?1248:1440;
-   this.label('JUMP + DASH →',gap-72,420,16);
+   this.label('↑  »',gap-72,420,16);
    this.obj(this.add.rectangle(gap+157,506,50,8,0x8af2b5));
   }
   this.showcase.speedStrip=this.obj(this.add.rectangle(1810,505,78,12,0x65d8d8).setStrokeStyle(3,0xffedc0));
-  this.label('» BOOST',1810,470,14);
+  this.label('»',1810,470,14);
   this.showcase.portals=markers.filter(o=>o.name==='portal'||o.name==='checkpoint').sort((a,b)=>a.x-b.x).filter((o,i,all)=>!i||o.x-all[i-1].x>100).map(o=>{
    const rim=[0xffd596,0x9effdc,0xd5b3ff][this.level];
    const arch=this.obj(this.add.ellipse(o.x,o.y,78,112,0x553487,.44).setStrokeStyle(7,rim).setDepth(2));
    this.obj(this.add.ellipse(o.x,o.y,94,128,rim,.08).setStrokeStyle(2,rim,.55).setDepth(1));
-   this.label('PORTAL',o.x,o.y-70,16);
+   this.label('◎',o.x,o.y-70,16);
    return {x:o.x,arch,entered:false};
   });
   this.showcase.district=0;
@@ -945,19 +945,19 @@ class Adventure extends Phaser.Scene{
    this.levelColliders.push(this.physics.add.collider(this.player,wall));
    if(this.showcase.partner)this.levelColliders.push(this.physics.add.collider(this.showcase.partner,wall));
    for(let y=429;y<510;y+=27)this.obj(this.add.image(wall.x,y,'cash-terrain').setDisplaySize(29,28).setDepth(6));
-   this.label('SPRING OVER WALL',pad.x,421,14);
+   this.label('↑',pad.x,421,14);
   }
   const lamps=[[2110,3390],[1040,2110,3390],[2110,3390]][this.level]
    .concat(markers.filter(o=>o.name==='lamp').map(o=>o.x));
   this.showcase.lamps=lamps.map(x=>this.obj(this.add.star(x,448,5,10,21,0xffc66d).setStrokeStyle(3,0xffffff)));
   this.showcase.lantern=this.showcase.lamps[0];
-  for(const lamp of this.showcase.lamps)this.label('COIN',lamp.x,410,15);
-  this.label(this.level===2?'DASH + COIN →':'COIN →',lamps[0]-70,415,16);
+  for(const lamp of this.showcase.lamps)this.label('◈',lamp.x,410,15);
+  this.label(this.level===2?'»  ◈':'◈ →',lamps[0]-70,415,16);
   const s=this.showcase;
   if(this.level===0){
-   for(const [x,y,tip] of [[245,357,'WATCH THE SCOUT LIGHT UP'],[1020,355,'JUMP, THEN FIRE'],[2140,346,'LOOK UP · SCOUT ABOVE'],[3820,355,'CLEAR A PATH TO THE PORTAL']]){
-    this.label(tip,x,y,15).setBackgroundColor('#211a32').setPadding(5,3);
-   }
+   this.label('★ ↗',springX+36,411,24).setDepth(8);
+   this.label('→',springX+40,481,24).setDepth(8);
+
   }
   const rewards=markers.filter(marker=>marker.name==='medal');
   if(this.level===0)rewards.unshift({x:springX+285,y:329});
@@ -970,20 +970,15 @@ class Adventure extends Phaser.Scene{
   s.medals=rewards.map(({x,y},index)=>{
    const earned=!!(s.earnedMedals&(1<<index));
    const marker=this.obj(this.add.image(x,y,'sun-cuff').setDisplaySize(34,31).setDepth(12).setVisible(!earned));
-   const sign=this.label(earned?'DISTRICT MEDAL EARNED':'OPTIONAL · DISTRICT MEDAL',x,y-34,14)
+   const sign=this.label(earned?'✓':'★',x,y-34,14)
     .setBackgroundColor('#211a32').setPadding(5,3);
    return {marker,sign};
   });
-  const lessons=[
-   ['', 'Spring over the wall','Watch the high route','Reach the Ogre'],
-   ['Watch the wings','Jump between islands','Dodge the spread','Reach the Skygate'],
-   ['Read the ground bolts','Jump from the gantry','Dash past crossfire','Reach the Furnace']
-  ][this.level];
-  for(const [index,lesson] of lessons.entries()){
-   if(!lesson)continue;
-   const x=index?s.portals[index-1].x+225:260;
-   this.label(lesson,x,348,16).setBackgroundColor('#211a32').setPadding(5,3);
-  }
+  s.playerIndicators=[this.player,s.partner].filter(Boolean).map((hero,index)=>({
+   marker:this.label(String(index+1),hero.x,hero.y,15).setDepth(30)
+    .setBackgroundColor(index?'#793c89':'#164c69').setPadding(5,2),
+   meter:this.obj(this.add.graphics().setScrollFactor(0).setDepth(46))
+  }));
   if(resumeCheckpoint){
    let district=0;
    try{district=Number(localStorage.getItem('sparkle-play-lab:cash-portal:'+this.level));}catch{}
@@ -1011,12 +1006,38 @@ class Adventure extends Phaser.Scene{
  }
  updateShowcaseHud(){
   const s=this.showcase;
-  const chargeLabels=[this.hero,s.partnerHero].map((hero,index)=>{
-   const power={cash:'LIGHTNING',kairo:'TSUNAMI',ninja:'SMOKE BOMB'}[hero];
-   const charge=hero==='cash'?s.cleanMs:s.heroCleanMs[index];
-   return power&&charge>=LIGHTNING_CHARGE_MS?'   P'+(index+1)+' '+power+' READY':'';
-  });
-  this.showcaseHud.setText('♥ '+(this.echoStep==='duel'?this.duel.cashLives:s.hearts)+'   ★ '+[1,2,4].filter(bit=>s.saved&bit).length+'/3'+(this.echoStep==='course'?'   '+Math.min(99,Math.floor(this.player.x/s.exitX*100))+'% TO OGRE · '+s.district+'/3 CHECKPOINTS · '+[1,2,4,8].filter(bit=>s.earnedMedals&bit).length+'/4 MEDALS':'')+(s.starPower?'   ✨ STAR POWER':'')+chargeLabels.join(''));
+  const count=(mask,bits)=>bits.filter(bit=>mask&bit).length;
+  const course=this.echoStep==='course';
+  this.showcaseHud.setText('♥ '+(this.echoStep==='duel'?this.duel.cashLives:s.hearts)
+   +'   ★ '+count(s.saved,[1,2,4])+'/3'
+   +(course?'   ◎ '+s.district+'/3   ◈ '+count(s.earnedMedals,[1,2,4,8])+'/4':'')
+   +(s.starPower?'   ✨':''));
+ }
+ updateCashIndicators(s){
+  const colors=[0x79e8ff,0xffabed];
+  for(const [index,indicator] of s.playerIndicators.entries()){
+   const hero=index?s.partner:this.player;
+   const name=index?s.partnerHero:this.hero;
+   const height=(CASH_HERO_SCALE[name]??.88)*60;
+   indicator.marker.setPosition(hero.x,hero.y-height-9);
+   const x=index?864:16,y=78,w=80;
+   const dash=index?s.partnerDash.charge:this.charge;
+   const charge=name==='cash'?s.cleanMs:s.heroCleanMs[index];
+   const counter=this.echoStep==='duel'&&this.duel.chargeOwner===hero;
+   const meter=indicator.meter.clear();
+   meter.fillStyle(0x151e35,.9).fillRoundedRect(x,y,w,20,5);
+   meter.fillStyle(colors[index]).fillRect(x+4,y+4,(w-8)*dash/100,4);
+   meter.fillStyle(counter?0xffffff:0xffd36e)
+    .fillRect(x+4,y+12,(w-8)*(counter?1:charge/LIGHTNING_CHARGE_MS),4);
+  }
+ }
+ showCashPortalStamp(s){
+  const saved=!!(s.earnedMedals&(1<<(s.district-1)));
+  const badge=this.label('◎ '+s.district+'/3    '+(saved?'★ ✓':'★ —'),W/2,170,32)
+   .setScrollFactor(0).setDepth(60).setBackgroundColor('#18233c').setPadding(18,10);
+  this.time.delayedCall(1500,()=>{if(badge.active)badge.destroy();});
+  tone(this,784,.14,.07);
+
  }
  cashShockwave(x,y,color,radius){
   if(this.reduced)return;
@@ -1408,6 +1429,7 @@ class Adventure extends Phaser.Scene{
    if(tsunamiCharged||!ready&&s.cleanMs>=LIGHTNING_CHARGE_MS)this.updateShowcaseHud();
   }
   this.updateCashPartner(s,dt);
+  this.updateCashIndicators(s);
   if(this.echoStep!=='course')return;
   if(this.echoStep==='course'){
    this.updateCashCourseHazards(s,dt);
@@ -1417,7 +1439,7 @@ class Adventure extends Phaser.Scene{
   for(const [index,{marker,sign}] of s.medals.entries()){
    if(!marker.visible||![this.player,s.partner].some(hero=>hero&&Math.hypot(hero.x-marker.x,hero.y-marker.y)<36))continue;
    marker.setVisible(false);
-   sign.setText('DISTRICT MEDAL EARNED');
+   sign.setText('✓');
    s.earnedMedals|=1<<index;
    try{localStorage.setItem(s.medalKey,String(s.earnedMedals));}catch{}
    setStatus(s.districtNames[index]+' medal earned!');
@@ -1431,7 +1453,7 @@ class Adventure extends Phaser.Scene{
    s.district=s.portals.indexOf(portal)+1;
    this.arriveCashPortal(s,portal);
    try{localStorage.setItem('sparkle-play-lab:cash-portal:'+this.level,String(s.district));}catch{}
-   const reveal=()=>{if(this.showcase===s)this.showCashDistrict(s);};
+   const reveal=()=>{if(this.showcase===s){this.showCashDistrict(s);this.showCashPortalStamp(s);}};
    if(this.reduced)reveal();
    else{
     const camera=this.cameras.main;
@@ -1511,7 +1533,7 @@ class Adventure extends Phaser.Scene{
  setupCashRoute(){
   this.cashRoofBonus=false;
   this.label('STREET ROUTE →',354,485,16).setDepth(12);
-  this.label('ROOFTOP SHORTCUT →',580,305,16).setDepth(12);
+  this.label('★ →',580,305,16).setDepth(12);
   this.cashRoofStar=this.obj(this.add.star(704,305,5,10,23,0xffd472)
    .setStrokeStyle(3,0xfff4cb).setDepth(13));
  }
