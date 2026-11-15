@@ -955,6 +955,11 @@ class Adventure extends Phaser.Scene{
   this.label(this.level===2?'»  ◈':'◈ →',lamps[0]-70,415,16);
   const s=this.showcase;
   if(this.level===0){
+   if(!s.partner&&this.hero==='cash'){
+    s.ricochetShield=this.obj(this.add.ellipse(270,480,20,60,0x4076ab,.85)
+     .setStrokeStyle(4,0xa3f8ff).setDepth(8));
+    this.label('◈ ↷',270,430,18);
+   }
    this.label('★ ↗',springX+36,411,24).setDepth(8);
    this.label('→',springX+40,481,24).setDepth(8);
 
@@ -1063,7 +1068,7 @@ class Adventure extends Phaser.Scene{
   this.updateShowcaseHud();
   setStatus('Back at the checkpoint. Try again!');
  }
- trapCashScout(s,scout,powered){
+ trapCashScout(s,scout,powered,owner){
   if(powered){
    scout.sprite.setVisible(false);
    scout.trap?.destroy();scout.trap=null;
@@ -1072,6 +1077,7 @@ class Adventure extends Phaser.Scene{
    tone(this,240,.21,.065,'triangle');
    return;
   }
+  scout.trapOwner=owner;
   scout.trapUntil=s.courseTime+(powered?6:3.5);
   scout.reload=1;
   if(!scout.trap)scout.trap=this.obj(this.add.ellipse(scout.sprite.x,scout.sprite.y,75,63,0x80fff2,.22)
@@ -1079,6 +1085,26 @@ class Adventure extends Phaser.Scene{
   scout.sprite.setTint(0xb6fff1);
   if(scout.type!=='scout')scout.sprite.setFrame(3);
   tone(this,880,.14,.05);
+ }
+ aimCashRicochet(s,shot,excluded){
+  let nearest=null;
+  let range=440;
+  for(const scout of s.hazards){
+   if(!scout.sprite.visible||scout===excluded)continue;
+   const distance=Math.hypot(shot.sprite.x-scout.sprite.x,shot.sprite.y-scout.sprite.y);
+   if(distance<range){nearest=scout;range=distance;}
+  }
+  if(!nearest)return false;
+  shot.chainTarget=nearest;
+  shot.life=.65;
+  shot.sprite.setFillStyle(0xfff2a0);
+  return true;
+ }
+ cashComboFeedback(x,y){
+  this.cashShockwave(x,y,0x9ff8ff,72);
+  emit(this,x,y,0xffde78,18);
+  tone(this,660,.12,.065,'triangle');
+  tone(this,990,.2,.055,'sine');
  }
  cashCourseCombat(s,dt){
   const seconds=Math.min(dt,40)/1000;
@@ -1130,14 +1156,25 @@ class Adventure extends Phaser.Scene{
      shot.vy=Math.sin(angle)*shot.speed;
     }
     sprite.x+=shot.vx*seconds;sprite.y+=shot.vy*seconds;shot.life-=seconds;
+    const shield=s.ricochetShield;
+    if(friendly&&shot.hero==='cash'&&!shot.chainTarget&&shield&&Math.abs(sprite.x-shield.x)<17
+      &&Math.abs(sprite.y-shield.y)<32&&this.aimCashRicochet(s,shot)){
+     this.cashComboFeedback(shield.x,shield.y);
+     continue;
+    }
     const target=friendly?s.hazards.find(scout=>scout.sprite.visible&&(!shot.chainTarget||shot.chainTarget===scout)&&!shot.hit?.has(scout)&&Math.hypot(sprite.x-scout.sprite.x,sprite.y-scout.sprite.y)<(shot.powered?44:29)):
      [this.player,s.partner].find(hero=>hero&&Math.hypot(sprite.x-hero.x,sprite.y-hero.y)<29);
     if(!target&&shot.life>0)continue;
     if(!friendly&&shot.life<=0){sprite.destroy();group.splice(index,1);continue;}
     if(friendly&&target){
-     if(shot.bubble)this.trapCashScout(s,target,shot.powered);
+     const duo=shot.hero==='cash'&&target.trapUntil>s.courseTime&&target.trapOwner&&target.trapOwner!==shot.owner;
+     if(shot.bubble)this.trapCashScout(s,target,shot.powered,shot.owner);
      else{target.sprite.setVisible(false);if(target.trap){target.trap.destroy();target.trap=null;}}
      this.events.emit('coin:target-hit',{x:sprite.x,y:sprite.y});
+     if(duo){
+      this.cashComboFeedback(sprite.x,sprite.y);
+      if(this.aimCashRicochet(s,shot,target))continue;
+     }
      if(shot.powered)this.cashShockwave(sprite.x,sprite.y,0xffd36e,85);
     }else if(target&&!s.bumpGrace&&!this.cashHeroDashing(target)){
      const lostPower=s.starPower;
@@ -1185,7 +1222,7 @@ class Adventure extends Phaser.Scene{
   const speed=weapon.speed+(powered?140:0);
   const spinning=hero==='ninja';
   const sprite=spinning?this.makeNugsStar(x,y,powered):this.obj(this.add.circle(x,y,weapon.radius+(powered?8:0),powered&&hero==='kairo'?0xbfff70:weapon.color).setStrokeStyle(2,0xfff4da).setDepth(15));
-  this.showcase.scoutCoins.push({sprite,vx:speed*Math.cos(angle),vy:speed*Math.sin(angle),life:powered?1:.85,powered,bubble:hero==='kairo',spinning,speed,chainHits:spinning&&powered?3:1});
+  this.showcase.scoutCoins.push({sprite,vx:speed*Math.cos(angle),vy:speed*Math.sin(angle),life:powered?1:.85,powered,hero,owner:shooter,bubble:hero==='kairo',spinning,speed,chainHits:spinning&&powered?3:1});
   this.events.emit('cash:coin-fired',{x,y,charged:powered});
  }
  cashHeroDashing(hero){
@@ -1888,6 +1925,12 @@ function syncCashMusic(){
 }
 function init(){if(game)return;game=new Phaser.Game({type:kind==='cash'?Phaser.CANVAS:Phaser.AUTO,parent:'stage',width:W,height:H,backgroundColor:'#142b55',render:{antialias:true,pixelArt:false},scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},physics:{default:'arcade',arcade:{gravity:{y:0},debug:false}},scene:[Adventure]});const bindHold=(id,key)=>{const el=$(id);if(!el||id==='power'&&kind!=='cash'&&kind!=='echo')return;const off=()=>{buttons[key]=false;el.classList.remove('pressed')};el.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();buttons[key]=true;el.classList.add('pressed')}});el.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')off()});el.addEventListener('blur',off);el.addEventListener('pointerdown',e=>{e.preventDefault();buttons[key]=true;el.classList.add('pressed');try{el.setPointerCapture(e.pointerId)}catch(_){}});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>el.addEventListener(ev,off))};['left','right','up','down','jump','power','breathe'].forEach(k=>bindHold(k,k));$('power')?.addEventListener('click',()=>game.scene.getScene('Adventure').action());$('dash')?.addEventListener('click',()=>game.scene.getScene('Adventure').dash());$('switch')?.addEventListener('click',()=>game.scene.getScene('Adventure').swap());document.querySelectorAll('.hero-option').forEach(b=>b.addEventListener('click',()=>{const s=game.scene.getScene('Adventure');if(kind!=='echo'||s.completed)return;let count=0;while(s.hero!==b.dataset.hero&&count++<3)s.swap()}));$('mute')?.addEventListener('click',e=>{let s=game.scene.getScene('Adventure');s.muted=!s.muted;if(cashMusic){cashMusic.muted=s.muted;syncCashMusic();}e.currentTarget.textContent=s.muted?'🔇 Sound off':'🔊 Sound on'});$('music')?.addEventListener('click',event=>{const scene=game.scene.getScene('Adventure');scene.musicOn=cashMusic?(cashMusicEnabled=!cashMusicEnabled):!scene.musicOn;if(cashMusic)syncCashMusic();event.currentTarget.setAttribute('aria-pressed',String(scene.musicOn));event.currentTarget.textContent=scene.musicOn?'Music on':'Music off';});const clearInputs=()=>{for(const key of Object.keys(buttons)){buttons[key]=false;$(key)?.classList.remove('pressed')}game.scene.getScene('Adventure').input.keyboard?.resetKeys()};window.addEventListener('blur',clearInputs);document.addEventListener('visibilitychange',()=>{if(document.hidden)clearInputs();syncCashMusic()});const scene=()=>game.scene.getScene('Adventure');
 $('cash-boss-shortcut')?.addEventListener('click',()=>scene()?.enterCashArena());
+$('cash-combo-retry')?.addEventListener('click',()=>{
+ const active=scene();
+ if(!active?.player)return;
+ active.level=0;
+ active.loadLevel();
+});
 $('cash-hero')?.addEventListener('change',()=>{if(scene()?.player)scene().loadLevel();});
 $('cash-partner')?.addEventListener('change',()=>{if(scene()?.player)scene().loadLevel();});
 $('cash-coop')?.addEventListener('change',()=>{if(scene()?.player)scene().loadLevel();});
