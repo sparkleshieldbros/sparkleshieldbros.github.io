@@ -1907,9 +1907,12 @@ if(kind==='cash'){
  syncPartner();
  const start=practice=>{
   practiceOnBoot=practice;
+  document.body.classList.add('cash-playing');
+  $('status').hidden=false;
   $('cash-playfield').hidden=false;
   $('load-panel').hidden=false;
   $('cash-start').hidden=true;
+  $('cash-playfield').querySelector('.arena-menu').append($('cash-boss-shortcut'));
   setStatus('Loading game engine…');
   syncCashMusic();
   init();
