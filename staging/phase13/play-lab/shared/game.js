@@ -7,7 +7,7 @@ import {movementIntent} from './cash/input.js';
 import {bindCheckIn,showMethodCallout} from './family.js';
 import {chapterNames,levels} from './levels.js';
 import {createProgressStore} from './save.js';
-import {playMusicBeat,tone} from './audio.js';
+import {playMusicBeat,tone,unlockEffects} from './audio.js';
 import {bindGameUI} from './ui.js';
 /* Sparkle Shield Bros — Phaser 3 shared game engine. Phaser is MIT-licensed. */
 (()=>{'use strict';
@@ -21,6 +21,7 @@ const kind=document.body.dataset.game||'bubble';
 const info={bubble:{title:'Kairo’s Anti-Gravity Quest',desc:'Use anti-gravity bubbles to repair paths and restore the Floating Garden.',power:'🫧 BUBBLE'},cash:{title:'Captain Cash: Coin Dash',desc:'Dash past obstacles and shoot coins from your boots to activate targets.',power:'🪙 COINS'},ninja:{title:'Ninja Nugs: Secret Mission',desc:'Explore the maze, reveal hidden paths and activate the secret switch.',power:'🔎 SCAN'},echo:{title:'The Echo Ogre: Sparkle Rescue',desc:'Combine the brothers’ powers and choose how to restore the Sparkle Grid.',power:'✨ POWER'}}[kind];
 const status=document.querySelector('#status');const $=id=>document.getElementById(id);const W=960,H=540;let game;
 const buttons={left:false,right:false,up:false,down:false,jump:false,breathe:false,power:false,dash:false,switch:false};
+const CASH_CHALLENGES=['Maplewood Rooftop Relay','Floating Garden Trick Shot','Night Foundry Counter Run'];
 const LIGHTNING_CHARGE_MS=10_000;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const palette={sky:0x142b55,blue:0x70e4ff,gold:0xffd16b,lav:0xa77bea,white:0xfff5df,grass:0x326a67};
@@ -145,7 +146,7 @@ class Adventure extends Phaser.Scene{
  constructor(){super('Adventure');this.level=0;this.hero='kairo';this.muted=false;this.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;this.pressed={};this.lock=false;this.completed=false;this.score=0;this.motionState='idle';this.motionClock=0;this.facing=1;this.lastGrounded=true}
  preload(){
  if(kind==='cash'){
-  for(const level of [1,2])this.load.tilemapTiledJSON('cash-chapter-'+level,'../../assets/levels/cash-chapter-'+level+'.json');
+  for(const level of [1,2,3])this.load.tilemapTiledJSON('cash-chapter-'+level,'../../assets/levels/cash-chapter-'+level+'.json');
   for(const hero of ['mom','dad','ninja'])this.load.image('book-poses-'+hero,'../../assets/runtime/'+hero+'-poses.jpg');
   for(const hero of ['mom','dad','ninja'])this.load.image('canon-'+hero,canonical[hero].image);
   this.load.image('book-poses-kairo','../../assets/runtime/kairo-poses.jpg');
@@ -181,7 +182,7 @@ class Adventure extends Phaser.Scene{
  this.events.once('shutdown',()=>{this.events.off('cash:coin-fired');this.events.off('coin:target-hit');});
 
  const chapter=$('chapter-select');
- const choose=()=>{const index=Number(chapter.value);if(Number.isInteger(index)&&index>=0&&index<levels[kind].length&&index<=readProgress()){this.level=index;this.loadLevel();}};
+ const choose=()=>{this.cashChallenge=null;const index=Number(chapter.value);if(Number.isInteger(index)&&index>=0&&index<levels[kind].length&&index<=readProgress()){this.level=index;this.loadLevel();}};
  chapter?.addEventListener('change',choose);
  this.events.once('shutdown',()=>chapter?.removeEventListener('change',choose));
  if(kind==='echo'||kind==='cash'){
@@ -191,7 +192,12 @@ class Adventure extends Phaser.Scene{
  const reset=()=>{try{localStorage.setItem(tierKey,mode.value);}catch{}this.loadLevel();};
  mode.addEventListener('change',reset);
  this.events.once('shutdown',()=>mode.removeEventListener('change',reset));
- }this.cameras.main.setBackgroundColor('#142b55');this.keys=this.input.keyboard.addKeys('A,D,W,S,LEFT,RIGHT,UP,DOWN,SPACE,J,K,Q,R,ENTER,B,E,F,SHIFT');this.input.keyboard.on('keydown-R',()=>this.loadLevel());this.input.keyboard.on('keydown-Q',()=>this.swap());this.input.keyboard.on('keydown-J',()=>{if(!this.showcase?.partner)this.action();});this.input.keyboard.on('keydown-K',()=>{if(!this.showcase?.partner)this.dash();});this.input.keyboard.on('keydown-SHIFT',()=>{if(this.showcase?.partner)this.dash();});this.input.keyboard.on('keydown-ENTER',()=>{if(this.completed)this.next();else if(this.showcase?.partner)this.action()});this.createBackdrop();if(kind==='cash'&&!practiceOnBoot)this.level=Math.min(readProgress(),levels.cash.length-1);this.loadLevel(kind==='cash'&&!practiceOnBoot);if(practiceOnBoot)this.enterCashArena();this.events.on('shutdown',()=>{this.input.keyboard.removeAllListeners()})}
+ }this.cameras.main.setBackgroundColor('#142b55');this.keys=this.input.keyboard.addKeys('A,D,W,S,LEFT,RIGHT,UP,DOWN,SPACE,J,K,Q,R,ENTER,B,E,F,SHIFT');this.input.keyboard.on('keydown-R',()=>this.loadLevel());this.input.keyboard.on('keydown-Q',()=>this.swap());this.input.keyboard.on('keydown-J',()=>{if(!this.showcase?.partner)this.action();});this.input.keyboard.on('keydown-K',()=>{if(!this.showcase?.partner)this.dash();});this.input.keyboard.on('keydown-SHIFT',()=>{if(this.showcase?.partner)this.dash();});this.input.keyboard.on('keydown-ENTER',()=>{if(this.completed)this.next();else if(this.showcase?.partner)this.action()});this.createBackdrop();
+ if(kind==='cash'&&challengeOnBoot>=0){
+  this.cashChallenge=challengeOnBoot;
+  this.level=challengeOnBoot;
+ }
+ if(kind==='cash'&&!practiceOnBoot&&this.cashChallenge==null)this.level=Math.min(readProgress(),levels.cash.length-1);this.loadLevel(kind==='cash'&&!practiceOnBoot&&this.cashChallenge==null);if(practiceOnBoot)this.enterCashArena();this.events.on('shutdown',()=>{this.input.keyboard.removeAllListeners()})}
  createBackdrop(){
   if(kind==='cash')return;
   if(this.textures.exists('book-arena')){
@@ -594,7 +600,7 @@ class Adventure extends Phaser.Scene{
    if(advance(shot)&&Math.hypot(o.x-this.ogre.x,o.y-(this.ogre.y-26))>=58)return true;
    if(Math.hypot(o.x-this.ogre.x,o.y-(this.ogre.y-26))<58&&d.ogreLives>0){
     if(kind==='cash'){
-     const hit=bossHit(d.ogreDamage||0,d.warning,shot.charged,shot.superDash);
+     const hit=bossHit(d.ogreDamage||0,d.warning,shot.charged,shot.superDash,d.hitsPerLife);
      if(hit.blocked){
       emit(this,o.x,o.y,0xc198ff,3);
       if(!d.lastGuardCue||this.time.now-d.lastGuardCue>400){
@@ -840,7 +846,7 @@ class Adventure extends Phaser.Scene{
   const tiles=map.addTilesetImage('Terrain','cash-terrain');
   const layer=this.obj(map.createLayer('Terrain',tiles,0,0));
   layer.setCollision(1);
-  layer.forEachTile(tile=>{tile.tint=[0xffe2b0,0xa4f0ce,0xc9b7ff][this.level];});
+  layer.forEachTile(tile=>{tile.tint=[0xffe2b0,0xa4f0ce,0xc9b7ff,0xe8bbff][this.level];});
   this.levelColliders.push(this.physics.add.collider(this.player,layer));
   const width=map.widthInPixels;
   this.physics.world.setBounds(0,0,width,H+90);
@@ -853,10 +859,16 @@ class Adventure extends Phaser.Scene{
    flags:markers.filter(o=>o.name==='checkpoint').map(o=>({x:o.x,mark:this.label('⚑ CHECKPOINT',o.x,452,15)})),
    stars:markers.filter(o=>o.name==='star').map((o,i)=>this.obj(this.add.image(o.x,o.y,'sun-cuff').setDisplaySize(50,42).setDepth(10)))};
   this.showcase.exitX=width-700;
+  if(this.cashChallenge!=null){
+   const finish=[3820,3160,3540][this.cashChallenge];
+   this.showcase.challengeFinish=finish;
+   this.label('🏁',finish,397,36).setDepth(10);
+  }
   const districtNames=[
    ['Maplewood Rooftops','Sunbeam Lane','Community Gardens','Echo’s Overlook'],
    ['Floating Garden','Bloom Isles','Canopy Crossing','Skygate'],
-   ['Night Foundry','Ember Walk','Lantern Works','The Echo Furnace']
+   ['Night Foundry','Ember Walk','Lantern Works','The Echo Furnace'],
+   ['Echo Factory','Prism Conveyor','Resonance Core']
   ][this.level];
   this.label(districtNames[0],265,245,27).setDepth(5).setBackgroundColor('#211a32').setPadding(9,5);
   if(this.textures.exists('maplewood-houses')){
@@ -866,7 +878,7 @@ class Adventure extends Phaser.Scene{
    this.showcase.scenery=[];
    for(let index=0;index<panels;index++){
     const panel=this.obj(this.add.image(panelWidth*index,0,this.level===1?'cash-garden':'maplewood-houses').setOrigin(0)
-     .setDisplaySize(panelWidth,H).setTint([0xffffff,0xc7ffe4,0xa9a7df][this.level]).setFlipX(index%2===1).setDepth(-8).setScrollFactor(factor,0));
+     .setDisplaySize(panelWidth,H).setTint([0xffffff,0xc7ffe4,0xa9a7df,0xabd5ee][this.level]).setFlipX(index%2===1).setDepth(-8).setScrollFactor(factor,0));
     this.showcase.scenery.push({panel, width:panelWidth});
    }
   }
@@ -888,7 +900,7 @@ class Adventure extends Phaser.Scene{
   this.showcase.heroCleanMs=[0,0];
   this.showcase.cleanMs=0;
   this.showcase.bumpGrace=0;
-  const springX=[530,1165,1358][this.level];
+  const springX=[530,1165,1358,1358][this.level];
   this.showcase.spring=this.obj(this.add.rectangle(springX,505,54,12,0xef8c62).setStrokeStyle(3,0xffedc0));
   this.label('↑',springX,470,14);
   this.obj(this.add.image(springX,498,'cash-launch').setDisplaySize(62,23).setDepth(7));
@@ -909,7 +921,7 @@ class Adventure extends Phaser.Scene{
   this.showcase.speedStrip=this.obj(this.add.rectangle(1810,505,78,12,0x65d8d8).setStrokeStyle(3,0xffedc0));
   this.label('»',1810,470,14);
   this.showcase.portals=markers.filter(o=>o.name==='portal'||o.name==='checkpoint').sort((a,b)=>a.x-b.x).filter((o,i,all)=>!i||o.x-all[i-1].x>100).map(o=>{
-   const rim=[0xffd596,0x9effdc,0xd5b3ff][this.level];
+   const rim=[0xffd596,0x9effdc,0xd5b3ff,0x8dfff1][this.level];
    const arch=this.obj(this.add.ellipse(o.x,o.y,78,112,0x553487,.44).setStrokeStyle(7,rim).setDepth(2));
    this.obj(this.add.ellipse(o.x,o.y,94,128,rim,.08).setStrokeStyle(2,rim,.55).setDepth(1));
    this.label('◎',o.x,o.y-70,16);
@@ -947,7 +959,7 @@ class Adventure extends Phaser.Scene{
    for(let y=429;y<510;y+=27)this.obj(this.add.image(wall.x,y,'cash-terrain').setDisplaySize(29,28).setDepth(6));
    this.label('↑',pad.x,421,14);
   }
-  const lamps=[[2110,3390],[1040,2110,3390],[2110,3390]][this.level]
+  const lamps=[[2110,3390],[1040,2110,3390],[2110,3390],[2110,3390]][this.level]
    .concat(markers.filter(o=>o.name==='lamp').map(o=>o.x));
   this.showcase.lamps=lamps.map(x=>this.obj(this.add.star(x,448,5,10,21,0xffc66d).setStrokeStyle(3,0xffffff)));
   this.showcase.lantern=this.showcase.lamps[0];
@@ -963,6 +975,10 @@ class Adventure extends Phaser.Scene{
    this.label('★ ↗',springX+36,411,24).setDepth(8);
    this.label('→',springX+40,481,24).setDepth(8);
 
+  }
+  if(this.cashChallenge===1&&!s.partner&&this.hero==='cash'){
+   s.ricochetShield=this.obj(this.add.ellipse(270,480,20,60,0x4076ab,.85)
+    .setStrokeStyle(4,0xa3f8ff).setDepth(8));
   }
   const rewards=markers.filter(marker=>marker.name==='medal');
   if(this.level===0)rewards.unshift({x:springX+285,y:329});
@@ -1003,7 +1019,7 @@ class Adventure extends Phaser.Scene{
  }
  showCashDistrict(s){
   const key=this.level===1&&s.district!==2||this.level===0&&s.district===2?'cash-garden':'maplewood-houses';
-  const colors=[[0xffffff,0xffe0ae,0xe4ffd1,0xd0bff7],[0xc7ffe4,0xcaffce,0xb7efe1,0x9cdccf],[0xa9a7df,0xbc9ee2,0xd5a2b8,0xf2baaa]];
+  const colors=[[0xffffff,0xffe0ae,0xe4ffd1,0xd0bff7],[0xc7ffe4,0xcaffce,0xb7efe1,0x9cdccf],[0xa9a7df,0xbc9ee2,0xd5a2b8,0xf2baaa],[0xabd5ee,0x94a9d7,0xf0bfcc]];
   for(const {panel,width} of s.scenery||[])panel.setTexture(key).setDisplaySize(width,H).setTint(colors[this.level][s.district]);
   setStatus(s.districtNames[s.district]+' · Checkpoint '+s.district+' of '+s.portals.length+'. Progress saved.');
  }
@@ -1013,7 +1029,7 @@ class Adventure extends Phaser.Scene{
   const course=this.echoStep==='course';
   this.showcaseHud.setText('♥ '+(this.echoStep==='duel'?this.duel.cashLives:s.hearts)
    +'   ★ '+count(s.saved,[1,2,4])+'/3'
-   +(course?'   ◎ '+s.district+'/3   ◈ '+count(s.earnedMedals,[1,2,4,8])+'/4':'')
+   +(course?'   ◎ '+s.district+'/'+s.portals.length+'   ◈ '+count(s.earnedMedals,[1,2,4,8])+'/4':'')
    +(s.starPower?'   ✨':''));
  }
  updateCashIndicators(s){
@@ -1034,7 +1050,7 @@ class Adventure extends Phaser.Scene{
  }
  showCashPortalStamp(s){
   const saved=!!(s.earnedMedals&(1<<(s.district-1)));
-  const badge=this.label('◎ '+s.district+'/3    '+(saved?'★ ✓':'★ —'),W/2,170,32)
+  const badge=this.label('◎ '+s.district+'/'+s.portals.length+'    '+(saved?'★ ✓':'★ —'),W/2,170,32)
    .setScrollFactor(0).setDepth(60).setBackgroundColor('#18233c').setPadding(18,10);
   this.time.delayedCall(1500,()=>{if(badge.active)badge.destroy();});
   tone(this,784,.14,.07);
@@ -1106,27 +1122,55 @@ class Adventure extends Phaser.Scene{
   tone(this,660,.12,.065,'triangle');
   tone(this,990,.2,.055,'sine');
  }
+ makeScoutBolt(x,y,bearing,type){
+  const key='scout-bolt-'+type;
+  if(!this.textures.exists(key)){
+   const art=this.add.graphics();
+   const paletteByType={scout:[0x492a68,0xf186c7], 'rift-wing':[0x205771,0x8cf4ff], 'kiln-runner':[0x6a302a,0xffae6e]};
+   const [shadow,light]=paletteByType[type]??paletteByType.scout;
+   art.fillStyle(shadow,.42).fillEllipse(20,12,38,22);
+   art.fillStyle(shadow,1).fillEllipse(22,12,28,16);
+   art.fillStyle(light,1).fillEllipse(24,12,22,10);
+   art.fillStyle(0xfff3cf,1).fillEllipse(27,11,10,4);
+   art.generateTexture(key,40,24);
+   art.destroy();
+  }
+  return this.obj(this.add.image(x,y,key).setRotation(bearing).setDepth(13));
+ }
+ updateScoutTell(scout,visible){
+  if(visible&&!scout.tell){
+   scout.tell=this.obj(this.add.graphics().setDepth(32));
+   const tell=scout.tell;
+   tell.fillStyle(0x24192e,1).fillTriangle(-11,5,11,5,0,-13);
+   tell.lineStyle(2,0xffd36e,1).strokeTriangle(-11,5,11,5,0,-13);
+   tell.fillStyle(0xfff3cf,1).fillRect(-1,-6,2,5).fillRect(-1,1,2,2);
+  }
+  scout.tell?.setPosition(scout.sprite.x,scout.sprite.y-31).setVisible(visible);
+ }
  cashCourseCombat(s,dt){
   const seconds=Math.min(dt,40)/1000;
   const cameraLeft=this.cameras.main.scrollX;
   const warningSeconds=({practice:.62,adventurer:.48,challenge:.37})[this.echoMode]??.48;
   for(const scout of s.hazards){
    const {sprite}=scout;
-   if(scout.trapUntil>s.courseTime){scout.warningAt=null;continue;}
+   if(scout.trapUntil>s.courseTime){scout.warningAt=null;this.updateScoutTell(scout,false);continue;}
    if(scout.trap){scout.trap.destroy();scout.trap=null;}
    const target=[this.player,s.partner].filter(Boolean).reduce((nearest,hero)=>
     Math.abs(hero.x-sprite.x)<Math.abs(nearest.x-sprite.x)?hero:nearest);
    if(!sprite.visible||sprite.x<cameraLeft+24||sprite.x>cameraLeft+W-24||Math.abs(sprite.x-target.x)>370){
     scout.warningAt=null;
+    this.updateScoutTell(scout,false);
     continue;
    }
    scout.reload-=seconds;
    const warning=scout.warningAt!=null;
+   this.updateScoutTell(scout,warning);
    sprite.setTint(warning?0xffd5a1:0xffffff);
    if(scout.type!=='scout')sprite.setFrame(warning?1:0);
    if(!warning){
     if(scout.reload>0||s.courseTime<(s.nextScoutWarning??0))continue;
     scout.warningAt=s.courseTime+warningSeconds;
+    this.updateScoutTell(scout,true);
     s.nextScoutWarning=s.courseTime+warningSeconds+.12;
     this.cashShockwave(sprite.x,sprite.y,0xffcf80,26);
     tone(this,550,.08,.03);
@@ -1134,12 +1178,13 @@ class Adventure extends Phaser.Scene{
    }
    if(s.courseTime<scout.warningAt)continue;
    scout.warningAt=null;
+   this.updateScoutTell(scout,false);
    scout.reload=scout.type==='kiln-runner'?1.9:2.4;
    const {x,y}=sprite;
    const angle=scout.type==='kiln-runner'?(target.x<x?Math.PI:0):Math.atan2(target.y-y,target.x-x);
    const angles=scout.type==='rift-wing'?[angle-.2,angle+.2]:[angle];
    for(const bearing of angles){
-   const bolt=this.obj(this.add.circle(x,y,9,0xfa94ff).setStrokeStyle(2,0xffe6ff).setDepth(13));
+   const bolt=this.makeScoutBolt(x,y,bearing,scout.type);
    const speed=scout.type==='kiln-runner'?375:285;
    s.bolts.push({sprite:bolt,vx:speed*Math.cos(bearing),vy:speed*Math.sin(bearing),life:1.7});
    }
@@ -1169,7 +1214,7 @@ class Adventure extends Phaser.Scene{
     if(friendly&&target){
      const duo=shot.hero==='cash'&&target.trapUntil>s.courseTime&&target.trapOwner&&target.trapOwner!==shot.owner;
      if(shot.bubble)this.trapCashScout(s,target,shot.powered,shot.owner);
-     else{target.sprite.setVisible(false);if(target.trap){target.trap.destroy();target.trap=null;}}
+     else{target.sprite.setVisible(false);this.updateScoutTell(target,false);if(target.trap){target.trap.destroy();target.trap=null;}}
      this.events.emit('coin:target-hit',{x:sprite.x,y:sprite.y});
      if(duo){
       this.cashComboFeedback(sprite.x,sprite.y);
@@ -1480,7 +1525,7 @@ class Adventure extends Phaser.Scene{
    this.cashShockwave(marker.x,marker.y,0xffdb72,65);
    this.updateShowcaseHud();
   }
-  const portal=s.portals.find(gate=>!gate.entered&&this.player.x>=gate.x);
+  const portal=this.cashChallenge==null&&s.portals.find(gate=>!gate.entered&&this.player.x>=gate.x);
   if(portal){
    portal.entered=true;
    s.district=s.portals.indexOf(portal)+1;
@@ -1535,6 +1580,11 @@ class Adventure extends Phaser.Scene{
    if(!s.lit)s.lantern=s.lamps[0];
   }
   this.updateShowcaseHud();
+  if(s.challengeFinish&&this.player.x>=s.challengeFinish){
+   if(this.cashChallenge===2)this.enterCashArena();
+   else this.finishCashChallenge();
+   return;
+  }
   if(this.echoStep==='course'&&this.player.x>=s.exitX){
    this.enterCashArena();
   }
@@ -1549,6 +1599,11 @@ class Adventure extends Phaser.Scene{
    // Reuse the arena objects on retries instead of accumulating hidden HUDs.
    for(const item of [this.ogre,this.duelMeter,this.duelReadout,this.echoCue,this.duelGlow])if(item?.active)item.destroy();
    this.setupCoinOgre();
+   if(this.cashChallenge===2){
+    this.duel.ogreLives=1;
+    this.duel.hitsPerLife=12;
+    this.drawDuelMeters();
+   }
    this.physics.world.setBounds(s.width-W,0,W,H+90);
    this.cameras.main.stopFollow().setScroll(s.width-W,0);
    if(!s.arenaRoofs){
@@ -1793,8 +1848,19 @@ if(aim){const angle=Math.atan2(aim.y-coin.y,aim.x-coin.x);coin.body.setVelocity(
 else coin.body.setVelocityX(dir*690);
 coin.aim=aim;coin.life=1600;this.projectiles.push(coin);tone(this,970,.065);emit(this,coin.x,coin.y,0xffd77c,6);return}if(this.hero==='ninja'){this.ninjaScan=90;setStatus('Ninja Nugs discovered a clue! Look for the golden ring and purple targets.');tone(this,800)}}
  dash(){if(this.completed||(kind==='cash'&&this.echoStep==='retry'))return;if(kind!=='cash'&&this.hero!=='cash'){if(kind==='echo')this.swap();return}if(kind==='cash'&&(this.dashTime>0||this.dashRecovery>0))return;if(this.charge<30){setStatus('Dash is recharging.');return;}this.charge-=30;this.dashTime=tuning.dashMs;this.dashDirection=this.facing||1;this.lastDashTrail=0;this.player.body.setVelocityX((this.facing||1)*620);if(kind==='cash'){cashCue(this,'dash');this.cashDashPower(this.player,this.hero,this.dashDirection);}else tone(this,240,.14);emit(this,this.player.x,this.player.y,palette.gold,18)}
- next(){if(this.finalePending)return;if(this.level<levels[kind].length-1){this.level++;this.loadLevel()}else{this.level=0;this.loadLevel()}}
- victory(){if(this.completed)return;this.completed=true;
+ finishCashChallenge(){
+  if(this.completed)return;
+  this.completed=true;
+  const seconds=Math.round(this.showcase.courseTime);
+  this.player.body.stop().setAllowGravity(false);
+  this.showcase.partner?.body.stop().setAllowGravity(false);
+  this.label('CHALLENGE CLEAR · '+seconds+'s',480,225,35).setScrollFactor(0).setDepth(60);
+  this.label('↻ Enter or Fire',480,273,20).setScrollFactor(0).setDepth(60);
+  setStatus(CASH_CHALLENGES[this.cashChallenge]+' cleared.');
+  cashCue(this,'victory');
+ }
+ next(){if(this.finalePending)return;if(this.cashChallenge!=null){this.loadLevel();return;}if(this.level<levels[kind].length-1){this.level++;this.loadLevel()}else{this.level=0;this.loadLevel()}}
+ victory(){if(this.cashChallenge!=null){this.finishCashChallenge();return;}if(this.completed)return;this.completed=true;
  if(kind==='cash'){try{localStorage.removeItem('sparkle-play-lab:cash-portal:'+this.level);}catch{}}
  saveProgress(this.level+1);updateChapterSelect(this.level);
  const finale=this.level===levels[kind].length-1;
@@ -1820,8 +1886,8 @@ coin.aim=aim;coin.life=1600;this.projectiles.push(coin);tone(this,970,.065);emit
    }
   }
   this.updateHUD();
-  this.label('THREE CHAPTERS CLEARED!',480,220,36,'#ffe5a0').setScrollFactor(0).setDepth(55);
-  setStatus('Victory! You cleared all three chapters.');
+  this.label('CAMPAIGN CLEARED!',480,220,36,'#ffe5a0').setScrollFactor(0).setDepth(55);
+  setStatus('Victory! You cleared the campaign.');
   const fanfare=[523,659,784,1047,784,1047,1319];
   fanfare.forEach((pitch,index)=>this.time.delayedCall(index*145,()=>{
    if(this.player!==player||!this.finalePending)return;
@@ -1909,13 +1975,14 @@ for(const coin of [...this.projectiles]){if(!coin.active)continue;coin.life-=dt;
 else if(!this.targetsAnnounced){this.targetsAnnounced=true;setStatus('All targets lit! Switch to Kairo and guide the crate into the ring.')}}if(kind==='echo'&&this.ogre&&!this.reduced&&this.villain.phase==='rest'){this.ogreMood+=dt*.001;this.ogre.setScale(1.35+Math.sin(this.ogreMood*2)*.035)}}
 }
 let practiceOnBoot=false;
+let challengeOnBoot=-1;
 const cashMusic=kind==='cash'?new Audio('../../assets/runtime/superhero-motif.mp3'):null;
 let cashMusicEnabled=true;
 let cashMenuPaused=false;
 if(cashMusic){
  cashMusic.preload='none';
  cashMusic.loop=true;
- cashMusic.volume=.38;
+ cashMusic.volume=.18;
 }
 function syncCashMusic(){
  if(!cashMusic)return;
@@ -1928,6 +1995,7 @@ $('cash-boss-shortcut')?.addEventListener('click',()=>scene()?.enterCashArena())
 $('cash-combo-retry')?.addEventListener('click',()=>{
  const active=scene();
  if(!active?.player)return;
+ active.cashChallenge=null;
  active.level=0;
  active.loadLevel();
 });
@@ -1946,7 +2014,7 @@ bindGameUI({
  pause(){clearInputs();cashMenuPaused=true;syncCashMusic();game.scene.pause('Adventure');},
  resume(){clearInputs();cashMenuPaused=false;syncCashMusic();game.scene.resume('Adventure');},
  restart(){scene().loadLevel();},
- resetProgress(){progress.reset();if(kind==='cash'){try{for(const suffix of ['',':1',':2'])localStorage.removeItem('sparkle-play-lab:cash-stars'+suffix);for(let chapter=0;chapter<3;chapter++){localStorage.removeItem('sparkle-play-lab:cash-portal:'+chapter);localStorage.removeItem('sparkle-play-lab:cash-medals:'+chapter);}localStorage.removeItem('sparkle-play-lab:maplewood-medal');}catch{}}scene().level=0;scene().loadLevel();},
+ resetProgress(){progress.reset();if(kind==='cash'){try{for(const suffix of ['',':1',':2',':3'])localStorage.removeItem('sparkle-play-lab:cash-stars'+suffix);for(let chapter=0;chapter<levels.cash.length;chapter++){localStorage.removeItem('sparkle-play-lab:cash-portal:'+chapter);localStorage.removeItem('sparkle-play-lab:cash-medals:'+chapter);}localStorage.removeItem('sparkle-play-lab:maplewood-medal');}catch{}}scene().level=0;scene().loadLevel();},
  getDashCharge(){const active=scene();return active&&(kind==='cash'||active.hero==='cash')?active.charge:null;}
 });
 $('echo-method')?.addEventListener('click',event=>{
@@ -1966,7 +2034,9 @@ if(kind==='cash'){
  $('cash-partner').value='kairo';
  $('cash-coop').addEventListener('change',syncPartner);
  syncPartner();
- const start=practice=>{
+ const start=(practice,challenge=-1)=>{
+  challengeOnBoot=challenge;
+  if(challenge===1){$('cash-hero').value='cash';$('cash-partner').value='kairo';}
   practiceOnBoot=practice;
   document.body.classList.add('cash-playing');
   $('status').hidden=false;
@@ -1975,10 +2045,12 @@ if(kind==='cash'){
   $('cash-start').hidden=true;
   $('cash-playfield').querySelector('.arena-menu').append($('cash-boss-shortcut'));
   setStatus('Loading game engine…');
+  unlockEffects();
   syncCashMusic();
   init();
  };
  $('cash-start').addEventListener('click',()=>start(false),{once:true});
+ document.querySelectorAll('[data-cash-challenge]').forEach(button=>button.addEventListener('click',()=>start(false,Number(button.dataset.cashChallenge))));
  $('cash-boss-shortcut').addEventListener('click',()=>{if(!game)start(true);});
 }else init();
 })();
