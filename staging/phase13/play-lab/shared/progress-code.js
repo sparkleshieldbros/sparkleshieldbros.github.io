@@ -1,4 +1,4 @@
-const limits=[4,3,3,3,7,2,1];
+const limits=[4,4,3,3,7,2,1];
 function checksum(text){
  let hash=2166136261;
  for(const char of text)hash=Math.imul(hash^char.charCodeAt(0),16777619);

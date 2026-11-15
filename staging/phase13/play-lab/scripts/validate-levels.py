@@ -8,6 +8,7 @@ for path in sorted((root/'assets/levels').glob('*.json')):
     terrain, markers=level['layers']
     assert len(terrain['data'])==level['width']*level['height'], path
     assert set(terrain['data'])<={0,1}, path
+    assert all(terrain['data'][-30:]), f'{path}: Ogre arena floor has a gap'
     objects=markers['objects']
     names=[o['name'] for o in objects]
     assert names.count('star')==3 and names.count('boss')==1 and names.count('portal')==(2 if path.stem=='cash-chapter-3' else 3), path

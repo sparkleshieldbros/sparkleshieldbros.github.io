@@ -10,6 +10,7 @@ terrain['data'] = [
     tile for row in range(terrain['height'])
     for tile in terrain['data'][row * 520:row * 520 + width]
 ]
+terrain['data'][-30:] = [1] * 30
 terrain['width'] = game_map['width'] = width
 objects = [o for o in markers['objects'] if o['x'] < width * 32 - 960 and o['name'] != 'boss']
 for i, scout in enumerate(o for o in objects if o['name'] == 'scout'):
