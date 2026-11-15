@@ -1,0 +1,50 @@
+{
+  "kairo": {
+    "name": "Bubble Boy Kairo",
+    "url": "https://sparkleshieldbros.github.io/assets/images/characters/bubble-boy-kairo-profile.webp",
+    "role": "Anti-gravity bubbles lift and guide objects.",
+    "source": "Sparkle Shield HQ official character portrait",
+    "localAsset": "portraits/bubble-boy-kairo-profile.webp"
+  },
+  "cash": {
+    "name": "Captain Cash",
+    "url": "https://sparkleshieldbros.github.io/assets/images/characters/captain-cash-profile.webp",
+    "role": "Super-speed dashes and coins fired from his boots.",
+    "source": "Sparkle Shield HQ official character portrait",
+    "localAsset": "portraits/captain-cash-profile.webp"
+  },
+  "ninja": {
+    "name": "Ninja Nugs",
+    "url": "https://sparkleshieldbros.github.io/assets/images/characters/ninja-nugs-profile.webp",
+    "role": "A small ninja dog who explores and discovers clues.",
+    "source": "Sparkle Shield HQ official character portrait",
+    "localAsset": "portraits/ninja-nugs-profile.webp"
+  },
+  "ogre": {
+    "name": "Echo Ogre",
+    "url": "https://sparkleshieldbros.github.io/assets/images/characters/echo-ogre-profile.webp",
+    "role": "A purple echo of emotions that can become a guardian.",
+    "source": "Sparkle Shield HQ official character portrait",
+    "localAsset": "portraits/echo-ogre-profile.webp"
+  },
+  "mom": {
+    "name": "Mom",
+    "url": "https://sparkleshieldbros.github.io/assets/images/characters/mom-profile.webp",
+    "role": "Notices patterns and supports the team.",
+    "source": "Sparkle Shield HQ official character portrait",
+    "localAsset": "portraits/mom-profile.webp"
+  },
+  "dad": {
+    "name": "Dad",
+    "url": "https://sparkleshieldbros.github.io/assets/images/characters/dad-profile.webp",
+    "role": "Models calm and repair.",
+    "source": "Sparkle Shield HQ official character portrait",
+    "localAsset": "portraits/dad-profile.webp"
+  },
+  "cover": {
+    "name": "The Echo Ogre book cover",
+    "url": "https://sparkleshieldbros.github.io/adventures/echo-ogre/images/echo-ogre-book-cover.jpg",
+    "source": "Published book cover",
+    "localAsset": "portraits/echo-ogre-book-cover.jpg"
+  }
+}

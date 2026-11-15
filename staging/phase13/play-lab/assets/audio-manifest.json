@@ -1,0 +1,21 @@
+{
+  "audioFiles": [
+    {
+      "path": "assets/runtime/superhero-motif.mp3",
+      "status": "approved",
+      "source": "User-supplied Superhero Motif.mp3, requested for Coin Dash playback",
+      "license": "User-supplied recording; ownership and redistribution terms not independently verified.",
+      "approvedBy": "User"
+    }
+  ],
+  "synthesized": [
+    {
+      "path": "shared/audio.js",
+      "status": "placeholder",
+      "source": "Project Web Audio oscillator cues, victory jingles and optional music loops.",
+      "license": "Original project synthesis; no third-party recordings.",
+      "approvedBy": null
+    }
+  ],
+  "notes": "Coin Dash uses the supplied recording for background music and synthesizes gameplay cues."
+}

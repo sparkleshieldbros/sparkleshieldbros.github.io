@@ -1,0 +1,545 @@
+{
+  "notes": "Canon identifies existing published artwork. No new creative director approval is asserted. Runtime derivatives and pose-based animation treatments remain provisional. Original portraits are immutable.",
+  "runtimeAnimation": {
+    "status": "placeholder",
+    "source": "Existing Phaser code composites, crops or transforms book pose references; no new approved frame-by-frame artwork."
+  },
+  "assets": [
+    {
+      "path": "assets/book/cash-arena.jpg",
+      "status": "provisional",
+      "source": "Published The Echo Ogre adventure / consequence-help.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1200,
+        "height": 675
+      }
+    },
+    {
+      "path": "assets/book/cash-consequence-pause.jpg",
+      "status": "provisional",
+      "source": "Published The Echo Ogre adventure / consequence-pause.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1400,
+        "height": 788
+      }
+    },
+    {
+      "path": "assets/book/cash-ending-true.jpg",
+      "status": "provisional",
+      "source": "Published The Echo Ogre adventure / ending-true.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1400,
+        "height": 788
+      }
+    },
+    {
+      "path": "assets/book/cash-opening.jpg",
+      "status": "provisional",
+      "source": "Published The Echo Ogre adventure / opening.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1400,
+        "height": 788
+      }
+    },
+    {
+      "path": "assets/book/cash-poses.png",
+      "status": "provisional",
+      "source": "Character production reference CC-003_PoseReference.png",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "path": "assets/book/echo-ogre.webp",
+      "status": "canon",
+      "source": "Published The Echo Ogre adventure / echo-ogre.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "path": "assets/book/floating-garden.jpg",
+      "status": "provisional",
+      "source": "Floating Garden setting sheet MT06-001_LocationSheet.png (crop)",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 326,
+        "height": 210
+      }
+    },
+    {
+      "path": "assets/book/kairo-poses.png",
+      "status": "provisional",
+      "source": "Character production reference BBK-003_ActionPoseSheet.png",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1536,
+        "height": 1024
+      }
+    },
+    {
+      "path": "assets/book/ninja-arena.jpg",
+      "status": "provisional",
+      "source": "Published The Echo Ogre adventure / consequence-pause.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1200,
+        "height": 675
+      }
+    },
+    {
+      "path": "assets/book/ninja-poses.png",
+      "status": "provisional",
+      "source": "Character production reference NN-003A_NinjutsuActionPoseSheet.png",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1536,
+        "height": 1024
+      }
+    },
+    {
+      "path": "assets/book/ogre-action.png",
+      "status": "provisional",
+      "source": "Character production reference EOG-003_ActionPerformanceGuide.png",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1536,
+        "height": 1024
+      }
+    },
+    {
+      "path": "assets/book/opening.webp",
+      "status": "canon",
+      "source": "Published The Echo Ogre adventure / opening.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1672,
+        "height": 941
+      }
+    },
+    {
+      "path": "assets/portraits/bubble-boy-kairo-profile.webp",
+      "status": "canon",
+      "source": "Published site artwork, Sparkle Shield Bros / bubble-boy-kairo-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "path": "assets/portraits/captain-cash-profile.webp",
+      "status": "canon",
+      "source": "Published site artwork, Sparkle Shield Bros / captain-cash-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "path": "assets/portraits/dad-profile.webp",
+      "status": "canon",
+      "source": "Published site artwork, Sparkle Shield Bros / dad-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "path": "assets/portraits/echo-ogre-book-cover.jpg",
+      "status": "canon",
+      "source": "Published site artwork, Sparkle Shield Bros / echo-ogre-book-cover.jpg",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 2566,
+        "height": 2566
+      }
+    },
+    {
+      "path": "assets/portraits/echo-ogre-profile.webp",
+      "status": "canon",
+      "source": "Published site artwork, Sparkle Shield Bros / echo-ogre-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "path": "assets/portraits/mom-profile.webp",
+      "status": "canon",
+      "source": "Published site artwork, Sparkle Shield Bros / mom-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "path": "assets/portraits/ninja-nugs-profile.webp",
+      "status": "canon",
+      "source": "Published site artwork, Sparkle Shield Bros / ninja-nugs-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1254,
+        "height": 1254
+      }
+    },
+    {
+      "path": "assets/runtime/bubble-boy-kairo-profile.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/portraits/bubble-boy-kairo-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 112,
+        "height": 112
+      }
+    },
+    {
+      "path": "assets/runtime/captain-cash-profile.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/portraits/captain-cash-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 112,
+        "height": 112
+      }
+    },
+    {
+      "path": "assets/runtime/cash-consequence-pause.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/book/cash-consequence-pause.jpg",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1100,
+        "height": 619
+      }
+    },
+    {
+      "path": "assets/runtime/cash-ending-true.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/book/cash-ending-true.jpg",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1100,
+        "height": 619
+      }
+    },
+    {
+      "path": "assets/runtime/cash-opening.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/book/cash-opening.jpg",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1100,
+        "height": 619
+      }
+    },
+    {
+      "path": "assets/runtime/cash-poses.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/book/cash-poses.png",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 960,
+        "height": 960
+      }
+    },
+    {
+      "path": "assets/runtime/dad-profile.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/portraits/dad-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 112,
+        "height": 112
+      }
+    },
+    {
+      "path": "assets/runtime/echo-ogre-book-cover.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/portraits/echo-ogre-book-cover.jpg",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 480,
+        "height": 480
+      }
+    },
+    {
+      "path": "assets/runtime/echo-ogre-profile.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/portraits/echo-ogre-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 112,
+        "height": 112
+      }
+    },
+    {
+      "path": "assets/runtime/echo-ogre.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/book/echo-ogre.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1100,
+        "height": 1100
+      }
+    },
+    {
+      "path": "assets/runtime/kairo-poses.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/book/kairo-poses.png",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "path": "assets/runtime/mom-profile.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/portraits/mom-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 112,
+        "height": 112
+      }
+    },
+    {
+      "path": "assets/runtime/ninja-arena.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/book/ninja-arena.jpg",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1100,
+        "height": 618
+      }
+    },
+    {
+      "path": "assets/runtime/ninja-nugs-profile.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/portraits/ninja-nugs-profile.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 112,
+        "height": 112
+      }
+    },
+    {
+      "path": "assets/runtime/ninja-poses.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/book/ninja-poses.png",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "path": "assets/runtime/ogre-action.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/book/ogre-action.png",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "path": "assets/runtime/opening.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of assets/book/opening.webp",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 1100,
+        "height": 619
+      }
+    },
+    {
+      "path": "assets/levels/terrain.png",
+      "status": "placeholder",
+      "source": "Original programmatic two-tone prototype terrain",
+      "license": "Original Sparkle Shield Bros project asset",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 32,
+        "height": 32
+      }
+    },
+    {
+      "path": "assets/runtime/maplewood-houses.jpg",
+      "status": "provisional",
+      "source": "Maplewood Terrace Family Home location sheet MT01-001, cropped establishing view",
+      "license": "User-supplied Sparkle Shield Bros artwork",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 560,
+        "height": 233
+      }
+    },
+    {
+      "path": "assets/runtime/echo-scout.svg",
+      "status": "provisional",
+      "source": "Original vector artwork for Coin Dash",
+      "license": "Original Sparkle Shield Bros project asset",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 96,
+        "height": 72
+      }
+    },
+    {
+      "path": "assets/runtime/launch-pad.svg",
+      "status": "provisional",
+      "source": "Original vector artwork for Coin Dash",
+      "license": "Original Sparkle Shield Bros project asset",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 96,
+        "height": 36
+      }
+    },
+    {
+      "path": "assets/runtime/echo-scout-painted.png",
+      "status": "provisional",
+      "source": "AI-generated Echo Scout concept, provisional non-canon",
+      "license": "Original project asset; review before production",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 256,
+        "height": 234
+      }
+    },
+    {
+      "path": "assets/levels/terrain-alloy.svg",
+      "status": "provisional",
+      "source": "Original vector alloy terrain art",
+      "license": "Original project asset; review before production",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 32,
+        "height": 32
+      }
+    },
+    {
+      "path": "assets/runtime/sun-cuff.svg",
+      "status": "provisional",
+      "source": "Original Coin Dash vector concept and action poses",
+      "license": "Original Sparkle Shield Bros project asset",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 96,
+        "height": 80
+      }
+    },
+    {
+      "path": "assets/runtime/rift-wing.svg",
+      "status": "provisional",
+      "source": "Original Coin Dash vector concept and action poses",
+      "license": "Original Sparkle Shield Bros project asset",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 384,
+        "height": 72
+      }
+    },
+    {
+      "path": "assets/runtime/kiln-runner.svg",
+      "status": "provisional",
+      "source": "Original Coin Dash vector concept and action poses",
+      "license": "Original Sparkle Shield Bros project asset",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 384,
+        "height": 72
+      }
+    },
+    {
+      "path": "assets/runtime/mom-poses.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of SparkleShieldUniverse/01_Characters/Mom/MOM-003A_ActionPerformanceGrid.png",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "path": "assets/runtime/dad-poses.jpg",
+      "status": "provisional",
+      "source": "Size-limited JPEG derivative of SparkleShieldUniverse/01_Characters/Dad/DAD-003_ActionPerformanceGuide.png",
+      "license": "User-supplied Sparkle Shield Bros artwork; no third-party redistribution license asserted.",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 960,
+        "height": 640
+      }
+    },
+    {
+      "path": "assets/runtime/echo-ogre-book-qr.png",
+      "status": "provisional",
+      "source": "QR generated from user-supplied Amazon book listing https://www.amazon.com/dp/B0H93RX971",
+      "license": "Locally generated QR graphic",
+      "approvedBy": null,
+      "dimensions": {
+        "width": 296,
+        "height": 296
+      }
+    },
+    {
+      "path": "assets/runtime/superhero-motif.mp3",
+      "status": "approved",
+      "source": "User-supplied Superhero Motif.mp3, requested for Coin Dash playback",
+      "license": "User-supplied recording; ownership and redistribution terms not independently verified.",
+      "approvedBy": "User",
+      "dimensions": null
+    }
+  ]
+}
