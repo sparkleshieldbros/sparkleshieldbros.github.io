@@ -18,16 +18,17 @@ export function nextBossPattern(current,lives,random=Math.random){
  return choices[Math.floor(random()*choices.length)];
 }
 export const OGRE_HITS_PER_LIFE=50;
-export function bossHit(damage,guarded,charged,superDash=false){
+export function bossHit(damage,guarded,charged,superDash=false,hitsPerLife=OGRE_HITS_PER_LIFE){
  const blocked=guarded&&!charged&&!superDash;
  const next=damage+(superDash?5:charged?4:blocked?0:1);
- return {damage:next,energy:Math.max(0,Math.ceil((OGRE_HITS_PER_LIFE-next)*100/OGRE_HITS_PER_LIFE)),blocked};
+ return {damage:next,energy:Math.max(0,Math.ceil((hitsPerLife-next)*100/hitsPerLife)),blocked};
 }
 
 const chapterArsenals=[
  [0,1,5], // Ground bolts, fan, returning crescent
  [3,6,7], // Falling crystals, rising sparks, diagonal rain
- [2,4,8]  // Tracking orbs, crossfire, rotating nova
+ [2,4,8], // Tracking orbs, crossfire, rotating nova
+ [5,7,8]  // Factory remix
 ];
 export function chapterBossPattern(chapter,current,lives,random=Math.random){
  const arsenal=chapterArsenals[chapter]||chapterArsenals[0];
