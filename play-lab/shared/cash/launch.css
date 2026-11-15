@@ -1,0 +1,42 @@
+body[data-game="cash"]:not(.cash-playing) { margin: 0; }
+body[data-game="cash"]:not(.cash-playing) main { width: 100%; max-width: none; padding: 0; }
+.cash-launch {
+  box-sizing: border-box;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 3.5rem 1rem 1.25rem;
+  position: relative;
+  background: linear-gradient(112deg,#071326ee,#102d47a8),url('../../assets/runtime/maplewood-houses.jpg') center / cover;
+  color: #fff5df;
+}
+.cash-home { position: absolute; top: 1rem; left: 1rem; color: #fff5df; }
+.cash-launch-card {
+  width: min(40rem,100%);
+  box-sizing: border-box;
+  padding: clamp(1rem,3vw,2rem);
+  background: #112941ed;
+  border: 2px solid #fbd675;
+  border-radius: 1.4rem;
+  box-shadow: 0 20px 65px #040c21a0;
+}
+.cash-brand { color: #c8ef94; font-weight: 700; margin: 0; }
+.cash-launch h1 { font-size: clamp(2.4rem,8vw,5.2rem); line-height: 1; margin: .15em 0; color: #ffdb75; }
+.cash-launch-portrait { float: right; width: clamp(62px,16vw,130px); margin: 0 0 .5rem 1rem; border-radius: 1rem; border: 2px solid #ffdb75; }
+.cash-pitch { margin: .5rem 0 .9rem; }
+.cash-launch #cash-start { background: #ffdb75; color: #182039; font-size: 1.25rem; min-height: 52px; padding-inline: 1.5rem; }
+.cash-options { clear: both; display: flex; flex-wrap: wrap; gap: .55rem 1rem; margin: .9rem 0; align-items: center; }
+.cash-options select { min-height: 40px; max-width: 100%; }
+.cash-toggle { min-height: 40px; display: inline-flex; align-items: center; gap: .5rem; }
+#cash-player-two { margin: 0; }
+.cash-launch-help { margin-top: .55rem; }
+body[data-game="cash"]:not(.cash-playing) .hero-profile,
+body[data-game="cash"]:not(.cash-playing) .note,
+.cash-playing .cash-launch { display: none; }
+@media (max-height: 570px) and (orientation: landscape) {
+  .cash-launch { padding: 2.45rem .75rem .6rem; }
+  .cash-launch-card { padding: .65rem 1rem; }
+  .cash-launch h1 { font-size: 2.4rem; }
+  .cash-launch-portrait { width: 74px; }
+  .cash-options { margin: .35rem 0; }
+}
