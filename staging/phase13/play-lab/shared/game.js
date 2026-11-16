@@ -634,6 +634,12 @@ class Adventure extends Phaser.Scene{
      }
      d.ogreDamage=hit.damage;
      d.ogre=hit.energy;
+     if(hit.energy>0&&this.ogreArt&&!this.reduced){
+      const art=this.ogreArt;
+      this.tweens.killTweensOf(art);
+      art.setAngle((d.facing||1)*(shot.charged?12:5));
+      this.tweens.add({targets:art,angle:0,duration:shot.charged?190:100,ease:'Sine.easeOut'});
+     }
     }else d.ogre=Math.max(0,d.ogre-(shot.charged?38:12));
     if(shot.charged&&!this.reduced)this.cameras.main.shake(140,.005);
     if(d.ogre===0){
@@ -1548,7 +1554,22 @@ class Adventure extends Phaser.Scene{
   this.updateCashPartner(s,dt);
   this.updateCashIndicators(s);
   if(this.echoStep!=='course'){
-   if(s.challengeFinish&&this.echoStep==='duel')this.updateShowcaseHud();
+   if(this.echoStep==='duel'){
+    for(const entry of s.arenaShadows||[]){
+     const {actor,shadow}=entry;
+     const onGround=actor.body?.blocked.down;
+     if(onGround&&entry.onGround===false&&!this.reduced){
+      const dust=this.obj(this.add.ellipse(actor.x,actor.body.bottom-2,25,6,0xe4c79b,.48).setDepth(8));
+      this.tweens.add({targets:dust,scaleX:2.1,alpha:0,duration:210,
+       onComplete:()=>{if(dust.active)dust.destroy();}});
+     }
+     entry.onGround=onGround;
+     const elevation=Math.max(0,484-actor.y);
+     shadow.setX(actor.x).setAlpha(Math.max(.15,.63-elevation/420))
+      .setScale(Math.max(.57,1-elevation/520),1);
+    }
+    if(s.challengeFinish)this.updateShowcaseHud();
+   }
    return;
   }
   if(this.echoStep==='course'){
@@ -1642,6 +1663,30 @@ class Adventure extends Phaser.Scene{
    // Reuse the arena objects on retries instead of accumulating hidden HUDs.
    for(const item of [this.ogre,this.duelMeter,this.duelReadout,this.echoCue,this.duelGlow])if(item?.active)item.destroy();
    this.setupCoinOgre();
+   if(!s.arenaFloor){
+    const left=s.width-W;
+    const framing=this.obj(this.add.graphics().setDepth(-2));
+    for(const x of [left+42,left+W-42]){
+     framing.fillStyle(0x18273c,.84).fillRoundedRect(x-21,210,42,302,12);
+     framing.fillStyle(0x384f63,.76).fillRoundedRect(x-14,222,8,279,4);
+     framing.fillStyle(0x75ded8,.22).fillCircle(x,218,33);
+     framing.fillStyle(0xffdf98,.84).fillCircle(x,218,10);
+    }
+    framing.lineStyle(4,0x647d87,.5).lineBetween(left+42,236,left+W-42,236);
+    const floor=this.obj(this.add.graphics().setDepth(4));
+    floor.fillStyle(0x263752).fillRect(left,512,W,28);
+    floor.fillStyle(0x556b79).fillRect(left,512,W,5);
+    floor.lineStyle(1,0xa0afac,.55).lineBetween(left,512,left+W,512);
+    floor.fillStyle(0x141e36).fillRect(left,533,W,7);
+    for(let x=left+30;x<left+W;x+=64){
+     floor.lineStyle(2,0x1b2941).lineBetween(x,517,x+12,534);
+     floor.fillStyle(0xb29765,.72).fillCircle(x-9,524,2);
+    }
+    s.arenaFloor=floor;
+   }
+   s.arenaShadows=[this.player,s.partner,this.ogre].filter(Boolean).map(actor=>({
+    actor,shadow:this.obj(this.add.ellipse(actor.x,510,actor===this.ogre?120:68,12,0x161329,.38).setDepth(5))
+   }));
    if(this.cashChallenge===2){
     this.duel.ogreLives=1;
     this.duel.hitsPerLife=12;
@@ -1652,7 +1697,15 @@ class Adventure extends Phaser.Scene{
    if(!s.arenaRoofs){
     s.arenaRoofs=true;
     for(const x of [s.width-565,s.width-310]){
-     const roof=this.box(x,397,125,14,0x537475);
+     const roof=this.box(x,397,125,14,0x537475).setVisible(false);
+     const ledge=this.obj(this.add.graphics().setDepth(6));
+     ledge.fillStyle(0x192944).fillRoundedRect(x-62.5,390,125,19,4);
+     ledge.fillStyle(0x748690).fillRoundedRect(x-61,390,122,5,2);
+     ledge.fillStyle(0x2b435b).fillRect(x-58,397,116,8);
+     for(const offset of [-44,-15,15,44]){
+      ledge.fillStyle(0x8ee6d9,.28).fillCircle(x+offset,401,4);
+      ledge.fillStyle(0xffdb8c).fillCircle(x+offset,401,1.75);
+     }
      this.levelColliders.push(this.physics.add.collider(this.player,roof));
      if(s.partner)this.levelColliders.push(this.physics.add.collider(s.partner,roof));
     }
