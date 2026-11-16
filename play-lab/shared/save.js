@@ -18,7 +18,7 @@ export function readPortableProgress(){
   const value=localStorage.getItem('sparkle-play-lab:'+key);
   if(index===5)return Math.max(0,tierValues.indexOf(value));
   if(index===6)return value==='challenge'?1:0;
-  return Math.min([4,3,3,3,7][index],Math.max(0,parseInt(value,10)||0));
+  return Math.min([4,4,3,3,7][index],Math.max(0,parseInt(value,10)||0));
  });
 }
 export function writePortableProgress(values){

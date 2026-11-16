@@ -163,7 +163,7 @@ class Adventure extends Phaser.Scene{
  const panel=$('load-panel'), bar=$('load-progress'), label=$('load-status');
  if(panel)panel.hidden=false;
  this.load.on('progress',fraction=>{
-  if(bar)bar.value=fraction*100;
+  if(bar)bar.value=fraction*bar.max;
   if(label)label.textContent=Math.round(fraction*100)+'%';
  });
  this.load.once('complete',()=>{if(panel)panel.hidden=true;});
@@ -188,16 +188,25 @@ class Adventure extends Phaser.Scene{
  if(kind==='echo'||kind==='cash'){
  const mode=$('echo-mode');
  const tierKey='sparkle-play-lab:'+kind+':tier';
- try{const saved=localStorage.getItem(tierKey);if([...mode.options].some(o=>o.value===saved))mode.value=saved;}catch{}
+ if(kind==='echo'){try{const saved=localStorage.getItem(tierKey);if([...mode.options].some(o=>o.value===saved))mode.value=saved;}catch{}}
  const reset=()=>{try{localStorage.setItem(tierKey,mode.value);}catch{}this.loadLevel();};
  mode.addEventListener('change',reset);
  this.events.once('shutdown',()=>mode.removeEventListener('change',reset));
- }this.cameras.main.setBackgroundColor('#142b55');this.keys=this.input.keyboard.addKeys('A,D,W,S,LEFT,RIGHT,UP,DOWN,SPACE,J,K,Q,R,ENTER,B,E,F,SHIFT');this.input.keyboard.on('keydown-R',()=>this.loadLevel());this.input.keyboard.on('keydown-Q',()=>this.swap());this.input.keyboard.on('keydown-J',()=>{if(!this.showcase?.partner)this.action();});this.input.keyboard.on('keydown-K',()=>{if(!this.showcase?.partner)this.dash();});this.input.keyboard.on('keydown-SHIFT',()=>{if(this.showcase?.partner)this.dash();});this.input.keyboard.on('keydown-ENTER',()=>{if(this.completed)this.next();else if(this.showcase?.partner)this.action()});this.createBackdrop();
+ }this.cameras.main.setBackgroundColor('#142b55');this.keys=this.input.keyboard.addKeys('A,D,W,S,LEFT,RIGHT,UP,DOWN,SPACE,J,K,Q,R,ENTER,B,E,F,SHIFT');this.input.keyboard.on('keydown-R',()=>this.loadLevel());this.input.keyboard.on('keydown-Q',()=>this.swap());this.input.keyboard.on('keydown-W',()=>{
+ if(this.showcase?.partnerHero==='ninja'&&!this.completed&&this.echoStep!=='retry')this.showcase.partnerJumpPressed=true;
+});this.input.keyboard.on('keydown-E',()=>{
+ if(this.showcase?.partner&&!this.completed&&this.echoStep!=='retry')this.showcase.partnerDashPressed=true;
+});this.input.keyboard.on('keydown-F',()=>{
+ const s=this.showcase;
+ if(!s?.partner||this.completed)return;
+ if(this.echoStep==='duel')this.fireDuelCoin(s.partner,s.partnerHero);
+ else if(this.echoStep==='course')this.fireScoutShot(s.partner,s.partnerHero,s.partner.flipX?-1:1);
+});this.input.keyboard.on('keydown-J',()=>{if(!this.showcase?.partner)this.action();});this.input.keyboard.on('keydown-K',()=>{if(!this.showcase?.partner)this.dash();});this.input.keyboard.on('keydown-SHIFT',()=>{if(this.showcase?.partner)this.dash();});this.input.keyboard.on('keydown-ENTER',()=>{if(this.completed)this.next();else if(this.showcase?.partner)this.action()});this.createBackdrop();
  if(kind==='cash'&&challengeOnBoot>=0){
   this.cashChallenge=challengeOnBoot;
   this.level=challengeOnBoot;
  }
- if(kind==='cash'&&!practiceOnBoot&&this.cashChallenge==null)this.level=Math.min(readProgress(),levels.cash.length-1);this.loadLevel(kind==='cash'&&!practiceOnBoot&&this.cashChallenge==null);if(practiceOnBoot)this.enterCashArena();this.events.on('shutdown',()=>{this.input.keyboard.removeAllListeners()})}
+ if(kind==='cash'&&!practiceOnBoot&&this.cashChallenge==null)this.level=Math.min(readProgress(),levels.cash.length-1);this.loadLevel(kind==='cash'&&!practiceOnBoot&&this.cashChallenge==null);if(practiceOnBoot)this.enterCashArena(true);this.events.on('shutdown',()=>{this.input.keyboard.removeAllListeners()})}
  createBackdrop(){
   if(kind==='cash')return;
   if(this.textures.exists('book-arena')){
@@ -625,6 +634,12 @@ class Adventure extends Phaser.Scene{
      }
      d.ogreDamage=hit.damage;
      d.ogre=hit.energy;
+     if(hit.energy>0&&this.ogreArt&&!this.reduced){
+      const art=this.ogreArt;
+      this.tweens.killTweensOf(art);
+      art.setAngle((d.facing||1)*(shot.charged?12:5));
+      this.tweens.add({targets:art,angle:0,duration:shot.charged?190:100,ease:'Sine.easeOut'});
+     }
     }else d.ogre=Math.max(0,d.ogre-(shot.charged?38:12));
     if(shot.charged&&!this.reduced)this.cameras.main.shake(140,.005);
     if(d.ogre===0){
@@ -842,6 +857,8 @@ class Adventure extends Phaser.Scene{
    (this.level===2?'Press POWER to replay.':'Press POWER for the next phase.'));
  }
  setupShowcase(resumeCheckpoint){
+  $('cash-boss-shortcut').hidden=this.cashChallenge!=null;
+  this.echoMode=$('echo-mode')?.value||'practice';
   const map=this.make.tilemap({key:this.level?'cash-chapter-'+this.level:'cash-showcase'});
   const tiles=map.addTilesetImage('Terrain','cash-terrain');
   const layer=this.obj(map.createLayer('Terrain',tiles,0,0));
@@ -862,6 +879,7 @@ class Adventure extends Phaser.Scene{
   if(this.cashChallenge!=null){
    const finish=[3820,3160,3540][this.cashChallenge];
    this.showcase.challengeFinish=finish;
+   this.showcase.challengeElapsedMs=0;
    this.label('🏁',finish,397,36).setDepth(10);
   }
   const districtNames=[
@@ -870,7 +888,7 @@ class Adventure extends Phaser.Scene{
    ['Night Foundry','Ember Walk','Lantern Works','The Echo Furnace'],
    ['Echo Factory','Prism Conveyor','Resonance Core']
   ][this.level];
-  this.label(districtNames[0],265,245,27).setDepth(5).setBackgroundColor('#211a32').setPadding(9,5);
+  this.label(CASH_CHALLENGES[this.cashChallenge]??districtNames[0],265,245,27).setDepth(5).setBackgroundColor('#211a32').setPadding(9,5);
   if(this.textures.exists('maplewood-houses')){
    const factor=this.reduced?0:.58;
    const panelWidth=Math.ceil(560*H/233);
@@ -977,7 +995,7 @@ class Adventure extends Phaser.Scene{
 
   }
   if(this.cashChallenge===1&&!s.partner&&this.hero==='cash'){
-   s.ricochetShield=this.obj(this.add.ellipse(270,480,20,60,0x4076ab,.85)
+   s.ricochetShield=this.obj(this.add.ellipse(270,452,20,60,0x4076ab,.85)
     .setStrokeStyle(4,0xa3f8ff).setDepth(8));
   }
   const rewards=markers.filter(marker=>marker.name==='medal');
@@ -998,7 +1016,7 @@ class Adventure extends Phaser.Scene{
   s.playerMeters=[this.player,s.partner].filter(Boolean).map(()=>
    this.obj(this.add.graphics().setScrollFactor(0).setDepth(46))
   );
-  if(resumeCheckpoint){
+  if(resumeCheckpoint&&this.cashChallenge==null){
    let district=0;
    try{district=Number(localStorage.getItem('sparkle-play-lab:cash-portal:'+this.level));}catch{}
    if(Number.isInteger(district)&&district>0&&district<=s.portals.length){
@@ -1030,7 +1048,8 @@ class Adventure extends Phaser.Scene{
   this.showcaseHud.setText('♥ '+(this.echoStep==='duel'?this.duel.cashLives:s.hearts)
    +'   ★ '+count(s.saved,[1,2,4])+'/3'
    +(course?'   ◎ '+s.district+'/'+s.portals.length+'   ◈ '+count(s.earnedMedals,[1,2,4,8])+'/4':'')
-   +(s.starPower?'   ✨':''));
+   +(s.starPower?'   ✨':'')
+   +(s.challengeFinish?'   ⏱ '+Math.floor(s.challengeElapsedMs/1000)+'s':''));
  }
  updateCashIndicators(s){
   const colors=[0x79e8ff,0xffabed];
@@ -1112,12 +1131,30 @@ class Adventure extends Phaser.Scene{
   }
   if(!nearest)return false;
   shot.chainTarget=nearest;
+  shot.ricochet=true;
   shot.life=.65;
   shot.sprite.setFillStyle(0xfff2a0);
+  const trail=this.obj(this.add.graphics().setDepth(14));
+  const x=shot.sprite.x,y=shot.sprite.y;
+  const end=nearest.sprite;
+  const bendY=Math.min(y,end.y)-22;
+  for(const [width,color,alpha] of [[8,0x176176,.65],[3,0xffe68a,.92]]){
+   trail.lineStyle(width,color,alpha);
+   trail.beginPath();
+   trail.moveTo(x,y);
+   trail.lineTo((x+end.x)/2,bendY);
+   trail.lineTo(end.x,end.y);
+   trail.strokePath();
+  }
+  this.time.delayedCall(this.reduced?180:250,()=>{if(trail.active)trail.destroy();});
   return true;
  }
  cashComboFeedback(x,y){
   this.cashShockwave(x,y,0x9ff8ff,72);
+  const crest=this.obj(this.add.star(x,y,4,8,25,0xffd875)
+   .setStrokeStyle(2,0xfff6d4).setDepth(22));
+  this.tweens.add({targets:crest,alpha:0,scale:this.reduced?1:1.4,duration:240,
+   onComplete:()=>{if(crest.active)crest.destroy();}});
   emit(this,x,y,0xffde78,18);
   tone(this,660,.12,.065,'triangle');
   tone(this,990,.2,.055,'sine');
@@ -1216,6 +1253,12 @@ class Adventure extends Phaser.Scene{
      if(shot.bubble)this.trapCashScout(s,target,shot.powered,shot.owner);
      else{target.sprite.setVisible(false);this.updateScoutTell(target,false);if(target.trap){target.trap.destroy();target.trap=null;}}
      this.events.emit('coin:target-hit',{x:sprite.x,y:sprite.y});
+     if(this.cashChallenge===1&&shot.ricochet&&!s.trickShotEarned){
+      s.trickShotEarned=true;
+      this.cashComboFeedback(sprite.x,sprite.y);
+      const star=this.label('★',sprite.x,sprite.y-38,33).setDepth(24);
+      this.time.delayedCall(850,()=>{if(star.active)star.destroy();});
+     }
      if(duo){
       this.cashComboFeedback(sprite.x,sprite.y);
       if(this.aimCashRicochet(s,shot,target))continue;
@@ -1316,6 +1359,11 @@ class Adventure extends Phaser.Scene{
   if(superDash&&duel){
    const targetX=this.ogre.x,targetY=this.ogre.y-26;
    if(lightning)this.drawCashLightning(targetX,targetY);
+   if(!this.reduced){
+    const glow=this.obj(this.add.ellipse(targetX,509,154,13,lightning?0xffee99:smoke?0xaa87db:0x87e4ef,.58).setDepth(5));
+    this.tweens.add({targets:glow,alpha:0,scaleX:1.55,duration:400,
+     onComplete:()=>{if(glow.active)glow.destroy();}});
+   }
    const strike=this.obj(this.add.circle(targetX,targetY,22,color,.45).setDepth(17));
    this.duel.coins.push({sprite:strike,vx:0,vy:0,charged:true,superDash:true,life:150,disposable:true});
    for(const shot of this.duel.shots)shot.sprite.destroy();
@@ -1412,7 +1460,8 @@ class Adventure extends Phaser.Scene{
   const body=partner.body;
   const direction=Number(this.keys.D.isDown)-Number(this.keys.A.isDown);
   const dash=s.partnerDash;
-  const pressed=Phaser.Input.Keyboard.JustDown(this.keys.E);
+  const pressed=s.partnerDashPressed;
+  s.partnerDashPressed=false;
   dash.charge=Math.min(100,dash.charge+dt*.016);
   dash.recovery=Math.max(0,dash.recovery-dt);
   if(dash.remaining>0){
@@ -1431,7 +1480,8 @@ class Adventure extends Phaser.Scene{
   const grounded=body.blocked.down&&body.velocity.y>=0;
   if(s.partnerHero==='ninja'){
    if(grounded)s.partnerAirJumpUsed=false;
-   if(Phaser.Input.Keyboard.JustDown(this.keys.W)){
+   if(s.partnerJumpPressed){
+    s.partnerJumpPressed=false;
     if(grounded)body.setVelocityY(-tuning.jumpSpeed);
     else if(!s.partnerAirJumpUsed){
      s.partnerAirJumpUsed=true;
@@ -1450,7 +1500,7 @@ class Adventure extends Phaser.Scene{
    if(this.keys.F.isDown)this.fireDuelCoin(partner,s.partnerHero);
    return;
   }
-  if(Phaser.Input.Keyboard.JustDown(this.keys.F))this.fireScoutShot(partner,s.partnerHero,partner.flipX?-1:1);
+
 
  }
  updateCashCourseHazards(s,dt){
@@ -1508,7 +1558,25 @@ class Adventure extends Phaser.Scene{
   }
   this.updateCashPartner(s,dt);
   this.updateCashIndicators(s);
-  if(this.echoStep!=='course')return;
+  if(this.echoStep!=='course'){
+   if(this.echoStep==='duel'){
+    for(const entry of s.arenaShadows||[]){
+     const {actor,shadow}=entry;
+     const onGround=actor.body?.blocked.down;
+     if(onGround&&entry.onGround===false&&!this.reduced){
+      const dust=this.obj(this.add.ellipse(actor.x,actor.body.bottom-2,25,6,0xe4c79b,.48).setDepth(8));
+      this.tweens.add({targets:dust,scaleX:2.1,alpha:0,duration:210,
+       onComplete:()=>{if(dust.active)dust.destroy();}});
+     }
+     entry.onGround=onGround;
+     const elevation=Math.max(0,484-actor.y);
+     shadow.setX(actor.x).setAlpha(Math.max(.15,.63-elevation/420))
+      .setScale(Math.max(.57,1-elevation/520),1);
+    }
+    if(s.challengeFinish)this.updateShowcaseHud();
+   }
+   return;
+  }
   if(this.echoStep==='course'){
    this.updateCashCourseHazards(s,dt);
    if(this.echoStep==='course')this.cashCourseCombat(s,dt);
@@ -1589,9 +1657,10 @@ class Adventure extends Phaser.Scene{
    this.enterCashArena();
   }
  }
- enterCashArena(){
+ enterCashArena(practice=false){
   const s=this.showcase;
   if(!s||this.echoStep!=='course')return;
+  s.practiceDuel=practice;
   this.player.body.reset(s.exitX,455);
   s.partner?.body.reset(s.exitX-48,455);
   for(const shot of [...s.bolts,...s.scoutCoins])shot.sprite.destroy();
@@ -1599,6 +1668,30 @@ class Adventure extends Phaser.Scene{
    // Reuse the arena objects on retries instead of accumulating hidden HUDs.
    for(const item of [this.ogre,this.duelMeter,this.duelReadout,this.echoCue,this.duelGlow])if(item?.active)item.destroy();
    this.setupCoinOgre();
+   if(!s.arenaFloor){
+    const left=s.width-W;
+    const framing=this.obj(this.add.graphics().setDepth(-2));
+    for(const x of [left+42,left+W-42]){
+     framing.fillStyle(0x18273c,.84).fillRoundedRect(x-21,210,42,302,12);
+     framing.fillStyle(0x384f63,.76).fillRoundedRect(x-14,222,8,279,4);
+     framing.fillStyle(0x75ded8,.22).fillCircle(x,218,33);
+     framing.fillStyle(0xffdf98,.84).fillCircle(x,218,10);
+    }
+    framing.lineStyle(4,0x647d87,.5).lineBetween(left+42,236,left+W-42,236);
+    const floor=this.obj(this.add.graphics().setDepth(4));
+    floor.fillStyle(0x263752).fillRect(left,512,W,28);
+    floor.fillStyle(0x556b79).fillRect(left,512,W,5);
+    floor.lineStyle(1,0xa0afac,.55).lineBetween(left,512,left+W,512);
+    floor.fillStyle(0x141e36).fillRect(left,533,W,7);
+    for(let x=left+30;x<left+W;x+=64){
+     floor.lineStyle(2,0x1b2941).lineBetween(x,517,x+12,534);
+     floor.fillStyle(0xb29765,.72).fillCircle(x-9,524,2);
+    }
+    s.arenaFloor=floor;
+   }
+   s.arenaShadows=[this.player,s.partner,this.ogre].filter(Boolean).map(actor=>({
+    actor,shadow:this.obj(this.add.ellipse(actor.x,510,actor===this.ogre?120:68,12,0x161329,.38).setDepth(5))
+   }));
    if(this.cashChallenge===2){
     this.duel.ogreLives=1;
     this.duel.hitsPerLife=12;
@@ -1609,7 +1702,15 @@ class Adventure extends Phaser.Scene{
    if(!s.arenaRoofs){
     s.arenaRoofs=true;
     for(const x of [s.width-565,s.width-310]){
-     const roof=this.box(x,397,125,14,0x537475);
+     const roof=this.box(x,397,125,14,0x537475).setVisible(false);
+     const ledge=this.obj(this.add.graphics().setDepth(6));
+     ledge.fillStyle(0x192944).fillRoundedRect(x-62.5,390,125,19,4);
+     ledge.fillStyle(0x748690).fillRoundedRect(x-61,390,122,5,2);
+     ledge.fillStyle(0x2b435b).fillRect(x-58,397,116,8);
+     for(const offset of [-44,-15,15,44]){
+      ledge.fillStyle(0x8ee6d9,.28).fillCircle(x+offset,401,4);
+      ledge.fillStyle(0xffdb8c).fillCircle(x+offset,401,1.75);
+     }
      this.levelColliders.push(this.physics.add.collider(this.player,roof));
      if(s.partner)this.levelColliders.push(this.physics.add.collider(s.partner,roof));
     }
@@ -1797,7 +1898,12 @@ class Adventure extends Phaser.Scene{
  }
 
  updateHUD(){this.heroTag?.setText(this.hero.toUpperCase());this.hud?.destroy();this.hud=this.obj(this.add.text(22,45,`CHAPTER ${this.level+1}/${levels[kind].length}    ✨ ${this.score}`,{fontSize:'17px',fontFamily:'system-ui',fontStyle:'bold',color:'#ffe4a0'}).setScrollFactor(0).setDepth(40));}
- instruction(){if(kind==='echo')return 'Read the Ogre’s warning and jump. His first attack reveals the lantern.';if(kind==='bubble')return this.dataLevel.tip;return this.seedTrial()?'Press BUBBLE or J near the seed pod. Guide it into the garden planter.':kind==='bubble'?'Press BUBBLE or J near the crate. Use the arrows to guide it into the golden ring.':kind==='cash'&&this.showcase?'Run right. Jump gaps. Collect three stars.':kind==='cash'?'Fire coins at the Echo Ogre. Watch his windup and dodge low bolts, spreads, and chasing orbs.':kind==='ninja'?'Find the golden switch, then reach the mint door. Press SCAN or J for a clue.':this.dataLevel?.crate?'Guide the crate into the golden ring with Kairo.':'Switch to Captain Cash with HERO or Q and light all the targets.'}
+ instruction(){
+ if(kind==='cash'&&this.cashChallenge!=null){
+  if(this.cashChallenge===1)return this.showcase.partner?'Bubble a scout, then hit it with a coin.':'Bank a coin off the blue shield.';
+  return this.cashChallenge===0?'Race to the flag.':'Reach the arena, then dodge and counter.';
+ }
+ if(kind==='echo')return 'Read the Ogre’s warning and jump. His first attack reveals the lantern.';if(kind==='bubble')return this.dataLevel.tip;return this.seedTrial()?'Press BUBBLE or J near the seed pod. Guide it into the garden planter.':kind==='bubble'?'Press BUBBLE or J near the crate. Use the arrows to guide it into the golden ring.':kind==='cash'&&this.showcase?'Run right. Jump gaps. Collect three stars.':kind==='cash'?'Fire coins at the Echo Ogre. Watch his windup and dodge low bolts, spreads, and chasing orbs.':kind==='ninja'?'Find the golden switch, then reach the mint door. Press SCAN or J for a clue.':this.dataLevel?.crate?'Guide the crate into the golden ring with Kairo.':'Switch to Captain Cash with HERO or Q and light all the targets.'}
  buildMaze(l){this.player.body.setGravityY(0);this.player.setPosition(95,455);this.maze=[];const size=46,ox=135,oy=80;this.mazeOffset={size,ox,oy};for(let r=0;r<l.grid.length;r++)for(let c=0;c<l.grid[r].length;c++){let v=l.grid[r][c],x=ox+c*size,y=oy+r*size; if(v==='#'){this.box(x,y,size-1,size-1,0x3c5478)}else{this.obj(this.add.rectangle(x,y,size-2,size-2,0x244b68,.35))}if(v==='S'){this.player.setPosition(x,y)}if(v==='K'){this.switchCell={x,y};this.switchMarker=this.obj(this.add.star(x,y,5,9,20,0xffe78c).setStrokeStyle(2,0xffffff))}if(v==='E'){this.exitCell={x,y};this.exitMarker=this.obj(this.add.rectangle(x,y,30,36,0x47768a).setStrokeStyle(3,0xffe68d))}}this.label('Find the golden switch • reach the mint door',480,35,18);this.switchOn=false;
  if(this.level===0){
   this.secretWall=this.walls.find(wall=>wall.x===ox+6*size&&wall.y===oy+size);
@@ -1851,16 +1957,37 @@ coin.aim=aim;coin.life=1600;this.projectiles.push(coin);tone(this,970,.065);emit
  finishCashChallenge(){
   if(this.completed)return;
   this.completed=true;
-  const seconds=Math.round(this.showcase.courseTime);
+  const elapsed=this.showcase.challengeElapsedMs;
+  const seconds=(elapsed/1000).toFixed(1);
+  const recordKey='sparkle-play-lab:cash-best:'+this.cashChallenge+':'+this.echoMode+':'+(this.showcase.partner?'duo':'solo');
+  let record='';
+  try{
+   const prior=Number(localStorage.getItem(recordKey));
+   if(!prior||elapsed<prior){
+    localStorage.setItem(recordKey,String(elapsed));
+    record='  ·  ★ New best';
+   }else record='  ·  Best '+(prior/1000).toFixed(1)+'s';
+  }catch{}
   this.player.body.stop().setAllowGravity(false);
   this.showcase.partner?.body.stop().setAllowGravity(false);
-  this.label('CHALLENGE CLEAR · '+seconds+'s',480,225,35).setScrollFactor(0).setDepth(60);
-  this.label('↻ Enter or Fire',480,273,20).setScrollFactor(0).setDepth(60);
+  this.label('CHALLENGE CLEAR · '+seconds+'s'+record,480,225,35).setScrollFactor(0).setDepth(60);
+  if(this.cashChallenge===1)this.label(this.showcase.trickShotEarned?'★ Trick shot earned':'◇ Try a ricochet',480,265,20).setScrollFactor(0).setDepth(60);
+  this.label('↻ Enter or Fire',480,306,20).setScrollFactor(0).setDepth(60);
   setStatus(CASH_CHALLENGES[this.cashChallenge]+' cleared.');
   cashCue(this,'victory');
  }
- next(){if(this.finalePending)return;if(this.cashChallenge!=null){this.loadLevel();return;}if(this.level<levels[kind].length-1){this.level++;this.loadLevel()}else{this.level=0;this.loadLevel()}}
- victory(){if(this.cashChallenge!=null){this.finishCashChallenge();return;}if(this.completed)return;this.completed=true;
+ next(){if(this.finalePending)return;if(this.cashChallenge!=null||this.showcase?.practiceDuel){this.loadLevel(true);return;}if(this.level<levels[kind].length-1){this.level++;this.loadLevel()}else{this.level=0;this.loadLevel()}}
+ victory(){
+ if(this.showcase?.practiceDuel){
+  this.completed=true;
+  this.player.body.stop().setAllowGravity(false);
+  this.showcase.partner?.body.stop().setAllowGravity(false);
+  this.label('PRACTICE CLEAR',480,225,36).setScrollFactor(0).setDepth(60);
+  this.label('↻ Enter or Fire',480,274,20).setScrollFactor(0).setDepth(60);
+  setStatus('Practice duel cleared!');
+  return;
+ }
+ if(this.cashChallenge!=null){this.finishCashChallenge();return;}if(this.completed)return;this.completed=true;
  if(kind==='cash'){try{localStorage.removeItem('sparkle-play-lab:cash-portal:'+this.level);}catch{}}
  saveProgress(this.level+1);updateChapterSelect(this.level);
  const finale=this.level===levels[kind].length-1;
@@ -1932,7 +2059,8 @@ coin.aim=aim;coin.life=1600;this.projectiles.push(coin);tone(this,970,.065);emit
   if(clear(cargo.x,y))cargo.y=y;
   this.bubble.setPosition(cargo.x,cargo.y);
  }
- update(_,dt){if(!this.player||this.completed||(kind==='cash'&&this.echoStep==='retry'))return;if(kind!=='cash')playMusicBeat(this,dt,kind);if(kind==='cash'&&this.echoStep==='duel')this.updateDuel(dt);else this.updateVillain(dt);const b=this.player.body;let left=buttons.left||this.keys.A.isDown||this.keys.LEFT.isDown,right=buttons.right||this.keys.D.isDown||this.keys.RIGHT.isDown,up=buttons.up||this.keys.W.isDown||this.keys.UP.isDown,down=buttons.down||this.keys.S.isDown||this.keys.DOWN.isDown;const cashIntent=kind==='cash'?movementIntent(buttons,this.keys,!!this.showcase?.partner):null;let dir=cashIntent?.direction??((right?1:0)-(left?1:0));if(dir){if(this.dashCarryDirection!==dir)this.dashCarry=0;this.facing=dir;this.player.setScale(dir<0?-1:1,1)}this.charge=Math.min(100,this.charge+dt*.016);if(kind==='ninja'){const vertical=(down?1:0)-(up?1:0);const speed=dir&&vertical?175*Math.SQRT1_2:175;b.setVelocity(dir*speed,vertical*speed);this.animateHero(dt,dir,up,down);if(this.switchCell&&Phaser.Math.Distance.Between(this.player.x,this.player.y,this.switchCell.x,this.switchCell.y)<30&&!this.switchOn){this.switchOn=true;this.exitMarker.setFillStyle(0x6bbda2);this.switchMarker.setFillStyle(0x7ee8a5);this.score+=50;this.updateHUD();emit(this,this.switchCell.x,this.switchCell.y,0xffdb70,25);tone(this,900);setStatus('Secret switch activated! Find the mint door.')}if(this.switchOn&&Phaser.Math.Distance.Between(this.player.x,this.player.y,this.exitCell.x,this.exitCell.y)<28)this.victory();return}this.dashRecovery=Math.max(0,this.dashRecovery-dt);if(this.dashTime>0){this.dashTime-=dt;if(kind==='cash'&&this.dashTime<=0)this.dashRecovery=tuning.recoveryMs;this.lastDashTrail+=dt;if(!this.reduced&&this.lastDashTrail>=48){this.lastDashTrail=0;const trail=this.add.circle(this.player.x,this.player.y,23,palette.gold,.25).setDepth(4);this.tweens.add({targets:trail,alpha:0,scale:1.8,duration:260,onComplete:()=>trail.destroy()})}b.setVelocityX((kind==='cash'?this.dashDirection:(this.facing||1))*tuning.dashSpeed);if(!this.reduced&&Math.random()<.5){const spark=this.add.circle(this.player.x,this.player.y,8,palette.gold,.5).setDepth(2);this.tweens.add({targets:spark,alpha:0,scale:.2,duration:220,onComplete:()=>spark.destroy()})} }else if(kind==='cash'&&this.dashCarry>0&&(dir===0||dir===this.dashCarryDirection)){
+ update(_,dt){if(!this.player||this.completed||(kind==='cash'&&this.echoStep==='retry'))return;if(this.showcase?.challengeFinish)this.showcase.challengeElapsedMs+=dt;
+ if(kind!=='cash')playMusicBeat(this,dt,kind);if(kind==='cash'&&this.echoStep==='duel')this.updateDuel(dt);else this.updateVillain(dt);const b=this.player.body;let left=buttons.left||this.keys.A.isDown||this.keys.LEFT.isDown,right=buttons.right||this.keys.D.isDown||this.keys.RIGHT.isDown,up=buttons.up||this.keys.W.isDown||this.keys.UP.isDown,down=buttons.down||this.keys.S.isDown||this.keys.DOWN.isDown;const cashIntent=kind==='cash'?movementIntent(buttons,this.keys,!!this.showcase?.partner):null;let dir=cashIntent?.direction??((right?1:0)-(left?1:0));if(dir){if(this.dashCarryDirection!==dir)this.dashCarry=0;this.facing=dir;this.player.setScale(dir<0?-1:1,1)}this.charge=Math.min(100,this.charge+dt*.016);if(kind==='ninja'){const vertical=(down?1:0)-(up?1:0);const speed=dir&&vertical?175*Math.SQRT1_2:175;b.setVelocity(dir*speed,vertical*speed);this.animateHero(dt,dir,up,down);if(this.switchCell&&Phaser.Math.Distance.Between(this.player.x,this.player.y,this.switchCell.x,this.switchCell.y)<30&&!this.switchOn){this.switchOn=true;this.exitMarker.setFillStyle(0x6bbda2);this.switchMarker.setFillStyle(0x7ee8a5);this.score+=50;this.updateHUD();emit(this,this.switchCell.x,this.switchCell.y,0xffdb70,25);tone(this,900);setStatus('Secret switch activated! Find the mint door.')}if(this.switchOn&&Phaser.Math.Distance.Between(this.player.x,this.player.y,this.exitCell.x,this.exitCell.y)<28)this.victory();return}this.dashRecovery=Math.max(0,this.dashRecovery-dt);if(this.dashTime>0){this.dashTime-=dt;if(kind==='cash'&&this.dashTime<=0)this.dashRecovery=tuning.recoveryMs;this.lastDashTrail+=dt;if(!this.reduced&&this.lastDashTrail>=48){this.lastDashTrail=0;const trail=this.add.circle(this.player.x,this.player.y,23,palette.gold,.25).setDepth(4);this.tweens.add({targets:trail,alpha:0,scale:1.8,duration:260,onComplete:()=>trail.destroy()})}b.setVelocityX((kind==='cash'?this.dashDirection:(this.facing||1))*tuning.dashSpeed);if(!this.reduced&&Math.random()<.5){const spark=this.add.circle(this.player.x,this.player.y,8,palette.gold,.5).setDepth(2);this.tweens.add({targets:spark,alpha:0,scale:.2,duration:220,onComplete:()=>spark.destroy()})} }else if(kind==='cash'&&this.dashCarry>0&&(dir===0||dir===this.dashCarryDirection)){
  this.dashCarry=Math.max(0,this.dashCarry-dt);
  b.setVelocityX(this.dashCarryDirection*(320+230*this.dashCarry/260));
  }else b.setVelocityX(this.hero==='cash'&&kind==='cash'?runVelocity(b.velocity.x,dir,dt):dir*(this.hero==='cash'?280:205));const jumpDown=cashIntent?.jump??(buttons.jump||this.keys.SPACE.isDown||(!this.holding&&up));
@@ -1990,8 +2118,8 @@ function syncCashMusic(){
   cashMusic.play().catch(()=>{});
  }else cashMusic.pause();
 }
-function init(){if(game)return;game=new Phaser.Game({type:kind==='cash'?Phaser.CANVAS:Phaser.AUTO,parent:'stage',width:W,height:H,backgroundColor:'#142b55',render:{antialias:true,pixelArt:false},scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},physics:{default:'arcade',arcade:{gravity:{y:0},debug:false}},scene:[Adventure]});const bindHold=(id,key)=>{const el=$(id);if(!el||id==='power'&&kind!=='cash'&&kind!=='echo')return;const off=()=>{buttons[key]=false;el.classList.remove('pressed')};el.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();buttons[key]=true;el.classList.add('pressed')}});el.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')off()});el.addEventListener('blur',off);el.addEventListener('pointerdown',e=>{e.preventDefault();buttons[key]=true;el.classList.add('pressed');try{el.setPointerCapture(e.pointerId)}catch(_){}});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>el.addEventListener(ev,off))};['left','right','up','down','jump','power','breathe'].forEach(k=>bindHold(k,k));$('power')?.addEventListener('click',()=>game.scene.getScene('Adventure').action());$('dash')?.addEventListener('click',()=>game.scene.getScene('Adventure').dash());$('switch')?.addEventListener('click',()=>game.scene.getScene('Adventure').swap());document.querySelectorAll('.hero-option').forEach(b=>b.addEventListener('click',()=>{const s=game.scene.getScene('Adventure');if(kind!=='echo'||s.completed)return;let count=0;while(s.hero!==b.dataset.hero&&count++<3)s.swap()}));$('mute')?.addEventListener('click',e=>{let s=game.scene.getScene('Adventure');s.muted=!s.muted;if(cashMusic){cashMusic.muted=s.muted;syncCashMusic();}e.currentTarget.textContent=s.muted?'🔇 Sound off':'🔊 Sound on'});$('music')?.addEventListener('click',event=>{const scene=game.scene.getScene('Adventure');scene.musicOn=cashMusic?(cashMusicEnabled=!cashMusicEnabled):!scene.musicOn;if(cashMusic)syncCashMusic();event.currentTarget.setAttribute('aria-pressed',String(scene.musicOn));event.currentTarget.textContent=scene.musicOn?'Music on':'Music off';});const clearInputs=()=>{for(const key of Object.keys(buttons)){buttons[key]=false;$(key)?.classList.remove('pressed')}game.scene.getScene('Adventure').input.keyboard?.resetKeys()};window.addEventListener('blur',clearInputs);document.addEventListener('visibilitychange',()=>{if(document.hidden)clearInputs();syncCashMusic()});const scene=()=>game.scene.getScene('Adventure');
-$('cash-boss-shortcut')?.addEventListener('click',()=>scene()?.enterCashArena());
+function init(){if(game)return;game=new Phaser.Game({type:kind==='cash'?Phaser.CANVAS:Phaser.AUTO,parent:'stage',width:W,height:H,backgroundColor:'#142b55',render:{antialias:true,pixelArt:false},scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},physics:{default:'arcade',arcade:{gravity:{y:0},debug:false}},scene:[Adventure]});const bindHold=(id,key)=>{const el=$(id);if(!el||id==='power'&&kind!=='cash'&&kind!=='echo')return;const off=()=>{buttons[key]=false;el.classList.remove('pressed')};el.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();buttons[key]=true;el.classList.add('pressed')}});el.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter')off()});el.addEventListener('blur',off);el.addEventListener('pointerdown',e=>{e.preventDefault();buttons[key]=true;el.classList.add('pressed');try{el.setPointerCapture(e.pointerId)}catch(_){}});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>el.addEventListener(ev,off))};['left','right','up','down','jump','power','breathe'].forEach(k=>bindHold(k,k));$('power')?.addEventListener('click',()=>game.scene.getScene('Adventure').action());$('dash')?.addEventListener('click',()=>game.scene.getScene('Adventure').dash());$('switch')?.addEventListener('click',()=>game.scene.getScene('Adventure').swap());document.querySelectorAll('.hero-option').forEach(b=>b.addEventListener('click',()=>{const s=game.scene.getScene('Adventure');if(kind!=='echo'||s.completed)return;let count=0;while(s.hero!==b.dataset.hero&&count++<3)s.swap()}));$('mute')?.addEventListener('click',e=>{let s=game.scene.getScene('Adventure');s.muted=!s.muted;if(cashMusic){cashMusic.muted=s.muted;syncCashMusic();}e.currentTarget.textContent=s.muted?'🔇 Sound off':'🔊 Sound on'});$('music')?.addEventListener('click',event=>{const scene=game.scene.getScene('Adventure');scene.musicOn=cashMusic?(cashMusicEnabled=!cashMusicEnabled):!scene.musicOn;if(cashMusic)syncCashMusic();event.currentTarget.setAttribute('aria-pressed',String(scene.musicOn));event.currentTarget.textContent=scene.musicOn?'Music on':'Music off';});const clearInputs=()=>{for(const key of Object.keys(buttons)){buttons[key]=false;$(key)?.classList.remove('pressed')}const active=game.scene.getScene('Adventure');if(active.showcase){active.showcase.partnerDashPressed=false;active.showcase.partnerJumpPressed=false;}active.input.keyboard?.resetKeys()};window.addEventListener('blur',clearInputs);document.addEventListener('visibilitychange',()=>{if(document.hidden)clearInputs();syncCashMusic()});const scene=()=>game.scene.getScene('Adventure');
+$('cash-boss-shortcut')?.addEventListener('click',()=>scene()?.enterCashArena(true));
 $('cash-combo-retry')?.addEventListener('click',()=>{
  const active=scene();
  if(!active?.player)return;
@@ -2014,7 +2142,7 @@ bindGameUI({
  pause(){clearInputs();cashMenuPaused=true;syncCashMusic();game.scene.pause('Adventure');},
  resume(){clearInputs();cashMenuPaused=false;syncCashMusic();game.scene.resume('Adventure');},
  restart(){scene().loadLevel();},
- resetProgress(){progress.reset();if(kind==='cash'){try{for(const suffix of ['',':1',':2',':3'])localStorage.removeItem('sparkle-play-lab:cash-stars'+suffix);for(let chapter=0;chapter<levels.cash.length;chapter++){localStorage.removeItem('sparkle-play-lab:cash-portal:'+chapter);localStorage.removeItem('sparkle-play-lab:cash-medals:'+chapter);}localStorage.removeItem('sparkle-play-lab:maplewood-medal');}catch{}}scene().level=0;scene().loadLevel();},
+ resetProgress(){progress.reset();if(kind==='cash'){try{for(const suffix of ['',':1',':2',':3'])localStorage.removeItem('sparkle-play-lab:cash-stars'+suffix);for(let chapter=0;chapter<levels.cash.length;chapter++){localStorage.removeItem('sparkle-play-lab:cash-portal:'+chapter);localStorage.removeItem('sparkle-play-lab:cash-medals:'+chapter);}localStorage.removeItem('sparkle-play-lab:maplewood-medal');for(const key of Object.keys(localStorage))if(key.startsWith('sparkle-play-lab:cash-best:'))localStorage.removeItem(key);}catch{}}scene().level=0;scene().loadLevel();},
  getDashCharge(){const active=scene();return active&&(kind==='cash'||active.hero==='cash')?active.charge:null;}
 });
 $('echo-method')?.addEventListener('click',event=>{
@@ -2030,12 +2158,19 @@ if(new URLSearchParams(location.search).get('test')==='1'){
 }
 setStatus(info.desc)}
 if(kind==='cash'){
+ const difficulty=$('echo-mode');
+ const difficultyKey='sparkle-play-lab:cash:tier';
+ try{
+  const saved=localStorage.getItem(difficultyKey);
+  if([...difficulty.options].some(option=>option.value===saved))difficulty.value=saved;
+ }catch{}
  const syncPartner=()=>{$('cash-player-two').hidden=!$('cash-coop').checked;};
  $('cash-partner').value='kairo';
  $('cash-coop').addEventListener('change',syncPartner);
  syncPartner();
  const start=(practice,challenge=-1)=>{
   challengeOnBoot=challenge;
+  try{localStorage.setItem(difficultyKey,difficulty.value);}catch{}
   if(challenge===1){$('cash-hero').value='cash';$('cash-partner').value='kairo';}
   practiceOnBoot=practice;
   document.body.classList.add('cash-playing');
