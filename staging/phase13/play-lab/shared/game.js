@@ -1359,6 +1359,11 @@ class Adventure extends Phaser.Scene{
   if(superDash&&duel){
    const targetX=this.ogre.x,targetY=this.ogre.y-26;
    if(lightning)this.drawCashLightning(targetX,targetY);
+   if(!this.reduced){
+    const glow=this.obj(this.add.ellipse(targetX,509,154,13,lightning?0xffee99:smoke?0xaa87db:0x87e4ef,.58).setDepth(5));
+    this.tweens.add({targets:glow,alpha:0,scaleX:1.55,duration:400,
+     onComplete:()=>{if(glow.active)glow.destroy();}});
+   }
    const strike=this.obj(this.add.circle(targetX,targetY,22,color,.45).setDepth(17));
    this.duel.coins.push({sprite:strike,vx:0,vy:0,charged:true,superDash:true,life:150,disposable:true});
    for(const shot of this.duel.shots)shot.sprite.destroy();
