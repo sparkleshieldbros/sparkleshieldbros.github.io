@@ -24,10 +24,16 @@ test('guard blocks ordinary coins and charged coins count as four',()=>{
 
 test('each chapter has a distinct arsenal and a second-life opener',async()=>{
  const {chapterBossPattern}=await import('../shared/cash/boss.js');
- for(const [chapter,first,second,final] of [[0,0,1,5],[1,3,6,7],[2,2,4,8]]){
+ for(const [chapter,first,second,final] of [[0,0,1,5],[1,3,6,7],[2,2,4,8],[3,5,7,8]]){
   assert.equal(chapterBossPattern(chapter,-1,2,()=>0),first);
   assert.equal(chapterBossPattern(chapter,first,2,()=>0),second);
   assert.equal(chapterBossPattern(chapter,-1,1),final);
   assert.notEqual(chapterBossPattern(chapter,final,1,()=>.99),final);
  }
+});
+
+test('Foundry Counter Run clears at twelve damage and honors the guard',()=>{
+ assert.deepEqual(bossHit(11,true,false,false,12),{damage:11,energy:9,blocked:true});
+ assert.equal(bossHit(11,false,false,false,12).energy,0);
+ assert.equal(bossHit(7,true,false,true,12).energy,0);
 });

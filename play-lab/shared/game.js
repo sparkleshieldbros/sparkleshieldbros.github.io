@@ -1,3 +1,7 @@
+import {drawOgreVortex} from './cash/ogre-vortex.js';
+import {districtArt,roofArt,weaponArt} from './cash/district-art.js';
+import {attackMotion,attackFrame} from './cash/attack-motion.js';
+import {drawStride,strideFrame,STRIDE_FRAMES} from './cash/stride.js';
 import {roster} from './cash/roster.js';
 import {installOgreWeapons} from './cash/ogre-weapons.js';
 import {advanceBossClock,chapterBossPattern,bossHit,OGRE_HITS_PER_LIFE} from './cash/boss.js';
@@ -67,11 +71,12 @@ const BOOK_POSES={
  mom:[[61,33,102,118],[465,24,560,119],[162,124,264,200],[309,128,424,204],[461,131,577,200],[16,219,135,297],[28,310,114,396]],
  dad:[[37,41,86,127],[458,30,561,127],[163,133,263,205],[301,141,424,207],[452,143,576,204],[292,223,432,299],[12,315,121,392]],
 };
+const ADULT_WALK={mom:[331,25,397,119],dad:[318,29,411,127]};
 function bookPose(scene,hero,index,alternate){
  const key='book-poses-'+hero;
  if(!scene.textures.exists(key))return null;
  const sheet=scene.textures.get(key).getSourceImage();
- const [x,y,right,bottom]=BOOK_POSES[hero][index];
+ const [x,y,right,bottom]=BOOK_POSES[hero][index]??ADULT_WALK[hero];
  const scale=sheet.width/600;
  const cutout=document.createElement('canvas');
  cutout.width=right-x;cutout.height=bottom-y;
@@ -95,17 +100,29 @@ function bookPose(scene,hero,index,alternate){
   }
  }
  ctx.putImageData(pixels,0,0);
+ if(index===7){
+  // The walking references face left while the game atlas faces right.
+  if(hero==='dad')ctx.clearRect(0,0,27,4);
+  const facingRight=document.createElement('canvas');
+  facingRight.width=cutout.width;facingRight.height=cutout.height;
+  const flipped=facingRight.getContext('2d');
+  flipped.translate(cutout.width,0);
+  flipped.scale(-1,1);
+  flipped.drawImage(cutout,0,0);
+  return facingRight;
+ }
  return cutout;
 }
 function makeHeroAtlas(scene,hero,alternate=false){
  const key='atlas-'+hero+(alternate?'-alternate':'');if(scene.textures.exists(key))return key;
  const srcKey='canon-'+hero,portrait=scene.textures.exists(srcKey)?scene.textures.get(srcKey).getSourceImage():null;
- const cell=112,canvas=document.createElement('canvas');canvas.width=cell*7;canvas.height=cell*4;
+ const cell=112,canvas=document.createElement('canvas');canvas.width=cell*7;canvas.height=cell*STRIDE_FRAMES;
  const ctx=canvas.getContext('2d');const cash=hero==='cash',ninja=hero==='ninja';
  const primary=cash?'#279c69':ninja?'#384b62':'#ed8c39',trim=cash?'#f5d26d':ninja?'#b2e9bb':'#ffe3a1';
  const poses=ATLAS_STATES.map((_,index)=>bookPose(scene,hero,index,alternate));
+ const walk=ADULT_WALK[hero]?bookPose(scene,hero,7,alternate):null;
  const round=(x,y,w,h,r)=>{ctx.beginPath();ctx.roundRect(x,y,w,h,r)};
- for(let row=0;row<4;row++)for(let col=0;col<7;col++){
+ for(let row=0;row<STRIDE_FRAMES;row++)for(let col=0;col<7;col++){
   const state=ATLAS_STATES[col],phase=row*Math.PI/2,run=state==='run',dash=state==='dash',power=state==='power';
   ctx.save();ctx.translate(col*cell+56,row*cell+56);
   const bounce=run?Math.abs(Math.sin(phase))*5:state==='celebrate'?Math.abs(Math.sin(phase))*7:state==='idle'?Math.sin(phase)*2:0;
@@ -115,7 +132,24 @@ function makeHeroAtlas(scene,hero,alternate=false){
    const proportioned=kind==='cash'&&!cash;
    const height=proportioned?94:pose.height*Math.min(100/pose.width,100/pose.height);
    const width=Math.min(100,pose.width*height/pose.height);
-   ctx.drawImage(pose,-width/2,39-height,width,height);
+   if(run&&kind==='cash'){
+    ctx.translate(0,bounce);
+    if(walk){
+     const stride=[pose,pose,walk,poses[0],walk,pose,walk,poses[0]][row];
+     const strideWidth=Math.min(100,stride.width*height/stride.height);
+     ctx.translate([0,2,1,0,0,2,1,0][row],39);
+     const compression=[1,1,.98,.97,1,1,.98,.97][row];
+     ctx.drawImage(stride,-strideWidth/2,-height*compression,strideWidth,height*compression);
+    }else drawStride(ctx,pose,width,height,row,hero,alternate);
+   }else if(power&&kind==='cash'){
+    const beat=row%3;
+    const motion=attackMotion(hero);
+    const lean=[-.12,.11,.035][beat]*(motion.x/28);
+    ctx.translate([ -5, 6, 1 ][beat],39);
+    ctx.rotate(lean);
+    ctx.scale(1,[.94,1.035,.99][beat]);
+    ctx.drawImage(beat===0?(poses[0]||pose):pose,-width/2,-height,width,height);
+   }else ctx.drawImage(pose,-width/2,39-height,width,height);
    ctx.restore();
    continue;
   }
@@ -318,7 +352,7 @@ class Adventure extends Phaser.Scene{
  }
  setOgrePose(pose){
   if(!this.ogreArt)return;
-  const key='ogre-pose-'+pose;
+  const key='ogre-pose-'+pose+(kind==='cash'?'-vortex':'');
   if(!this.textures.exists(key)){
    const sheet=this.textures.get('ogre-action').getSourceImage();
    const [x,y,w,h]=[[402,29,87,123],[318,29,82,123],[235,29,80,123],[510,29,90,123]][pose];
@@ -329,7 +363,9 @@ class Adventure extends Phaser.Scene{
    const pixels=ctx.getImageData(0,0,w,h);
    for(let i=0;i<pixels.data.length;i+=4){
     const g=pixels.data[i+1],b=pixels.data[i+2];
-    pixels.data[i+3]=Math.min(255,Math.max(0,(b-g-9)*6));
+    const row=Math.floor(i/(4*w));
+    const fade=kind==='cash'?Math.max(0,Math.min(1,(104-row)/16)):1;
+    pixels.data[i+3]=Math.min(255,Math.max(0,(b-g-9)*6))*fade;
    }
    ctx.putImageData(pixels,0,0);
    texture.refresh();
@@ -344,6 +380,13 @@ class Adventure extends Phaser.Scene{
    this.ogreArt=this.add.image(0,-50,'ogre-action');
    this.ogre.add(this.ogreArt);
    this.setOgrePose(0);
+  }
+  if(kind==='cash'){
+   const back=this.add.graphics(),front=this.add.graphics();
+   this.ogre.addAt(back,0);
+   this.ogre.add(front);
+   this.duel.vortex={back,front};
+   drawOgreVortex(this.duel.vortex,0,false);
   }
   this.duelMeter=this.obj(this.add.graphics().setDepth(42).setScrollFactor(0));
   this.duelReadout=this.label('',480,62,19).setScrollFactor(0).setDepth(43).setBackgroundColor('#211a32').setPadding(7,4);
@@ -466,10 +509,15 @@ class Adventure extends Phaser.Scene{
   }
   this.duelReadout.setText('CASH '+d.cash+'% · '+d.cashLives+' lives     OGRE '+d.ogre+'% · '+d.ogreLives+' lives');
  }
- fireDuelCoin(shooter=this.player,hero=this.hero){
+ fireDuelCoin(shooter=this.player,hero=this.hero,release=false){
   const d=this.duel;
   const cooldown=shooter===this.player?'cooldown':'partnerCooldown';
   if(d[cooldown]>0)return;
+  if(kind==='cash'&&!release){
+   const facing=shooter===this.player?(this.facing||1):shooter.flipX?-1:1;
+   this.queueCashAttack(shooter,hero,facing,'duel',()=>this.fireDuelCoin(shooter,hero,true));
+   return;
+  }
   d[cooldown]=shooter===this.player?190:310;
   const charged=!!d.charged&&(kind!=='cash'||d.chargeOwner===shooter);
   const powered=kind==='cash'&&this.showcase?.starPower;
@@ -479,7 +527,9 @@ class Adventure extends Phaser.Scene{
    this.duelGlow?.setVisible(false);
   }
   let coin;
-  const x=shooter.x+(shooter===this.player?(this.facing||1):shooter.flipX?-1:1)*13,y=shooter.y+26;
+  const facing=shooter.cashAttack?.facing??(shooter===this.player?(this.facing||1):shooter.flipX?-1:1);
+  const motion=kind==='cash'?attackMotion(hero):{x:13,y:26};
+  const x=shooter.x+facing*motion.x,y=shooter.y+motion.y;
   const star=kind==='cash'&&hero==='ninja';
   if(star)coin=this.makeNugsStar(x,y,charged||powered);
   else if(kind==='cash'){
@@ -508,6 +558,7 @@ class Adventure extends Phaser.Scene{
   const seconds=elapsed/1000;
   if(kind==='cash'){
    d.motion=(d.motion||0)+seconds;
+   if(!this.reduced)drawOgreVortex(d.vortex,d.motion,d.warning);
    const left=this.showcase?this.showcase.width-W:0;
    const cycle=d.motion%8;
    const lane=cycle<1.6?1:cycle<4?1-(cycle-1.6)/1.2:cycle<5.6?-1:-1+(cycle-5.6)/1.2;
@@ -667,6 +718,7 @@ class Adventure extends Phaser.Scene{
     cashCue(this,'victory');
     this.echoStep='won';
     this.ogre.setAngle(-24).setScale(.72);
+    if(!this.reduced)this.tweens.add({targets:[d.vortex.back,d.vortex.front],alpha:.25,scaleX:1.35,scaleY:.28,duration:360,ease:'Cubic.Out'});
     this.ogreArt?.setTint(0x845dab);
     const x=this.ogre.x,y=this.ogre.y-36;
     const ring=this.obj(this.add.circle(x,y,85,0xa465ff,.26).setStrokeStyle(5,0xe4c0ff).setDepth(25));
@@ -924,8 +976,10 @@ class Adventure extends Phaser.Scene{
   this.obj(this.add.image(springX,498,'cash-launch').setDisplaySize(62,23).setDepth(7));
   this.showcase.extraSpring=this.obj(this.add.image(2790,498,'cash-launch').setDisplaySize(62,23).setDepth(7));
   this.label('↑  »',2760,440,17);
-  this.box(springX+88,401,110,13,0x537475);
-  this.box(springX+285,365,96,13,0x537475);
+  for(const [x,y,w] of [[springX+88,401,110],[springX+285,365,96]]){
+   this.box(x,y,w,13,0x537475).setVisible(false);
+   roofArt(this,x,y,w,this.level);
+  }
   this.label('★',springX+88,374,13);
   for(const roof of this.walls.slice(-2)){
    this.levelColliders.push(this.physics.add.collider(this.player,roof));
@@ -945,6 +999,7 @@ class Adventure extends Phaser.Scene{
    this.label('◎',o.x,o.y-70,16);
    return {x:o.x,arch,entered:false};
   });
+  districtArt(this,layer,width,this.level,this.showcase.portals);
   this.showcase.district=0;
   this.showcase.districtNames=districtNames;
   this.showcase.starPower=false;
@@ -1238,6 +1293,7 @@ class Adventure extends Phaser.Scene{
      shot.vy=Math.sin(angle)*shot.speed;
     }
     sprite.x+=shot.vx*seconds;sprite.y+=shot.vy*seconds;shot.life-=seconds;
+    shot.art?.setPosition(sprite.x,sprite.y).setRotation(Math.atan2(shot.vy,shot.vx));
     const shield=s.ricochetShield;
     if(friendly&&shot.hero==='cash'&&!shot.chainTarget&&shield&&Math.abs(sprite.x-shield.x)<17
       &&Math.abs(sprite.y-shield.y)<32&&this.aimCashRicochet(s,shot)){
@@ -1300,9 +1356,36 @@ class Adventure extends Phaser.Scene{
   const star=this.obj(this.add.star(x,y,4,radius*.38,radius,powered?0xe8ff89:0xcddee7));
   return star.setStrokeStyle(2,powered?0xffffff:0x465772).setDepth(15);
  }
- fireScoutShot(shooter,hero,facing){
+ queueCashAttack(shooter,hero,facing,phase,release){
+  if(shooter.cashAttack||this.completed)return;
+  const motion=attackMotion(hero);
+  const attack={motion,facing,start:this.time.now};
+  shooter.cashAttack=attack;
+  this.time.delayedCall(motion.windup,()=>{
+   if(shooter.active&&shooter.cashAttack===attack&&this.echoStep===phase&&!this.completed)release();
+  });
+  this.time.delayedCall(motion.windup+motion.hold+motion.recovery,()=>{
+   if(shooter.cashAttack===attack)shooter.cashAttack=null;
+  });
+ }
+ showCashAttack(shooter,sprite){
+  const attack=shooter.cashAttack;
+  if(!attack||this.reduced)return false;
+  const frame=attackFrame(this.time.now-attack.start,attack.motion);
+  sprite.anims.stop();
+  sprite.setFrame(frame*7+5);
+  if(shooter===this.player)shooter.setScale(attack.facing,1);
+  else sprite.setFlipX(attack.facing<0);
+  return true;
+ }
+ fireScoutShot(shooter,hero,facing,release=false){
   if(this.showcase.scoutCoins.length>=12)return;
-  const x=shooter.x,y=shooter.y+(hero==='cash'?22:0);
+  if(!release){
+   this.queueCashAttack(shooter,hero,facing,'course',()=>this.fireScoutShot(shooter,hero,facing,true));
+   return;
+  }
+  const motion=attackMotion(hero);
+  const x=shooter.x+facing*motion.x,y=shooter.y+motion.y;
   const scout=this.showcase.hazards.find(h=>h.sprite.visible&&(h.sprite.x-x)*facing>0&&Math.abs(h.sprite.x-x)<410);
   const angle=scout?Math.atan2(scout.sprite.y-y,scout.sprite.x-x):facing<0?Math.PI:0;
   const powered=this.showcase.starPower;
@@ -1310,7 +1393,9 @@ class Adventure extends Phaser.Scene{
   const speed=weapon.speed+(powered?140:0);
   const spinning=hero==='ninja';
   const sprite=spinning?this.makeNugsStar(x,y,powered):this.obj(this.add.circle(x,y,weapon.radius+(powered?8:0),powered&&hero==='kairo'?0xbfff70:weapon.color).setStrokeStyle(2,0xfff4da).setDepth(15));
-  this.showcase.scoutCoins.push({sprite,vx:speed*Math.cos(angle),vy:speed*Math.sin(angle),life:powered?1:.85,powered,hero,owner:shooter,bubble:hero==='kairo',spinning,speed,chainHits:spinning&&powered?3:1});
+  const art=weaponArt(this,x,y,hero,powered);
+  if(art)sprite.once('destroy',()=>art.destroy());
+  this.showcase.scoutCoins.push({sprite,art,vx:speed*Math.cos(angle),vy:speed*Math.sin(angle),life:powered?1:.85,powered,hero,owner:shooter,bubble:hero==='kairo',spinning,speed,chainHits:spinning&&powered?3:1});
   this.events.emit('cash:coin-fired',{x,y,charged:powered});
  }
  cashHeroDashing(hero){
@@ -1495,7 +1580,14 @@ class Adventure extends Phaser.Scene{
   if(partner.y>560||Math.abs(partner.x-this.player.x)>590)body.reset(Math.max(30,this.player.x-52),415);
   if(direction)partner.setFlipX(direction<0);
   const state=this.reduced?'idle':dash.remaining?'dash':!body.blocked.down?(body.velocity.y<0?'jump':'fall'):direction?'run':'idle';
-  partner.play(s.partnerAtlas+'-'+(this.keys.F.isDown&&!this.reduced&&!dash.remaining?'power':state),true);
+  if(this.showCashAttack(partner,partner)){partner.strideX=null;}
+  else if(!this.reduced&&state==='run'){
+   partner.anims.stop();
+   partner.setFrame(strideFrame(partner,partner.x)*7+1);
+  }else{
+   partner.strideX=null;
+   partner.play(s.partnerAtlas+'-'+state,true);
+  }
   if(this.echoStep==='duel'){
    if(this.keys.F.isDown)this.fireDuelCoin(partner,s.partnerHero);
    return;
@@ -2042,6 +2134,14 @@ coin.aim=aim;coin.life=1600;this.projectiles.push(coin);tone(this,970,.065);emit
    this.cashWasGrounded=b.blocked.down;
   }
   const state=this.completed?'celebrate':this.dashTime>0?'dash':this.holding?'power':kind!=='ninja'&&!b.blocked.down?(b.velocity.y<0?'jump':'fall'):Math.abs(b.velocity.x)>25||kind==='ninja'&&Math.abs(b.velocity.y)>25?'run':'idle';
+  if(kind==='cash'&&this.showCashAttack(this.player,m.sprite)){this.motionState='attack';m.strideX=null;return;}
+  if(kind==='cash'&&!this.reduced&&state==='run'){
+   this.motionState=state;
+   m.sprite.anims.stop();
+   m.sprite.setFrame(strideFrame(m,this.player.x)*7+1);
+   return;
+  }
+  m.strideX=null;
   if(state!==this.motionState){this.motionState=state;m.sprite.play('atlas-'+this.hero+'-'+(this.reduced?'idle':state),true)}
  }
 
