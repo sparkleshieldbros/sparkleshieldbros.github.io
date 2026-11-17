@@ -1,47 +1,70 @@
 body[data-game="cash"]:not(.cash-playing) { margin: 0; }
 body[data-game="cash"]:not(.cash-playing) main { width: 100%; max-width: none; padding: 0; }
 .cash-launch {
-  box-sizing: border-box;
-  min-height: 100dvh;
-  display: grid;
-  place-items: center;
-  padding: 3.5rem 1rem 1.25rem;
-  position: relative;
-  background: linear-gradient(112deg,#071326ee,#102d47a8),url('../../assets/runtime/maplewood-houses.jpg') center / cover;
-  color: #fff5df;
+  box-sizing:border-box;
+  min-height:100dvh;
+  display:grid;
+  place-items:center;
+  padding:3.2rem 1rem 1rem;
+  position:relative;
+  background:linear-gradient(90deg,#0e162bc9,#101c4350 65%,#111b40a0),url('../../assets/runtime/maplewood-houses.jpg') center / cover;
+  color:#fff5df;
 }
-.cash-home { position: absolute; top: 1rem; left: 1rem; color: #fff5df; }
+.cash-home { position:absolute;top:.85rem;left:1rem;color:#fff5df;background:#10182bd9;border-radius:1rem;padding:.32rem .75rem; }
 .cash-launch-card {
-  width: min(40rem,100%);
-  box-sizing: border-box;
-  padding: clamp(1rem,3vw,2rem);
-  background: #112941ed;
-  border: 2px solid #fbd675;
-  border-radius: 1.4rem;
-  box-shadow: 0 20px 65px #040c21a0;
+  width:min(51rem,100%);
+  box-sizing:border-box;
+  padding:clamp(.85rem,3vw,1.75rem);
+  background:linear-gradient(140deg,#172641f5,#181629f5);
+  border:2px solid #f6c76e;
+  border-radius:1.4rem;
+  box-shadow:0 20px 65px #040c21a0,inset 0 0 0 4px #f5cb7513;
 }
-.cash-brand { color: #c8ef94; font-weight: 700; margin: 0; }
-.cash-launch h1 { font-size: clamp(2.4rem,8vw,5.2rem); line-height: 1; margin: .15em 0; color: #ffdb75; }
-.cash-launch-portrait { float: right; width: clamp(62px,16vw,130px); margin: 0 0 .5rem 1rem; border-radius: 1rem; border: 2px solid #ffdb75; }
-.cash-pitch { margin: .5rem 0 .9rem; }
-.cash-launch #cash-start { background: #ffdb75; color: #182039; font-size: 1.25rem; min-height: 52px; padding-inline: 1.5rem; }
-.cash-options { clear: both; display: flex; flex-wrap: wrap; gap: .55rem 1rem; margin: .9rem 0; align-items: center; }
-.cash-options select { min-height: 40px; max-width: 100%; }
-.cash-toggle { min-height: 40px; display: inline-flex; align-items: center; gap: .5rem; }
-#cash-player-two { margin: 0; }
-.cash-launch-help { margin-top: .55rem; }
+.cash-launch-title{text-align:center}
+.cash-brand{color:#f2c982;font-weight:800;letter-spacing:.11em;text-transform:uppercase;margin:0}
+.cash-launch h1{
+  font-size:clamp(3rem,10vw,6rem);font-weight:950;letter-spacing:-.065em;line-height:.94;margin:.08em 0;color:#ffdf87;
+  text-shadow:0 4px #a95039,0 7px #48213b,0 10px 18px #080b19;
+}
+.cash-pitch{margin:.7rem 0;color:#ffeacf}
+.cash-options{display:flex;justify-content:center;gap:.4rem 1.1rem;align-items:center;flex-wrap:wrap;margin:.65rem 0}
+.cash-options select{min-height:38px;max-width:100%}
+.cash-toggle{min-height:40px;display:inline-flex;align-items:center;gap:.45rem}
+.cash-roster{border:0;padding:0;margin:.45rem 0 .65rem;min-width:0}
+.cash-roster legend{font-size:.88rem;font-weight:800;color:#ffdfa0;margin:0 0 .35rem}
+.cash-roster[hidden],.cash-roster select[hidden]{display:none}
+.cash-hero-cards{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:clamp(.2rem,1vw,.65rem)}
+.cash-hero-card{
+ cursor:pointer;display:grid;grid-template-rows:auto 1fr;position:relative;overflow:hidden;text-align:center;
+ border:2px solid #7b7189;border-radius:.65rem;background:#211b31;color:#fff2d8;
+}
+.cash-hero-card input{position:absolute;opacity:0;width:1px;height:1px}
+.cash-hero-card img{width:100%;height:clamp(56px,11vw,108px);object-fit:cover;object-position:center 26%;display:block}
+.cash-hero-card span{display:grid;place-items:center;padding:.28rem .12rem;font-size:clamp(.62rem,1.45vw,.92rem);font-weight:800}
+.cash-hero-card:has(input:checked){border-color:#ffe19a;background:#68402a;box-shadow:0 0 0 1px #ffcc77}
+.cash-hero-card:has(input:focus-visible){outline:2px solid #bcffec;outline-offset:2px}
+.cash-launch-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.65rem 1.2rem;margin:.95rem 0 .65rem}
+.cash-launch #cash-start{background:#ffdb75;color:#182039;font-size:1.22rem;min-height:49px;padding-inline:2rem}
+.cash-launch #cash-boss-shortcut{font-size:.88rem;min-height:36px}
+.cash-launch-help{margin-top:.4rem;font-size:.88rem}
+.cash-book-extra{color:#ffe0a5;font-size:.9rem}
 body[data-game="cash"]:not(.cash-playing) .hero-profile,
 body[data-game="cash"]:not(.cash-playing) .note,
-.cash-playing .cash-launch { display: none; }
-@media (max-height: 570px) and (orientation: landscape) {
-  .cash-launch { padding: 2.45rem .75rem .6rem; }
-  .cash-launch-card { padding: .65rem 1rem; }
-  .cash-launch h1 { font-size: 2.4rem; }
-  .cash-launch-portrait { width: 74px; }
-  .cash-options { margin: .35rem 0; }
+.cash-playing .cash-launch {display:none}
+@media (max-height:570px) and (orientation:landscape){
+ .cash-launch{padding:2.35rem .6rem .5rem}
+ .cash-launch-card{padding:.55rem .85rem}
+ .cash-launch h1{font-size:2.55rem}
+ .cash-launch-title .cash-brand,.cash-pitch{font-size:.76rem}
+ .cash-launch-title{padding:0 0 .25rem}
+ .cash-toggle,.cash-options select{min-height:32px}
+ .cash-launch #cash-start{min-height:40px}
+ .cash-hero-card span{padding:.18rem .1rem}
+ .cash-pitch,.cash-options,.cash-launch-actions{margin:.28rem 0}
+ .cash-hero-card img{height:42px}
+ .cash-roster{margin:.28rem 0}
+ .cash-roster legend{margin-bottom:.18rem}
 }
-
-.cash-book-extra{color:#ffe0a5;justify-self:center;font-size:.92rem}
 .cash-book-dialog{max-width:min(26rem,calc(100vw - 2rem));max-height:calc(100dvh - 2rem);overflow:auto;background:#251c36;color:#fff2dc;border:1px solid #d5a86a;border-radius:1rem;text-align:center;padding:1rem 1.4rem}
 .cash-book-dialog::backdrop{background:#140f22b8}
 .cash-book-dialog img{display:block;margin:auto}

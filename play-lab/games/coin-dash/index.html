@@ -2,17 +2,26 @@
 <section class="cash-launch" aria-labelledby="cash-title">
   <a class="cash-home" href="https://sparkleshieldbros.github.io/">← Sparkle Shield HQ</a>
   <div class="cash-launch-card">
-    <img class="cash-launch-portrait" src="../../assets/runtime/captain-cash-profile.jpg" alt="">
-    <p class="cash-brand">Sparkle Shield Bros</p>
-    <h1 id="cash-title">Coin Dash</h1>
-    <p class="cash-pitch">Race across Maplewood. Dodge the scouts. Face the Echo Ogre.</p>
-    <button type="button" id="cash-start">Start game</button>
-    <a class="cash-book-extra" href="../../books.html">Books &amp; Extras</a>
+    <header class="cash-launch-title">
+      <p class="cash-brand">Sparkle Shield Bros</p>
+      <h1 id="cash-title">Coin Dash</h1>
+      <p class="cash-pitch">Race across Maplewood. Face the Echo Ogre.</p>
+    </header>
     <div class="cash-options">
-      <label for="cash-hero">Player 1 <select id="cash-hero"><option value="cash">Captain Cash</option><option value="kairo">Bubble Boy Kairo</option><option value="mom">Mom</option><option value="dad">Dad</option><option value="ninja">Ninja Nugs</option></select></label>
-      <label for="echo-mode">Difficulty <select id="echo-mode"><option value="practice">Explorer</option><option value="adventurer">Adventurer</option><option value="challenge">Hero</option></select></label>
       <label class="cash-toggle"><input id="cash-coop" type="checkbox"> Two players</label>
-      <p id="cash-player-two" hidden><label for="cash-partner">Player 2 hero</label> <select id="cash-partner"><option value="cash">Captain Cash</option><option value="kairo">Bubble Boy Kairo</option><option value="mom">Mom</option><option value="dad">Dad</option><option value="ninja">Ninja Nugs</option></select></p>
+      <label for="echo-mode">Difficulty <select id="echo-mode"><option value="practice">Explorer</option><option value="adventurer">Adventurer</option><option value="challenge">Hero</option></select></label>
+    </div>
+    <fieldset class="cash-roster" data-hero-select="cash-hero">
+      <legend>Player 1 · Choose a hero</legend>
+      <select id="cash-hero" aria-label="Player 1 hero"><option value="cash">Captain Cash</option><option value="kairo">Bubble Boy Kairo</option><option value="mom">Mom</option><option value="dad">Dad</option><option value="ninja">Ninja Nugs</option></select>
+    </fieldset>
+    <fieldset class="cash-roster" id="cash-player-two" data-hero-select="cash-partner" hidden>
+      <legend>Player 2 · Choose a hero</legend>
+      <select id="cash-partner" aria-label="Player 2 hero"><option value="cash">Captain Cash</option><option value="kairo" selected>Bubble Boy Kairo</option><option value="mom">Mom</option><option value="dad">Dad</option><option value="ninja">Ninja Nugs</option></select>
+    </fieldset>
+    <div class="cash-launch-actions">
+      <button type="button" id="cash-start">Start game</button>
+      <a class="cash-book-extra" href="../../books.html">Books &amp; Extras</a>
     </div>
     <button type="button" id="cash-boss-shortcut">Practice the Ogre duel</button>
     <details class="cash-launch-help"><summary>Bonus challenges</summary>

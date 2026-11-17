@@ -2330,7 +2330,35 @@ if(kind==='cash'){
   if([...difficulty.options].some(option=>option.value===saved))difficulty.value=saved;
  }catch{}
  const syncPartner=()=>{$('cash-player-two').hidden=!$('cash-coop').checked;};
- $('cash-partner').value='kairo';
+ for(const rosterField of document.querySelectorAll('[data-hero-select]')){
+  const select=$(rosterField.dataset.heroSelect);
+  const cards=document.createElement('div');
+  cards.className='cash-hero-cards';
+  for(const option of select.options){
+   const hero=option.value;
+   const card=document.createElement('label');
+   card.className='cash-hero-card';
+   const radio=document.createElement('input');
+   radio.type='radio';radio.name=select.id+'-card';radio.value=hero;
+   const art=document.createElement('img');
+   art.src=canonical[hero].image;art.alt='';
+   art.width=100;art.height=100;art.draggable=false;
+   const title=document.createElement('span');
+   title.textContent=option.textContent;
+   radio.addEventListener('change',()=>{
+    select.value=hero;
+    select.dispatchEvent(new Event('change',{bubbles:true}));
+   });
+   card.append(radio,art,title);cards.append(card);
+  }
+  const syncCards=()=>{
+   for(const radio of cards.querySelectorAll('input'))radio.checked=radio.value===select.value;
+  };
+  select.addEventListener('change',syncCards);
+  syncCards();
+  rosterField.append(cards);
+  select.hidden=true;
+ }
  $('cash-coop').addEventListener('change',syncPartner);
  syncPartner();
  const start=(practice,challenge=-1)=>{
