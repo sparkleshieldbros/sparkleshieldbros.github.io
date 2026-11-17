@@ -1,3 +1,4 @@
+import {expansion,expansionAttack} from './cash/expansion.js';
 import {drawOgreVortex} from './cash/ogre-vortex.js';
 import {districtArt,roofArt,weaponArt} from './cash/district-art.js';
 import {attackMotion,attackFrame} from './cash/attack-motion.js';
@@ -25,6 +26,7 @@ const kind=document.body.dataset.game||'bubble';
 const info={bubble:{title:'Kairo’s Anti-Gravity Quest',desc:'Use anti-gravity bubbles to repair paths and restore the Floating Garden.',power:'🫧 BUBBLE'},cash:{title:'Captain Cash: Coin Dash',desc:'Dash past obstacles and shoot coins from your boots to activate targets.',power:'🪙 COINS'},ninja:{title:'Ninja Nugs: Secret Mission',desc:'Explore the maze, reveal hidden paths and activate the secret switch.',power:'🔎 SCAN'},echo:{title:'The Echo Ogre: Sparkle Rescue',desc:'Combine the brothers’ powers and choose how to restore the Sparkle Grid.',power:'✨ POWER'}}[kind];
 const status=document.querySelector('#status');const $=id=>document.getElementById(id);const W=960,H=540;let game;
 const buttons={left:false,right:false,up:false,down:false,jump:false,breathe:false,power:false,dash:false,switch:false};
+const observatoryArt=[25,9,11,17];
 const CASH_CHALLENGES=['Maplewood Rooftop Relay','Floating Garden Trick Shot','Night Foundry Counter Run'];
 const LIGHTNING_CHARGE_MS=10_000;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
@@ -180,12 +182,15 @@ class Adventure extends Phaser.Scene{
  constructor(){super('Adventure');this.level=0;this.hero='kairo';this.muted=false;this.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;this.pressed={};this.lock=false;this.completed=false;this.score=0;this.motionState='idle';this.motionClock=0;this.facing=1;this.lastGrounded=true}
  preload(){
  if(kind==='cash'){
-  for(const level of [1,2,3])this.load.tilemapTiledJSON('cash-chapter-'+level,'../../assets/levels/cash-chapter-'+level+'.json');
+  for(let level=1;level<levels.cash.length;level++)this.load.tilemapTiledJSON('cash-chapter-'+level,'../../assets/levels/cash-chapter-'+level+'.json');
   for(const hero of ['mom','dad','ninja'])this.load.image('book-poses-'+hero,'../../assets/runtime/'+hero+'-poses.jpg');
   for(const hero of ['mom','dad','ninja'])this.load.image('canon-'+hero,canonical[hero].image);
   this.load.image('book-poses-kairo','../../assets/runtime/kairo-poses.jpg');
   this.load.image('canon-kairo','../../assets/runtime/bubble-boy-kairo-profile.jpg');
-  for(const asset of ['sun-cuff','rift-wing','kiln-runner'])this.load.svg(asset,'../../assets/runtime/'+asset+'.svg');
+  for(const page of new Set([...observatoryArt,...expansion.flatMap(chapter=>chapter.pages)]))this.load.image('echo-book-'+page,'../../assets/runtime/maplewood-scenery-'+page+'.jpg');
+  for(const {scout} of expansion)this.load.svg(scout,'../../assets/runtime/'+scout+'.svg');
+  this.load.image('cash-book-cover','../../assets/runtime/echo-ogre-book-cover.jpg');
+  for(const asset of ['sun-cuff','rift-wing','kiln-runner','prism-scout','forge-scout'])this.load.svg(asset,'../../assets/runtime/'+asset+'.svg');
   this.load.image('cash-scout','../../assets/runtime/echo-scout-painted.png');
   this.load.svg('cash-launch','../../assets/runtime/launch-pad.svg');
   this.load.image('cash-garden','../../assets/book/floating-garden.jpg');
@@ -226,7 +231,10 @@ class Adventure extends Phaser.Scene{
  const reset=()=>{try{localStorage.setItem(tierKey,mode.value);}catch{}this.loadLevel();};
  mode.addEventListener('change',reset);
  this.events.once('shutdown',()=>mode.removeEventListener('change',reset));
- }this.cameras.main.setBackgroundColor('#142b55');this.keys=this.input.keyboard.addKeys('A,D,W,S,LEFT,RIGHT,UP,DOWN,SPACE,J,K,Q,R,ENTER,B,E,F,SHIFT');this.input.keyboard.on('keydown-R',()=>this.loadLevel());this.input.keyboard.on('keydown-Q',()=>this.swap());this.input.keyboard.on('keydown-W',()=>{
+ }this.cameras.main.setBackgroundColor('#142b55');this.keys=this.input.keyboard.addKeys('A,D,W,S,LEFT,RIGHT,UP,DOWN,SPACE,J,K,Q,R,ENTER,B,E,F,SHIFT');this.input.keyboard.on('keydown-R',()=>{
+  if(kind==='cash'&&(this.showcase?.partner||$('pause-panel')?.open))return;
+  this.loadLevel();
+ });this.input.keyboard.on('keydown-Q',()=>this.swap());this.input.keyboard.on('keydown-W',()=>{
  if(this.showcase?.partnerHero==='ninja'&&!this.completed&&this.echoStep!=='retry')this.showcase.partnerJumpPressed=true;
 });this.input.keyboard.on('keydown-E',()=>{
  if(this.showcase?.partner&&!this.completed&&this.echoStep!=='retry')this.showcase.partnerDashPressed=true;
@@ -407,6 +415,8 @@ class Adventure extends Phaser.Scene{
   if(this.showcase){
    this.ogre.x=this.showcase.boss.x;this.ogre.y=this.showcase.boss.y;
    this.duel.cashLives=this.showcase.hearts;
+   this.duel.hitsPerLife=OGRE_HITS_PER_LIFE+({practice:0,adventurer:8,challenge:16}[this.echoMode]??0)
+    +(this.showcase.partner?8:0)+Math.floor(this.level/3)*3;
    this.drawDuelMeters();
   }
  }
@@ -510,6 +520,7 @@ class Adventure extends Phaser.Scene{
   this.duelReadout.setText('CASH '+d.cash+'% · '+d.cashLives+' lives     OGRE '+d.ogre+'% · '+d.ogreLives+' lives');
  }
  fireDuelCoin(shooter=this.player,hero=this.hero,release=false){
+  if(this.duel?.entering)return;
   const d=this.duel;
   const cooldown=shooter===this.player?'cooldown':'partnerCooldown';
   if(d[cooldown]>0)return;
@@ -546,6 +557,10 @@ class Adventure extends Phaser.Scene{
   const left=this.showcase?this.showcase.width-W:0;
   const right=left+W;
   const x=clamp(this.player.x,left+55,right-55);
+  if(pattern>=12)return expansionAttack(pattern,left,x).origins;
+  if(pattern===9)return [280,430].flatMap(y=>[{x:left+46,y,angle:.12},{x:right-46,y:y+72,angle:Math.PI+.12}]);
+  if(pattern===10)return [-192,-96,96,192].map(offset=>({x:clamp(x+offset,left+50,right-50),y:50,angle:Math.atan2(435,-offset)}));
+  if(pattern===11)return [-230,-145,0,145,230].map(offset=>({x:clamp(x+offset,left+42,right-42),y:508,angle:-Math.PI/2+offset/570}));
   if(pattern===6)return [-120,120].map(offset=>({x:clamp(x+offset,left+45,right-45),y:505,angle:-Math.PI/2}));
   if(pattern===7)return [-130,0,130].map(offset=>({x:clamp(x+offset,left+45,right-45),y:80,angle:Math.PI*.34}));
   if(pattern===3)return [-155,0,155].map(offset=>({x:clamp(x+offset,left+45,right-45),y:85,angle:Math.PI/2}));
@@ -554,6 +569,7 @@ class Adventure extends Phaser.Scene{
  }
  updateDuel(dt){
   const d=this.duel;
+  if(d.entering)return;
   const elapsed=Math.min(dt,40);
   const seconds=elapsed/1000;
   if(kind==='cash'){
@@ -586,8 +602,8 @@ class Adventure extends Phaser.Scene{
   if(transition){
    if(transition==='windup'){
     d.warning=true;
-    this.setOgrePose([1,3,2,1,3,2,1,3,2][d.pattern]);
-    this.echoCue.setText((kind==='cash'?'GUARDING · ':'')+['LOW BOLT · JUMP','TRIPLE SPREAD · FIND A GAP','TRACKING ORBS · DASH AFTER THE LOCK','SKY CRYSTALS · MOVE SIDEWAYS','CROSS FIRE · CHANGE HEIGHT','CRESCENT · WATCH THE RETURN','RISING SPARKS · MOVE SIDEWAYS','DIAGONAL RAIN · FIND A GAP','NOVA · DASH THROUGH A GAP'][d.pattern]);
+    this.setOgrePose([1,3,2,1,3,2,1,3,2,3,2,1][d.pattern]??(d.pattern%3+1));
+    this.echoCue.setText((kind==='cash'?'GUARDING · ':'')+(d.pattern>=12?expansionAttack(d.pattern,this.showcase?this.showcase.width-W:0,this.player.x).label+' · WATCH THE MARKERS':['LOW BOLT · JUMP','TRIPLE SPREAD · FIND A GAP','TRACKING ORBS · DASH AFTER THE LOCK','SKY CRYSTALS · MOVE SIDEWAYS','CROSS FIRE · CHANGE HEIGHT','CRESCENT · WATCH THE RETURN','RISING SPARKS · MOVE SIDEWAYS','DIAGONAL RAIN · FIND A GAP','NOVA · DASH THROUGH A GAP','MIRROR LANES · JUMP OR DUCK BETWEEN HEIGHTS','STAR CONVERGENCE · MOVE SIDEWAYS','CONSTELLATION FOUNTAIN · LEAVE THE MARKERS'][d.pattern]));
     if(kind==='cash'){
      d.origins=this.cashAttackOrigins(d.pattern);
      d.markers=d.origins.map(origin=>this.obj(this.add.circle(origin.x,origin.y,24,0x783eb4,.36)
@@ -696,8 +712,9 @@ class Adventure extends Phaser.Scene{
     if(d.ogre===0){
      d.ogreLives--;
      if(d.ogreLives){
-      d.ogreDamage=kind==='cash'?Math.max(0,d.ogreDamage-OGRE_HITS_PER_LIFE):0;
-      d.ogre=100-d.ogreDamage*2;
+      const capacity=d.hitsPerLife??OGRE_HITS_PER_LIFE;
+      d.ogreDamage=kind==='cash'?Math.max(0,d.ogreDamage-capacity):0;
+      d.ogre=Math.ceil((capacity-d.ogreDamage)*100/capacity);
       d.pattern=kind==='cash'?chapterBossPattern(this.level,-1,1):2;d.warning=false;d.clock=850;
       this.setOgrePose(3);
       this.echoCue.setText(kind==='cash'?'SECOND LIFE · NEW WEAPON':'SECOND LIFE · TRACKING ORBS');
@@ -749,7 +766,7 @@ class Adventure extends Phaser.Scene{
     shot.trailClock+=elapsed;
     if(shot.trailClock>=90){
      shot.trailClock=0;
-     emit(this,o.x,o.y,[0xff95cf,0xc29bff,0xffd777,0x9beaff,0xffa681,0xff92a1,0xffef8f,0x8affcc,0xc9a5ff][shot.pattern],2);
+     emit(this,o.x,o.y,[0xff95cf,0xc29bff,0xffd777,0x9beaff,0xffa681,0xff92a1,0xffef8f,0x8affcc,0xc9a5ff,0x98f8ff,0xffd892,0xffaef3][shot.pattern]??this.showcase?.chapter?.color??0xcc99ff,2);
     }
    }
    const dodger=[this.player,this.showcase?.partner].find(hero=>hero&&this.cashHeroDashing(hero)&&Math.hypot(o.x-hero.x,o.y-hero.y)<43);
@@ -911,11 +928,12 @@ class Adventure extends Phaser.Scene{
  setupShowcase(resumeCheckpoint){
   $('cash-boss-shortcut').hidden=this.cashChallenge!=null;
   this.echoMode=$('echo-mode')?.value||'practice';
+  const chapter=expansion[this.level-5];
   const map=this.make.tilemap({key:this.level?'cash-chapter-'+this.level:'cash-showcase'});
   const tiles=map.addTilesetImage('Terrain','cash-terrain');
   const layer=this.obj(map.createLayer('Terrain',tiles,0,0));
   layer.setCollision(1);
-  layer.forEachTile(tile=>{tile.tint=[0xffe2b0,0xa4f0ce,0xc9b7ff,0xe8bbff][this.level];});
+  layer.forEachTile(tile=>{tile.tint=chapter?.color??[0xffe2b0,0xa4f0ce,0xc9b7ff,0xe8bbff,0xc6dcff][this.level];});
   this.levelColliders.push(this.physics.add.collider(this.player,layer));
   const width=map.widthInPixels;
   this.physics.world.setBounds(0,0,width,H+90);
@@ -924,7 +942,7 @@ class Adventure extends Phaser.Scene{
   const starKey='sparkle-play-lab:cash-stars'+(this.level?':'+this.level:'');
   let saved=0;
   try{saved=Number(localStorage.getItem(starKey))&7;}catch{}
-  this.showcase={width,terrain:layer,boss:markers.find(o=>o.name==='boss'),hearts:3,checkpoint:95,starKey,saved,
+  this.showcase={chapter,width,terrain:layer,boss:markers.find(o=>o.name==='boss'),hearts:3,checkpoint:95,starKey,saved,
    flags:markers.filter(o=>o.name==='checkpoint').map(o=>({x:o.x,mark:this.label('⚑ CHECKPOINT',o.x,452,15)})),
    stars:markers.filter(o=>o.name==='star').map((o,i)=>this.obj(this.add.image(o.x,o.y,'sun-cuff').setDisplaySize(50,42).setDepth(10)))};
   this.showcase.exitX=width-700;
@@ -934,22 +952,30 @@ class Adventure extends Phaser.Scene{
    this.showcase.challengeElapsedMs=0;
    this.label('🏁',finish,397,36).setDepth(10);
   }
-  const districtNames=[
+  const districtNames=chapter?.districts??[
    ['Maplewood Rooftops','Sunbeam Lane','Community Gardens','Echo’s Overlook'],
    ['Floating Garden','Bloom Isles','Canopy Crossing','Skygate'],
    ['Night Foundry','Ember Walk','Lantern Works','The Echo Furnace'],
-   ['Echo Factory','Prism Conveyor','Resonance Core']
+   ['Echo Factory','Prism Conveyor','Resonance Core'],
+   ['Twilight Observatory','Mirror Lanes','Sky Gardens','Star Vault']
   ][this.level];
   this.label(CASH_CHALLENGES[this.cashChallenge]??districtNames[0],265,245,27).setDepth(5).setBackgroundColor('#211a32').setPadding(9,5);
   if(this.textures.exists('maplewood-houses')){
    const factor=this.reduced?0:.58;
-   const panelWidth=Math.ceil(560*H/233);
-   const panels=Math.ceil((W+(width-W)*factor)/panelWidth)+1;
+   const pageSet=chapter?.pages??(this.level===4?observatoryArt:null);
+   const key=pageSet?'echo-book-'+pageSet[0]:this.level===1?'cash-garden':'maplewood-houses';
+   const widthFor=texture=>{
+    const source=this.textures.get(texture).getSourceImage();
+    return Math.max(390,Math.round(H*source.width/source.height));
+   };
+   const panelWidth=pageSet?widthFor(key):Math.ceil(560*H/233);
+   const countWidth=pageSet?Math.min(...pageSet.map(page=>widthFor('echo-book-'+page))):panelWidth;
+   const panels=Math.ceil((W+(width-W)*factor)/countWidth)+1;
    this.showcase.scenery=[];
    for(let index=0;index<panels;index++){
-    const panel=this.obj(this.add.image(panelWidth*index,0,this.level===1?'cash-garden':'maplewood-houses').setOrigin(0)
-     .setDisplaySize(panelWidth,H).setTint([0xffffff,0xc7ffe4,0xa9a7df,0xabd5ee][this.level]).setFlipX(index%2===1).setDepth(-8).setScrollFactor(factor,0));
-    this.showcase.scenery.push({panel, width:panelWidth});
+    const panel=this.obj(this.add.image(panelWidth*index,0,key).setOrigin(0)
+     .setDisplaySize(panelWidth+1,H).setTint([0xffffff,0xc7ffe4,0xa9a7df,0xabd5ee,0xa29ab9][this.level]??0xc1b6c9).setFlipX(index%2===1).setDepth(-8).setScrollFactor(factor,0));
+    this.showcase.scenery.push({panel,width:panelWidth});
    }
   }
   this.showcaseHud=this.label('',480,25,19).setScrollFactor(0).setDepth(44).setBackgroundColor('#211a32').setPadding(6,3);
@@ -962,15 +988,15 @@ class Adventure extends Phaser.Scene{
    this.textures.addSpriteSheet(name+'-poses',sheet,{frameWidth:96,frameHeight:72});
   }
   this.showcase.hazards=markers.filter(o=>o.name==='scout').map(({x,y,type},index)=>{
-   const variant=['rift-wing','kiln-runner'].includes(type)?type:'scout';
-   const sprite=this.obj(this.add.image(x,y,variant==='scout'?'cash-scout':variant+'-poses',0).setDisplaySize(64,48).setDepth(7));
+   const variant=type===chapter?.scout||['rift-wing','kiln-runner','prism-scout','forge-scout'].includes(type)?type:'scout';
+   const sprite=this.obj(this.add.image(x,y,variant==='scout'?'cash-scout':variant==='prism-scout'||variant==='forge-scout'||variant===chapter?.scout?variant:variant+'-poses',0).setDisplaySize(64,48).setDepth(7));
    return {x,y,sprite,type:variant,reload:1+(index%4)*.22};
   });
   this.showcase.courseTime=0;
   this.showcase.heroCleanMs=[0,0];
   this.showcase.cleanMs=0;
   this.showcase.bumpGrace=0;
-  const springX=[530,1165,1358,1358][this.level];
+  const springX=chapter?.spring??[530,1165,1358,1358,442][this.level];
   this.showcase.spring=this.obj(this.add.rectangle(springX,505,54,12,0xef8c62).setStrokeStyle(3,0xffedc0));
   this.label('↑',springX,470,14);
   this.obj(this.add.image(springX,498,'cash-launch').setDisplaySize(62,23).setDepth(7));
@@ -993,7 +1019,7 @@ class Adventure extends Phaser.Scene{
   this.showcase.speedStrip=this.obj(this.add.rectangle(1810,505,78,12,0x65d8d8).setStrokeStyle(3,0xffedc0));
   this.label('»',1810,470,14);
   this.showcase.portals=markers.filter(o=>o.name==='portal'||o.name==='checkpoint').sort((a,b)=>a.x-b.x).filter((o,i,all)=>!i||o.x-all[i-1].x>100).map(o=>{
-   const rim=[0xffd596,0x9effdc,0xd5b3ff,0x8dfff1][this.level];
+   const rim=chapter?.color??[0xffd596,0x9effdc,0xd5b3ff,0x8dfff1,0xc3adff][this.level];
    const arch=this.obj(this.add.ellipse(o.x,o.y,78,112,0x553487,.44).setStrokeStyle(7,rim).setDepth(2));
    this.obj(this.add.ellipse(o.x,o.y,94,128,rim,.08).setStrokeStyle(2,rim,.55).setDepth(1));
    this.label('◎',o.x,o.y-70,16);
@@ -1032,7 +1058,7 @@ class Adventure extends Phaser.Scene{
    for(let y=429;y<510;y+=27)this.obj(this.add.image(wall.x,y,'cash-terrain').setDisplaySize(29,28).setDepth(6));
    this.label('↑',pad.x,421,14);
   }
-  const lamps=[[2110,3390],[1040,2110,3390],[2110,3390],[2110,3390]][this.level]
+  const lamps=([[2110,3390],[1040,2110,3390],[2110,3390],[2110,3390],[1300,3630]][this.level]??[650])
    .concat(markers.filter(o=>o.name==='lamp').map(o=>o.x));
   this.showcase.lamps=lamps.map(x=>this.obj(this.add.star(x,448,5,10,21,0xffc66d).setStrokeStyle(3,0xffffff)));
   this.showcase.lantern=this.showcase.lamps[0];
@@ -1040,6 +1066,12 @@ class Adventure extends Phaser.Scene{
   this.label(this.level===2?'»  ◈':'◈ →',lamps[0]-70,415,16);
   const s=this.showcase;
   if(this.level===0){
+   const board=this.obj(this.add.graphics().setDepth(4));
+   board.fillStyle(0x261a31,.97).fillRoundedRect(425,245,166,92,7);
+   board.lineStyle(2,0xe1ad6e).strokeRoundedRect(425,245,166,92,7);
+   this.obj(this.add.image(460,291,'cash-book-cover').setDisplaySize(54,74).setDepth(5));
+   this.label('MAPLEWOOD LIBRARY',536,270,8,'#efbb7c').setDepth(5);
+   this.label('THE ECHO\nOGRE',536,296,15,'#fff2d5').setDepth(5);
    if(!s.partner&&this.hero==='cash'){
     s.ricochetShield=this.obj(this.add.ellipse(270,480,20,60,0x4076ab,.85)
      .setStrokeStyle(4,0xa3f8ff).setDepth(8));
@@ -1091,9 +1123,14 @@ class Adventure extends Phaser.Scene{
   s.partner?.body.reset(arrival-45,455);
  }
  showCashDistrict(s){
-  const key=this.level===1&&s.district!==2||this.level===0&&s.district===2?'cash-garden':'maplewood-houses';
-  const colors=[[0xffffff,0xffe0ae,0xe4ffd1,0xd0bff7],[0xc7ffe4,0xcaffce,0xb7efe1,0x9cdccf],[0xa9a7df,0xbc9ee2,0xd5a2b8,0xf2baaa],[0xabd5ee,0x94a9d7,0xf0bfcc]];
-  for(const {panel,width} of s.scenery||[])panel.setTexture(key).setDisplaySize(width,H).setTint(colors[this.level][s.district]);
+  const key=s.chapter?'echo-book-'+s.chapter.pages[s.district]:this.level===4?'echo-book-'+observatoryArt[s.district]:this.level===1&&s.district!==2||this.level===0&&s.district===2?'cash-garden':'maplewood-houses';
+  const colors=[[0xffffff,0xffe0ae,0xe4ffd1,0xd0bff7],[0xc7ffe4,0xcaffce,0xb7efe1,0x9cdccf],[0xa9a7df,0xbc9ee2,0xd5a2b8,0xf2baaa],[0xabd5ee,0x94a9d7,0xf0bfcc],[0xa29ab9,0xb4aedb,0xb9e3f4,0xc7a6d4]];
+  const source=this.textures.get(key).getSourceImage();
+  const bookWidth=key.startsWith('echo-book-')?Math.max(390,Math.round(H*source.width/source.height)):null;
+  for(const [index,{panel,width}] of (s.scenery||[]).entries()){
+   const panelWidth=bookWidth??width;
+   panel.setTexture(key).setX(index*panelWidth).setDisplaySize(panelWidth+1,H).setTint(colors[this.level]?.[s.district]??0xc1b6c9);
+  }
   setStatus(s.districtNames[s.district]+' · Checkpoint '+s.district+' of '+s.portals.length+'. Progress saved.');
  }
  updateShowcaseHud(){
@@ -1218,7 +1255,7 @@ class Adventure extends Phaser.Scene{
   const key='scout-bolt-'+type;
   if(!this.textures.exists(key)){
    const art=this.add.graphics();
-   const paletteByType={scout:[0x492a68,0xf186c7], 'rift-wing':[0x205771,0x8cf4ff], 'kiln-runner':[0x6a302a,0xffae6e]};
+   const paletteByType={scout:[0x492a68,0xf186c7], 'rift-wing':[0x205771,0x8cf4ff], 'kiln-runner':[0x6a302a,0xffae6e], 'prism-scout':[0x383578,0x84ffff], 'forge-scout':[0x773348,0xffc481]};
    const [shadow,light]=paletteByType[type]??paletteByType.scout;
    art.fillStyle(shadow,.42).fillEllipse(20,12,38,22);
    art.fillStyle(shadow,1).fillEllipse(22,12,28,16);
@@ -1258,7 +1295,7 @@ class Adventure extends Phaser.Scene{
    const warning=scout.warningAt!=null;
    this.updateScoutTell(scout,warning);
    sprite.setTint(warning?0xffd5a1:0xffffff);
-   if(scout.type!=='scout')sprite.setFrame(warning?1:0);
+   if(scout.type==='rift-wing'||scout.type==='kiln-runner')sprite.setFrame(warning?1:0);
    if(!warning){
     if(scout.reload>0||s.courseTime<(s.nextScoutWarning??0))continue;
     scout.warningAt=s.courseTime+warningSeconds;
@@ -1274,7 +1311,7 @@ class Adventure extends Phaser.Scene{
    scout.reload=scout.type==='kiln-runner'?1.9:2.4;
    const {x,y}=sprite;
    const angle=scout.type==='kiln-runner'?(target.x<x?Math.PI:0):Math.atan2(target.y-y,target.x-x);
-   const angles=scout.type==='rift-wing'?[angle-.2,angle+.2]:[angle];
+   const angles=scout.type===s.chapter?.scout?s.chapter.spread.map(offset=>angle+offset):scout.type==='forge-scout'?[angle-.44,angle+.12]:scout.type==='prism-scout'?[angle-.28,angle,angle+.28]:scout.type==='rift-wing'?[angle-.2,angle+.2]:[angle];
    for(const bearing of angles){
    const bolt=this.makeScoutBolt(x,y,bearing,scout.type);
    const speed=scout.type==='kiln-runner'?375:285;
@@ -1601,9 +1638,9 @@ class Adventure extends Phaser.Scene{
   for(const [index,hazard] of s.hazards.entries()){
    if(hazard.trapUntil>s.courseTime)continue;
    const phase=s.courseTime*(hazard.type==='kiln-runner'?3.3:2)+index;
-   hazard.sprite.x=hazard.x+Math.sin(phase)*(hazard.type==='kiln-runner'?77:40);
+   hazard.sprite.x=hazard.x+Math.sin(phase)*(s.chapter?.reach??(hazard.type==='kiln-runner'?77:40));
    hazard.sprite.setFlipX(Math.cos(phase)<0);
-   hazard.sprite.y=hazard.y+(hazard.type==='rift-wing'?Math.sin(phase)*36:0);
+   hazard.sprite.y=hazard.y+(s.chapter?Math.sin(phase*1.65)*s.chapter.lift:hazard.type==='prism-scout'?Math.sin(phase*1.7)*45:hazard.type==='rift-wing'?Math.sin(phase)*36:0);
    if(!this.reduced)hazard.sprite.y+=Math.sin(phase*2)*4;
    if(!hazard.sprite.visible)continue;
    const contacts=[this.player,s.partner].filter(hero=>hero&&Math.abs(hero.x-hazard.sprite.x)<=32&&Math.abs(hero.y-hazard.sprite.y)<=37);
@@ -1808,6 +1845,26 @@ class Adventure extends Phaser.Scene{
     }
    }
    s.checkpoint=s.exitX;
+   const duel=this.duel;
+   const ogre=this.ogre;
+   const x=s.width-112,y=415;
+   ogre.setPosition(x,y);
+   if(!this.reduced){
+    duel.entering=true;
+    this.echoCue.setText('THE ECHO OGRE');
+    ogre.setY(y-240).setAlpha(.18).setScale(.64);
+    this.cashShockwave(x,y-30,0xb47dff,150);
+    tone(this,95,.42,.08,'triangle');
+    this.tweens.add({targets:ogre,y,alpha:1,scale:1,duration:720,ease:'Cubic.Out',onComplete:()=>{
+     if(this.duel!==duel||!ogre.active)return;
+     duel.entering=false;
+     this.echoCue.setText('COIN DUEL');
+     this.cashShockwave(x,y+40,0xdfadff,190);
+     emit(this,x,y,0xc48aff,30);
+     this.cameras.main.shake(175,.007);
+     tone(this,141,.31,.075,'triangle');
+    }});
+   }
    setStatus('Hold COIN. Jump the Ogre’s bolts.');
   this.updateShowcaseHud();
  }
@@ -2080,6 +2137,13 @@ coin.aim=aim;coin.life=1600;this.projectiles.push(coin);tone(this,970,.065);emit
   return;
  }
  if(this.cashChallenge!=null){this.finishCashChallenge();return;}if(this.completed)return;this.completed=true;
+ if(kind==='cash'&&this.level===0&&readProgress()===0){
+  const player=this.player;
+  this.time.delayedCall(1650,()=>{
+   const card=$('cash-first-book');
+   if(card&&!card.open&&this.player===player&&this.completed&&this.level===0)card.showModal();
+  });
+ }
  if(kind==='cash'){try{localStorage.removeItem('sparkle-play-lab:cash-portal:'+this.level);}catch{}}
  saveProgress(this.level+1);updateChapterSelect(this.level);
  const finale=this.level===levels[kind].length-1;
@@ -2226,6 +2290,7 @@ $('cash-combo-retry')?.addEventListener('click',()=>{
  active.cashChallenge=null;
  active.level=0;
  active.loadLevel();
+ $('pause-panel')?.close();
 });
 $('cash-hero')?.addEventListener('change',()=>{if(scene()?.player)scene().loadLevel();});
 $('cash-partner')?.addEventListener('change',()=>{if(scene()?.player)scene().loadLevel();});

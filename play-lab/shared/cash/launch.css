@@ -40,3 +40,11 @@ body[data-game="cash"]:not(.cash-playing) .note,
   .cash-launch-portrait { width: 74px; }
   .cash-options { margin: .35rem 0; }
 }
+
+.cash-book-extra{color:#ffe0a5;justify-self:center;font-size:.92rem}
+.cash-book-dialog{max-width:min(26rem,calc(100vw - 2rem));max-height:calc(100dvh - 2rem);overflow:auto;background:#251c36;color:#fff2dc;border:1px solid #d5a86a;border-radius:1rem;text-align:center;padding:1rem 1.4rem}
+.cash-book-dialog::backdrop{background:#140f22b8}
+.cash-book-dialog img{display:block;margin:auto}
+.cash-book-dialog h2{font-size:1.3rem;margin:.55rem 0}
+.cash-book-dialog a{color:#ffda93}
+.cash-book-dialog button{margin-top:.8rem}

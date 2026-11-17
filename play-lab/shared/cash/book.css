@@ -1,0 +1,13 @@
+.book-page{max-width:52rem;margin:auto;padding:1.5rem;color:#fff2de}
+.book-page a{color:#ffd695}
+.book-intro{display:grid;grid-template-columns:minmax(95px,230px) 1fr;gap:clamp(1rem,4vw,2.5rem);align-items:center;margin:2rem 0}
+.book-intro img,.book-page figure img{display:block;width:100%;border-radius:.6rem}
+.book-page figure{margin:1.5rem 0}
+.book-page figcaption{padding:.5rem 0}
+.book-link{display:inline-block;padding:.65rem .8rem;border:1px solid currentColor;border-radius:.5rem}
+.book-draw-area{display:none}
+@media print{
+ .book-page{color:#111;padding:0}
+ .book-page nav,.book-intro,.book-page #preview,#book-print{display:none}
+ .book-draw-area{display:block;height:50vh;border:1px solid #555}
+}

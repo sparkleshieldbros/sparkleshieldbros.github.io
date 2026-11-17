@@ -2,11 +2,12 @@ const palettes=[
  {stone:0x674854,edge:0xffc68c,shadow:0x322b40,glass:0x65d4d1},
  {stone:0x356456,edge:0xc8f597,shadow:0x203f42,glass:0xa6efd5},
  {stone:0x614156,edge:0xffb565,shadow:0x35263b,glass:0xff9e5d},
- {stone:0x424f72,edge:0xc7adff,shadow:0x282940,glass:0x9ff4ee}
+ {stone:0x424f72,edge:0xc7adff,shadow:0x282940,glass:0x9ff4ee},
+ {stone:0x42415d,edge:0xffce8e,shadow:0x272240,glass:0x9afaff}
 ];
 
 export function roofArt(scene,x,y,width,chapter){
- const {stone,edge,shadow}=palettes[chapter];
+ const {stone,edge,shadow}=palettes[chapter]??palettes[4];
  const g=scene.obj(scene.add.graphics().setDepth(3));
  const left=x-width/2,top=y-6.5;
  g.fillStyle(shadow).fillRect(left,top,width,13);
@@ -18,7 +19,7 @@ export function roofArt(scene,x,y,width,chapter){
 }
 
 export function districtArt(scene,layer,width,chapter,portals){
- const {stone,edge,shadow,glass}=palettes[chapter];
+ const {stone,edge,shadow,glass}=palettes[chapter]??palettes[4];
  const ground=scene.obj(scene.add.graphics().setDepth(1));
  layer.forEachTile(tile=>{
   if(!tile.collides||layer.getTileAt(tile.x,tile.y-1)?.collides)return;

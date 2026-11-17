@@ -28,7 +28,9 @@ const chapterArsenals=[
  [0,1,5], // Ground bolts, fan, returning crescent
  [3,6,7], // Falling crystals, rising sparks, diagonal rain
  [2,4,8], // Tracking orbs, crossfire, rotating nova
- [5,7,8]  // Factory remix
+ [27,28,29], // Factory conveyor, forge and core
+ [9,10,11], // Observatory mirror lanes, convergence and fountain
+ [12,13,14],[15,16,17],[18,19,20],[21,22,23],[24,25,26]
 ];
 export function chapterBossPattern(chapter,current,lives,random=Math.random){
  const arsenal=chapterArsenals[chapter]||chapterArsenals[0];
