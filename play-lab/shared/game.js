@@ -557,6 +557,17 @@ class Adventure extends Phaser.Scene{
   const left=this.showcase?this.showcase.width-W:0;
   const right=left+W;
   const x=clamp(this.player.x,left+55,right-55);
+  if(pattern===0){
+   const fromLeft=this.ogre.x<this.player.x;
+   return [{x:clamp(this.ogre.x,left+32,right-32),y:474,angle:fromLeft?0:Math.PI}];
+  }
+  if(pattern===1||pattern===5){
+   const direction=this.ogre.x<this.player.x?1:-1;
+   const launch=clamp(this.ogre.x+direction*32,left+32,right-32);
+   const heading=direction>0?0:Math.PI;
+   const offsets=pattern===1?[-.27,0,.27]:[0];
+   return offsets.map(offset=>({x:launch,y:this.ogre.y-26,angle:heading+offset}));
+  }
   if(pattern>=12)return expansionAttack(pattern,left,x).origins;
   if(pattern===9)return [280,430].flatMap(y=>[{x:left+46,y,angle:.12},{x:right-46,y:y+72,angle:Math.PI+.12}]);
   if(pattern===10)return [-192,-96,96,192].map(offset=>({x:clamp(x+offset,left+50,right-50),y:50,angle:Math.atan2(435,-offset)}));
@@ -589,6 +600,30 @@ class Adventure extends Phaser.Scene{
    }
    d.facing=facing;
    this.ogreArt?.setFlipX(d.facing<0);
+  }
+  if(kind==='cash'&&d.escorts&&!d.warning){
+   d.escortClock-=elapsed;
+   for(const [index,scout] of d.escorts.entries()){
+    scout.y=365+Math.sin(d.motion*2+index)*20;
+   }
+   if(d.escortClock<=0&&d.clock>470&&!d.escortAim){
+    const scout=d.escorts[d.escortTurn%d.escorts.length];
+    d.escortAim=true;
+    scout.setTint(0xffd080);
+    this.cashShockwave(scout.x,scout.y,0xf4c478,40);
+    tone(this,440,.1,.045);
+    d.escortClock=360;
+   }
+   if(d.escortClock<=0&&d.escortAim){
+    const scout=d.escorts[d.escortTurn++%d.escorts.length];
+    scout.clearTint();
+    d.escortAim=false;
+    const angle=Math.atan2(this.player.y-scout.y,this.player.x-scout.x);
+    const sprite=this.makeScoutBolt(scout.x,scout.y,angle,'scout');
+    d.shots.push({sprite,vx:Math.cos(angle)*215,vy:Math.sin(angle)*215,pattern:0,trailClock:0});
+    this.cashShockwave(scout.x,scout.y,0xf4c478,28);
+    d.escortClock=4200;
+   }
   }
   d.cooldown-=elapsed;
   d.partnerCooldown=(d.partnerCooldown||0)-elapsed;
@@ -716,6 +751,9 @@ class Adventure extends Phaser.Scene{
       d.ogreDamage=kind==='cash'?Math.max(0,d.ogreDamage-capacity):0;
       d.ogre=Math.ceil((capacity-d.ogreDamage)*100/capacity);
       d.pattern=kind==='cash'?chapterBossPattern(this.level,-1,1):2;d.warning=false;d.clock=850;
+      for(const marker of d.markers||[])marker.destroy();
+      d.markers=[];d.origins=[];
+      this.ogre.setAngle(0);
       this.setOgrePose(3);
       this.echoCue.setText(kind==='cash'?'SECOND LIFE · NEW WEAPON':'SECOND LIFE · TRACKING ORBS');
       setStatus(kind==='cash'?'New attack incoming. Read the warning.':'The Ogre’s tracking orbs turn gold when they lock. Dash past one to charge your next coin.');
@@ -726,6 +764,7 @@ class Adventure extends Phaser.Scene{
    if(kind==='cash'&&!shot.disposable)o.setVisible(false);else o.destroy();return false;
   });
   if(!d.ogreLives){
+   for(const scout of d.escorts||[])scout.destroy();
    for(const marker of d.markers||[])marker.destroy();
    for(const shot of d.shots)shot.sprite.destroy();
    for(const shot of d.coins){if(kind==='cash'&&!shot.disposable)shot.sprite.setVisible(false);else shot.sprite.destroy();}
@@ -796,6 +835,7 @@ class Adventure extends Phaser.Scene{
    return true;
   });
   if(!d.cashLives){
+   for(const scout of d.escorts||[])scout.destroy();
    for(const marker of d.markers||[])marker.destroy();
    for(const shot of d.shots)shot.sprite.destroy();
    for(const shot of d.coins){if(kind==='cash'&&!shot.disposable)shot.sprite.setVisible(false);else shot.sprite.destroy();}
@@ -987,9 +1027,22 @@ class Adventure extends Phaser.Scene{
    sheet.getContext('2d').drawImage(this.textures.get(name).getSourceImage(),0,0);
    this.textures.addSpriteSheet(name+'-poses',sheet,{frameWidth:96,frameHeight:72});
   }
-  this.showcase.hazards=markers.filter(o=>o.name==='scout').map(({x,y,type},index)=>{
+  const patrols=markers.filter(o=>o.name==='scout');
+  if(this.cashChallenge==null){
+   const interval=this.level<4?9:this.level===4?5:3;
+   const support=this.level<2?'scout':this.level%2?'kiln-runner':'rift-wing';
+   const gates=markers.filter(marker=>['portal','checkpoint','boss'].includes(marker.name));
+   const reinforcements=patrols.filter(({x},index)=>index%interval===1
+    &&gates.every(gate=>Math.abs(gate.x-(x+112))>168));
+   patrols.push(...reinforcements.map(({x,y})=>({
+    x:x+112,y:support==='rift-wing'?396:Math.max(441,y),type:support
+   })));
+  }
+  this.showcase.hazards=patrols.map(({x,y,type},index)=>{
    const variant=type===chapter?.scout||['rift-wing','kiln-runner','prism-scout','forge-scout'].includes(type)?type:'scout';
-   const sprite=this.obj(this.add.image(x,y,variant==='scout'?'cash-scout':variant==='prism-scout'||variant==='forge-scout'||variant===chapter?.scout?variant:variant+'-poses',0).setDisplaySize(64,48).setDepth(7));
+   const animated=variant==='rift-wing'||variant==='kiln-runner';
+   const texture=variant==='scout'?'cash-scout':animated?variant+'-poses':variant;
+   const sprite=this.obj(this.add.image(x,y,texture,animated?0:undefined).setDisplaySize(64,48).setDepth(7));
    return {x,y,sprite,type:variant,reload:1+(index%4)*.22};
   });
   this.showcase.courseTime=0;
@@ -1846,6 +1899,13 @@ class Adventure extends Phaser.Scene{
    }
    s.checkpoint=s.exitX;
    const duel=this.duel;
+   if(!practice&&this.cashChallenge==null&&this.echoMode!=='practice'){
+    duel.escortClock=4100;
+    duel.escortTurn=0;
+    duel.escorts=[s.width-W+84,s.width-84].map(x=>
+     this.obj(this.add.image(x,365,'cash-scout').setDisplaySize(62,46).setDepth(7))
+    );
+   }
    const ogre=this.ogre;
    const x=s.width-112,y=415;
    ogre.setPosition(x,y);
