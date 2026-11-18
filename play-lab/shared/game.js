@@ -1,3 +1,4 @@
+import {aerialRoutes} from './cash/routes.js';
 import {expansion,expansionAttack} from './cash/expansion.js';
 import {drawOgreVortex} from './cash/ogre-vortex.js';
 import {districtArt,roofArt,weaponArt} from './cash/district-art.js';
@@ -5,7 +6,7 @@ import {attackMotion,attackFrame} from './cash/attack-motion.js';
 import {drawStride,strideFrame,STRIDE_FRAMES} from './cash/stride.js';
 import {roster} from './cash/roster.js';
 import {installOgreWeapons} from './cash/ogre-weapons.js';
-import {advanceBossClock,chapterBossPattern,bossHit,OGRE_HITS_PER_LIFE} from './cash/boss.js';
+import {advanceBossClock,chapterBossPattern,bossHit,escortAction,escortReservesArena,OGRE_HITS_PER_LIFE} from './cash/boss.js';
 import {cashCue} from './cash/presentation.js';
 import {tuning,runVelocity} from './cash/movement.js';
 import {movementIntent} from './cash/input.js';
@@ -29,6 +30,8 @@ const buttons={left:false,right:false,up:false,down:false,jump:false,breathe:fal
 const observatoryArt=[25,9,11,17];
 const CASH_CHALLENGES=['Maplewood Rooftop Relay','Floating Garden Trick Shot','Night Foundry Counter Run'];
 const LIGHTNING_CHARGE_MS=10_000;
+const SUPER_DASH_VISUAL_HOLD=420;
+const SUPER_DASH_VISUAL_FADE=820;
 const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
 const palette={sky:0x142b55,blue:0x70e4ff,gold:0xffd16b,lav:0xa77bea,white:0xfff5df,grass:0x326a67};
 const progress=createProgressStore(kind,chapterNames[kind].length);
@@ -593,7 +596,7 @@ class Adventure extends Phaser.Scene{
    this.ogre.y=415-Math.abs(Math.sin(d.motion*.65))*95;
    const delta=this.player.x-this.ogre.x;
    const facing=Math.abs(delta)<30?(d.facing??-1):Math.sign(delta);
-   if(d.facing!==undefined&&facing!==d.facing&&!d.warning){
+   if(d.facing!==undefined&&facing!==d.facing&&!d.warning&&!d.escortAim){
     d.pattern=chapterBossPattern(this.level,d.pattern,d.ogreLives);
     d.clock=Math.min(d.clock,330);
     this.echoCue.setText('OGRE TURNING · GET READY');
@@ -601,28 +604,39 @@ class Adventure extends Phaser.Scene{
    d.facing=facing;
    this.ogreArt?.setFlipX(d.facing<0);
   }
-  if(kind==='cash'&&d.escorts&&!d.warning){
-   d.escortClock-=elapsed;
+  if(kind==='cash'&&d.escorts){
+   const escort=escortAction(d,elapsed);
    for(const [index,scout] of d.escorts.entries()){
-    scout.y=365+Math.sin(d.motion*2+index)*20;
+    if(!d.escortAim&&escort!=='fire')scout.y=(index===0?365:472)+Math.sin(d.motion*2+index)*(index===0?20:4);
    }
-   if(d.escortClock<=0&&d.clock>470&&!d.escortAim){
+   if(escort==='aim'){
     const scout=d.escorts[d.escortTurn%d.escorts.length];
-    d.escortAim=true;
+    const aerial=d.escortTurn%d.escorts.length===0;
     scout.setTint(0xffd080);
+    const target=[this.player,this.showcase?.partner].filter(Boolean)
+     .reduce((a,b)=>Math.abs(a.x-scout.x)<=Math.abs(b.x-scout.x)?a:b);
+    d.escortBearing=d.escortTurn%d.escorts.length===0
+     ?Math.atan2(target.y-scout.y,target.x-scout.x):target.x>=scout.x?0:Math.PI;
+    d.escortSpeed=d.escortTurn%d.escorts.length===0?215:295;
+    const endX=scout.x+Math.cos(d.escortBearing)*d.escortSpeed*1.4;
+    const endY=scout.y+Math.sin(d.escortBearing)*d.escortSpeed*1.4;
+    d.escortTell=this.obj(this.add.graphics().setDepth(58));
+    d.escortTell.lineStyle(8,0x171124,1).lineBetween(scout.x,scout.y,endX,endY);
+    d.escortTell.lineStyle(3,aerial?0x9ef6ff:0xffdd87,1)
+     .lineBetween(scout.x,scout.y,endX,endY).strokeCircle(endX,endY,8);
     this.cashShockwave(scout.x,scout.y,0xf4c478,40);
     tone(this,440,.1,.045);
-    d.escortClock=360;
    }
-   if(d.escortClock<=0&&d.escortAim){
+   if(escort==='fire'){
     const scout=d.escorts[d.escortTurn++%d.escorts.length];
     scout.clearTint();
-    d.escortAim=false;
-    const angle=Math.atan2(this.player.y-scout.y,this.player.x-scout.x);
-    const sprite=this.makeScoutBolt(scout.x,scout.y,angle,'scout');
-    d.shots.push({sprite,vx:Math.cos(angle)*215,vy:Math.sin(angle)*215,pattern:0,trailClock:0});
+    d.escortTell?.destroy();d.escortTell=null;
+    const angle=d.escortBearing;
+    const type=scout===d.escorts[0]?'rift-wing':'kiln-runner';
+    const sprite=this.makeScoutBolt(scout.x,scout.y,angle,type);
+    d.escortRecovery=300;
+    d.shots.push({sprite,vx:Math.cos(angle)*d.escortSpeed,vy:Math.sin(angle)*d.escortSpeed,escortLife:1400,pattern:0,trailClock:0});
     this.cashShockwave(scout.x,scout.y,0xf4c478,28);
-    d.escortClock=4200;
    }
   }
   d.cooldown-=elapsed;
@@ -631,7 +645,8 @@ class Adventure extends Phaser.Scene{
   if(d.charged&&d.chargeOwner)this.duelGlow?.setPosition(d.chargeOwner.x,d.chargeOwner.y+26);
   d.grace-=elapsed;
   const previousClock=d.clock;
-  const transition=kind==='cash'?advanceBossClock(d,elapsed,this.echoMode):
+  const escortHasFloor=escortReservesArena(d,elapsed);
+  const transition=kind==='cash'?(escortHasFloor?null:advanceBossClock(d,elapsed,this.echoMode)):
    ((d.clock-=elapsed)<=0?(d.warning?'fire':'windup'):null);
   if(!d.warning&&d.clock<900&&previousClock>=900)this.setOgrePose(0);
   if(transition){
@@ -642,7 +657,7 @@ class Adventure extends Phaser.Scene{
     if(kind==='cash'){
      d.origins=this.cashAttackOrigins(d.pattern);
      d.markers=d.origins.map(origin=>this.obj(this.add.circle(origin.x,origin.y,24,0x783eb4,.36)
-      .setStrokeStyle(4,0xffdd87).setDepth(14)));
+      .setStrokeStyle(5,0xffdd87).setDepth(51)));
     }
     if(!this.reduced)this.ogre.setAngle(-7);
     tone(this,230,.18);
@@ -662,7 +677,7 @@ class Adventure extends Phaser.Scene{
      const {angle}=origin;
      const low=d.pattern===0;
      const orb=kind==='cash'
-      ?this.obj(this.add.image(origin.x,low?474:origin.y,'ogre-weapon-'+d.pattern).setDisplaySize(low?61:49,low?61:49).setDepth(14))
+      ?this.obj(this.add.image(origin.x,low?474:origin.y,'ogre-weapon-'+d.pattern).setDisplaySize(low?61:49,low?61:49).setDepth(50))
       :this.obj(this.add.circle(origin.x,low?474:origin.y,low?16:12,0xd697ff).setStrokeStyle(3,0xffe2ff).setDepth(14));
      if(kind==='cash')this.cashShockwave(orb.x,orb.y,0xd697ff,64);
      const speed=(kind==='cash'?{practice:290,adventurer:365,challenge:430}:{practice:270,adventurer:310,challenge:350})[this.echoMode];
@@ -753,6 +768,13 @@ class Adventure extends Phaser.Scene{
       d.pattern=kind==='cash'?chapterBossPattern(this.level,-1,1):2;d.warning=false;d.clock=850;
       for(const marker of d.markers||[])marker.destroy();
       d.markers=[];d.origins=[];
+      d.escortTell?.destroy();d.escortTell=null;
+      d.escortAim=false;
+      d.escortRecovery=0;
+      d.escortClock=4200;
+      for(const shot of d.shots)shot.sprite.destroy();
+      d.shots=[];
+      for(const scout of d.escorts||[])scout.clearTint();
       this.ogre.setAngle(0);
       this.setOgrePose(3);
       this.echoCue.setText(kind==='cash'?'SECOND LIFE · NEW WEAPON':'SECOND LIFE · TRACKING ORBS');
@@ -764,6 +786,7 @@ class Adventure extends Phaser.Scene{
    if(kind==='cash'&&!shot.disposable)o.setVisible(false);else o.destroy();return false;
   });
   if(!d.ogreLives){
+   d.escortTell?.destroy();
    for(const scout of d.escorts||[])scout.destroy();
    for(const marker of d.markers||[])marker.destroy();
    for(const shot of d.shots)shot.sprite.destroy();
@@ -799,7 +822,8 @@ class Adventure extends Phaser.Scene{
   }
   d.shots=d.shots.filter(shot=>{
    const o=shot.sprite;
-   if(!advance(shot)){o.destroy();return false;}
+   if(shot.escortLife!=null)shot.escortLife-=elapsed;
+   if(shot.escortLife<=0||!advance(shot)){o.destroy();return false;}
    if(kind==='cash'&&!this.reduced){
     o.angle+=elapsed*(shot.pattern===3?.12:.28);
     shot.trailClock+=elapsed;
@@ -826,7 +850,10 @@ class Adventure extends Phaser.Scene{
     d.grace=800;
     d.cash=Math.max(0,d.cash-((kind==='cash'?{practice:25,adventurer:34,challenge:50}:{practice:25,adventurer:30,challenge:34})[this.echoMode]));
     this.echoHits++;
-    if(!d.cash&&--d.cashLives>0)d.cash=100;
+    if(!d.cash){
+     if(this.showcase)this.recordCashLifeLoss(shot.escortLife!=null?'escort shot':'Ogre shot');
+     if(--d.cashLives>0)d.cash=100;
+    }
     if(this.showcase)this.updateShowcaseHud();
     this.drawDuelMeters();
     emit(this,o.x,o.y,0xd697ff,12);tone(this,180,.16);
@@ -835,6 +862,7 @@ class Adventure extends Phaser.Scene{
    return true;
   });
   if(!d.cashLives){
+   d.escortTell?.destroy();
    for(const scout of d.escorts||[])scout.destroy();
    for(const marker of d.markers||[])marker.destroy();
    for(const shot of d.shots)shot.sprite.destroy();
@@ -982,7 +1010,7 @@ class Adventure extends Phaser.Scene{
   const starKey='sparkle-play-lab:cash-stars'+(this.level?':'+this.level:'');
   let saved=0;
   try{saved=Number(localStorage.getItem(starKey))&7;}catch{}
-  this.showcase={chapter,width,terrain:layer,boss:markers.find(o=>o.name==='boss'),hearts:3,checkpoint:95,starKey,saved,
+  this.showcase={chapter,width,terrain:layer,boss:markers.find(o=>o.name==='boss'),hearts:3,checkpoint:95,starKey,saved,attemptStartedAt:this.time.now,lifeLosses:{},
    flags:markers.filter(o=>o.name==='checkpoint').map(o=>({x:o.x,mark:this.label('⚑ CHECKPOINT',o.x,452,15)})),
    stars:markers.filter(o=>o.name==='star').map((o,i)=>this.obj(this.add.image(o.x,o.y,'sun-cuff').setDisplaySize(50,42).setDepth(10)))};
   this.showcase.exitX=width-700;
@@ -1017,6 +1045,11 @@ class Adventure extends Phaser.Scene{
      .setDisplaySize(panelWidth+1,H).setTint([0xffffff,0xc7ffe4,0xa9a7df,0xabd5ee,0xa29ab9][this.level]??0xc1b6c9).setFlipX(index%2===1).setDepth(-8).setScrollFactor(factor,0));
     this.showcase.scenery.push({panel,width:panelWidth});
    }
+  }
+  const playLane=this.obj(this.add.graphics().setScrollFactor(0).setDepth(-6));
+  for(let y=300;y<512;y+=4){
+   const strength=.49*((y-300)/212)**1.3;
+   playLane.fillStyle(0x171429,strength).fillRect(0,y,W,4);
   }
   this.showcaseHud=this.label('',480,25,19).setScrollFactor(0).setDepth(44).setBackgroundColor('#211a32').setPadding(6,3);
   this.echoStep='course';
@@ -1069,6 +1102,21 @@ class Adventure extends Phaser.Scene{
    this.label('↑  »',gap-72,420,16);
    this.obj(this.add.rectangle(gap+157,506,50,8,0x8af2b5));
   }
+  const route=this.cashChallenge==null?aerialRoutes[this.level]:null;
+  if(route){
+   for(const [offset,height] of route.steps){
+    const x=route.x+offset,y=451+height;
+    const roof=this.box(x,y,65,11).setVisible(false);
+    roofArt(this,x,y,65,this.level);
+    this.obj(this.add.rectangle(x,y-6,43,3,route.color).setDepth(4));
+    for(const hero of [this.player,this.showcase.partner].filter(Boolean)){
+     this.levelColliders.push(this.physics.add.collider(hero,roof));
+    }
+   }
+   const [goalX,goalY]=route.steps.at(-1);
+   this.showcase.routeReward=this.obj(this.add.star(route.x+goalX,416+goalY,5,7,15,route.color)
+    .setStrokeStyle(2,0xfff8de).setDepth(10));
+  }
   this.showcase.speedStrip=this.obj(this.add.rectangle(1810,505,78,12,0x65d8d8).setStrokeStyle(3,0xffedc0));
   this.label('»',1810,470,14);
   this.showcase.portals=markers.filter(o=>o.name==='portal'||o.name==='checkpoint').sort((a,b)=>a.x-b.x).filter((o,i,all)=>!i||o.x-all[i-1].x>100).map(o=>{
@@ -1102,9 +1150,37 @@ class Adventure extends Phaser.Scene{
    this.showcase.partner=partner;
    this.showcase.partnerDash={charge:100,remaining:0,recovery:0,direction:1};
   }
-  this.showcase.springs=markers.filter(o=>o.name==='spring').map(o=>
-   this.obj(this.add.image(o.x,o.y,'cash-launch').setDisplaySize(62,23).setDepth(7)));
+  this.showcase.springs=markers.filter(o=>o.name==='spring').map(o=>{
+   const pad=this.obj(this.add.image(o.x,o.y,'cash-launch').setDisplaySize(62,23).setDepth(7));
+   pad.observatoryLift=o.type==='observatory-lift';
+   pad.signatureLift=o.type==='signature-lift';
+   return pad;
+  });
+  const signature = markers.find(o => o.name === 'signature-route');
+  if (signature) {
+   this.label(signature.type, signature.x, signature.y, 15, '#e6ffff')
+    .setPadding(8, 4).setBackgroundColor('#211a32').setDepth(8);
+  }
+  this.showcase.traversalRetries = markers
+   .filter(o => o.name === 'observatory-retry' || o.name === 'signature-route')
+   .map(o => o.x);
+  const liftHints=['Ride the launch pad →','Ride high or jump from the edge →','Launch over the gap · Watch the scout →'];
+  let liftIndex=0;
   for(const pad of this.showcase.springs){
+   if(pad.signatureLift)continue;
+   if(pad.observatoryLift){
+    this.label(liftHints[liftIndex++],pad.x,342,15,'#e6ffff')
+     .setPadding(8,4).setBackgroundColor('#211a32').setDepth(8);
+    const light=this.obj(this.add.graphics().setDepth(2));
+    light.fillStyle(0x9deffc,.15).fillTriangle(pad.x-28,500,pad.x+28,500,pad.x+75,365);
+    light.lineStyle(3,0xd2fff2,.8);
+    for(const y of [402,430,458]){
+     const x=pad.x+(500-y)*.34;
+     light.lineBetween(x-10,y+5,x,y-4);
+     light.lineBetween(x,y-4,x+10,y+5);
+    }
+    continue;
+   }
    const wall=this.box(pad.x+94,466,28,92,0x5b547e);
    this.levelColliders.push(this.physics.add.collider(this.player,wall));
    if(this.showcase.partner)this.levelColliders.push(this.physics.add.collider(this.showcase.partner,wall));
@@ -1214,18 +1290,51 @@ class Adventure extends Phaser.Scene{
  }
  showCashPortalStamp(s){
   const saved=!!(s.earnedMedals&(1<<(s.district-1)));
-  const badge=this.label('◎ '+s.district+'/'+s.portals.length+'    '+(saved?'★ ✓':'★ —'),W/2,170,32)
-   .setScrollFactor(0).setDepth(60).setBackgroundColor('#18233c').setPadding(18,10);
-  this.time.delayedCall(1500,()=>{if(badge.active)badge.destroy();});
-  tone(this,784,.14,.07);
-
+  const accent=s.chapter?.color??[0xffdaa0,0x9de5b5,0xffae88,0x9beaff,0xd2b5ff][this.level];
+  const color='#'+accent.toString(16).padStart(6,'0');
+  const title=this.label(s.districtNames[s.district],W/2,65,26,color)
+   .setScrollFactor(0).setDepth(60).setBackgroundColor('#18233c').setPadding(16,8);
+  const progress=this.label('◎ '+s.district+'/'+s.portals.length+(saved?'    ★ ✓':''),W/2,105,18)
+   .setScrollFactor(0).setDepth(60).setBackgroundColor('#18233c').setPadding(9,4);
+  if(!this.reduced){
+   title.setAlpha(0).setY(71);
+   this.tweens.add({targets:title,y:65,alpha:1,duration:220,ease:'Sine.easeOut'});
+  }
+  this.time.delayedCall(1850,()=>{
+   if(title.active)title.destroy();
+   if(progress.active)progress.destroy();
+  });
+  tone(this,658,.14,.07);
+  this.time.delayedCall(105,()=>{
+   if(this.showcase===s&&title.active)tone(this,784+s.district*43,.16,.06);
+  });
  }
  cashShockwave(x,y,color,radius){
   if(this.reduced)return;
   const ring=this.add.circle(x,y,radius,color,.12).setStrokeStyle(5,color).setDepth(19).setScale(.3);
   this.tweens.add({targets:ring,scale:1.45,alpha:0,duration:380,onComplete:()=>ring.destroy()});
  }
+ recordCashLifeLoss(cause){
+  const losses=this.showcase.lifeLosses;
+  losses[cause]=(losses[cause]||0)+1;
+ }
+ saveCashAttempt(result){
+  const s=this.showcase;
+  if(!s||s.practiceDuel||this.cashChallenge!=null||s.attemptRecorded)return;
+  s.attemptRecorded=true;
+  const key='sparkle-play-lab:cash-attempts';
+  try{
+   const stored=JSON.parse(localStorage.getItem(key)||'[]');
+   const history=Array.isArray(stored)?stored:[];
+   history.push({chapter:this.level+1,difficulty:this.echoMode,
+    mode:s.partner?'co-op':'solo',result,
+    seconds:Math.round((this.time.now-s.attemptStartedAt)/1000),
+    lifeLosses:s.lifeLosses});
+   localStorage.setItem(key,JSON.stringify(history.slice(-60)));
+  }catch{}
+ }
  showCashGameOver(){
+  this.saveCashAttempt('retry');
   this.echoStep='retry';
   this.player.body.stop();
   this.showcase?.partner?.body.stop();
@@ -1311,6 +1420,7 @@ class Adventure extends Phaser.Scene{
    const paletteByType={scout:[0x492a68,0xf186c7], 'rift-wing':[0x205771,0x8cf4ff], 'kiln-runner':[0x6a302a,0xffae6e], 'prism-scout':[0x383578,0x84ffff], 'forge-scout':[0x773348,0xffc481]};
    const [shadow,light]=paletteByType[type]??paletteByType.scout;
    art.fillStyle(shadow,.42).fillEllipse(20,12,38,22);
+   art.fillStyle(0x151021,1).fillEllipse(21,12,34,20);
    art.fillStyle(shadow,1).fillEllipse(22,12,28,16);
    art.fillStyle(light,1).fillEllipse(24,12,22,10);
    art.fillStyle(0xfff3cf,1).fillEllipse(27,11,10,4);
@@ -1418,6 +1528,7 @@ class Adventure extends Phaser.Scene{
      tone(this,155,.19,.07,'triangle');
      this.cashShockwave(sprite.x,sprite.y,0xff91df,42);
      this.resetCashStreak(target);
+     this.recordCashLifeLoss('scout shot');
      if(--s.hearts<=0)this.showCashGameOver();
      else{target.body.setVelocityY(-160);this.updateShowcaseHud();}
     }
@@ -1522,7 +1633,7 @@ class Adventure extends Phaser.Scene{
   if(!duel&&this.echoStep!=='course')return;
   if(superDash){
    const camera=this.cameras.main;
-   if(!this.reduced){
+   if(!this.reduced&&!duel){
     camera.shake(430,.006);
     camera.flash(140,lightning?255:115,lightning?240:205,255);
    }
@@ -1578,21 +1689,21 @@ class Adventure extends Phaser.Scene{
   s.scoutCoins.push({sprite:wave,vx:direction*(water?595:690),vy:0,life:water?.9:.5,powered:true,pierce:water,hit:new Set()});
  }
  drawSmokeBomb(direction){
-  const smoke=this.obj(this.add.graphics().setScrollFactor(0).setDepth(23));
+  const smoke=this.obj(this.add.graphics().setScrollFactor(0).setDepth(5));
   for(let i=0;i<27;i++){
    const x=(i%9)*120;
    const y=H-36-Math.floor(i/9)*92+Math.sin(i*4)*21;
    const radius=73+(i%5)*8;
-   smoke.fillStyle([0x44345e,0x9a83bc,0xd2c5e9][i%3],.30);
+   smoke.fillStyle([0x44345e,0x9a83bc,0xd2c5e9][i%3],.23);
    smoke.fillCircle(x,y,radius);
   }
-  this.tweens.add({targets:smoke,x:this.reduced?0:direction*48,alpha:0,duration:460,onComplete:()=>smoke.destroy()});
+  this.tweens.add({targets:smoke,x:this.reduced?0:direction*48,alpha:0,delay:SUPER_DASH_VISUAL_HOLD,duration:SUPER_DASH_VISUAL_FADE,ease:"Sine.Out",onComplete:()=>{if(smoke.active)smoke.destroy();}});
  }
  drawGiantTsunami(direction){
-  const wave=this.obj(this.add.graphics().setScrollFactor(0).setDepth(23));
+  const wave=this.obj(this.add.graphics().setScrollFactor(0).setDepth(5));
   const start=direction>0?0:W;
   wave.setPosition(start,0).setScale(direction,1);
-  for(const [height,color,alpha] of [[355,0x157bd0,.66],[290,0x17baa9,.72],[225,0x91fff1,.65]]){
+  for(const [height,color,alpha] of [[355,0x157bd0,.50],[290,0x17baa9,.49],[225,0x91fff1,.42]]){
    wave.fillStyle(color,alpha);
    wave.beginPath();
    wave.moveTo(0,H);
@@ -1603,10 +1714,10 @@ class Adventure extends Phaser.Scene{
    wave.closePath();
    wave.fillPath();
   }
-  this.tweens.add({targets:wave,x:this.reduced?start:start+direction*95,alpha:0,duration:460,onComplete:()=>wave.destroy()});
+  this.tweens.add({targets:wave,x:this.reduced?start:start+direction*95,alpha:0,delay:SUPER_DASH_VISUAL_HOLD,duration:SUPER_DASH_VISUAL_FADE,ease:"Sine.Out",onComplete:()=>{if(wave.active)wave.destroy();}});
  }
  drawCashLightning(x,y){
-  const bolt=this.obj(this.add.graphics().setDepth(21));
+  const bolt=this.obj(this.add.graphics().setDepth(8));
   const offset=this.reduced?0:26;
   const trunk=[[x-offset,0],[x+offset,y*.22],[x-offset*.8,y*.47],
    [x+offset*.65,y*.7],[x-offset*.35,y*.86],[x,y]];
@@ -1627,7 +1738,7 @@ class Adventure extends Phaser.Scene{
   }
   this.cashShockwave(x,y,0xaaffff,72);
   if(!this.reduced)emit(this,x,y,0xaaffff,12);
-  this.tweens.add({targets:bolt,alpha:0,duration:460,onComplete:()=>bolt.destroy()});
+  this.tweens.add({targets:bolt,alpha:0,delay:SUPER_DASH_VISUAL_HOLD,duration:SUPER_DASH_VISUAL_FADE,ease:"Sine.Out",onComplete:()=>{if(bolt.active)bolt.destroy();}});
  }
  updateCashPartner(s,dt){
   const partner=s.partner;
@@ -1667,7 +1778,10 @@ class Adventure extends Phaser.Scene{
   }else if(this.keys.W.isDown&&grounded)body.setVelocityY(-tuning.jumpSpeed);
   if(body.blocked.down&&[s.spring,s.extraSpring,...s.springs].some(pad=>Math.abs(partner.x-pad.x)<29))body.setVelocityY(-565);
   if(partner.y>560){this.resetCashStreak(partner);this.updateShowcaseHud();}
-  if(partner.y>560||Math.abs(partner.x-this.player.x)>590)body.reset(Math.max(30,this.player.x-52),415);
+  if(partner.y>560||Math.abs(partner.x-this.player.x)>590){
+   const retry=partner.y>560&&s.traversalRetries.includes(s.checkpoint);
+   body.reset(retry?s.checkpoint-45:Math.max(30,this.player.x-52),415);
+  }
   if(direction)partner.setFlipX(direction<0);
   const state=this.reduced?'idle':dash.remaining?'dash':!body.blocked.down?(body.velocity.y<0?'jump':'fall'):direction?'run':'idle';
   if(this.showCashAttack(partner,partner)){partner.strideX=null;}
@@ -1706,6 +1820,7 @@ class Adventure extends Phaser.Scene{
    const hitHero=contacts[0];
    s.bumpGrace=1100;
    this.resetCashStreak(hitHero);
+   this.recordCashLifeLoss('scout contact');
    if(--s.hearts<=0)this.showCashGameOver();
    else{
     hitHero.body.setVelocityY(-175);
@@ -1760,6 +1875,14 @@ class Adventure extends Phaser.Scene{
    return;
   }
   if(this.echoStep==='course'){
+   if(s.routeReward?.visible&&[this.player,s.partner].some(hero=>hero&&
+    Math.hypot(hero.x-s.routeReward.x,hero.y-s.routeReward.y)<29)){
+    s.routeReward.setVisible(false);
+    this.score+=100;
+    this.updateHUD();
+    tone(this,1047,.18,.07);
+    this.cashShockwave(s.routeReward.x,s.routeReward.y,0xffdc89,48);
+   }
    this.updateCashCourseHazards(s,dt);
    if(this.echoStep==='course')this.cashCourseCombat(s,dt);
    if(this.echoStep==='retry')return;
@@ -1819,10 +1942,17 @@ class Adventure extends Phaser.Scene{
    tone(this,980,.19);
    this.cashShockwave(star.x,star.y,0xffdf70,84);
   }
+  const nearbyRetry=s.traversalRetries.find(x=>this.player.x>=x&&this.player.x<x+135);
+  if(nearbyRetry)s.checkpoint=Math.max(s.checkpoint,nearbyRetry);
   if(this.player.y>560){
    this.resetCashStreak(this.player);
+   this.recordCashLifeLoss('missed landing');
    if(--s.hearts<=0)this.showCashGameOver();
-   else{this.player.body.reset(s.checkpoint,455);this.updateShowcaseHud();}
+   else{
+    this.player.body.reset(s.checkpoint,455);
+    if(s.traversalRetries.includes(s.checkpoint))s.partner?.body.reset(s.checkpoint-45,455);
+    this.updateShowcaseHud();
+   }
    return;
   }
   if(this.echoStep==='course'&&!s.lit&&!s.lanternCoin&&this.player.x>s.lantern.x+210){
@@ -2204,7 +2334,7 @@ coin.aim=aim;coin.life=1600;this.projectiles.push(coin);tone(this,970,.065);emit
    if(card&&!card.open&&this.player===player&&this.completed&&this.level===0)card.showModal();
   });
  }
- if(kind==='cash'){try{localStorage.removeItem('sparkle-play-lab:cash-portal:'+this.level);}catch{}}
+ if(kind==='cash'){this.saveCashAttempt('clear');try{localStorage.removeItem('sparkle-play-lab:cash-portal:'+this.level);}catch{}}
  saveProgress(this.level+1);updateChapterSelect(this.level);
  const finale=this.level===levels[kind].length-1;
  const tune={bubble:[523,659,784],cash:[392,784,988],ninja:[440,587,880],echo:[392,523,659]}[kind];
@@ -2409,7 +2539,16 @@ if(kind==='cash'){
     select.value=hero;
     select.dispatchEvent(new Event('change',{bubbles:true}));
    });
-   card.append(radio,art,title);cards.append(card);
+   const power=document.createElement('span');
+   power.className='cash-hero-power';
+   power.textContent=roster[hero].shot;
+   power.style.setProperty('--shot-color','#'+roster[hero].color.toString(16));
+   const preview=document.createElement('span');
+   preview.className='cash-hero-shot-preview';
+   preview.setAttribute('aria-hidden','true');
+   preview.dataset.weapon=hero;
+   preview.style.setProperty('--shot-color','#'+roster[hero].color.toString(16));
+   card.append(radio,art,title,power,preview);cards.append(card);
   }
   const syncCards=()=>{
    for(const radio of cards.querySelectorAll('input'))radio.checked=radio.value===select.value;

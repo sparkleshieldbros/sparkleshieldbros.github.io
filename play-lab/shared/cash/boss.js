@@ -38,3 +38,25 @@ export function chapterBossPattern(chapter,current,lives,random=Math.random){
  const choices=arsenal.slice(0,lives===2?2:3).filter(pattern=>pattern!==current);
  return choices[Math.floor(random()*choices.length)];
 }
+
+export function escortAction(duel,elapsed){
+ duel.escortClock-=elapsed;
+ if(duel.warning||duel.shots.length)return null;
+ if(duel.escortClock>0)return null;
+ if(duel.escortAim){
+  duel.escortAim=false;
+  duel.escortClock=4200;
+  return 'fire';
+ }
+ if(duel.clock<=elapsed)return null;
+ duel.escortAim=true;
+ duel.escortClock=650;
+ return 'aim';
+}
+
+export function escortReservesArena(duel,elapsed){
+ if(duel.escortAim||duel.shots.some(shot=>shot.escortLife>0))return true;
+ const remaining=duel.escortRecovery??0;
+ duel.escortRecovery=Math.max(0,remaining-elapsed);
+ return remaining>0;
+}

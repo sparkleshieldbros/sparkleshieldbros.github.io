@@ -22,7 +22,11 @@ objects = [marker('portal', x, 452) for x in (2016, 4160, 6624)]
 objects += [marker('star', x, y) for x, y in [(896, 389), (3232, 409), (6512, 388)]]
 objects += [marker('spring', 2192, 498), marker('spring', 4752, 498),
             marker('lamp', 7010, 448), marker('boss', width * 32 - 180, 415)]
-objects += [marker('scout', x, 437, 'prism-scout') for x in range(600, 8620, 343)]
+objects += [marker('spring', x, 498, 'observatory-lift') for x in (704, 3104, 6432)]
+objects += [marker('observatory-retry', x, 452) for x in (630, 2980, 6208)]
+objects += [marker('scout', x, 437, 'prism-scout') for x in range(1260, 8620, 343)
+            if not 6050 < x < 6470]
+objects += [marker('scout', 6710, 388, 'prism-scout')]
 for i, obj in enumerate(objects, start=1):
     obj['id'] = i
 markers['objects'] = objects

@@ -71,3 +71,58 @@ body[data-game="cash"]:not(.cash-playing) .note,
 .cash-book-dialog h2{font-size:1.3rem;margin:.55rem 0}
 .cash-book-dialog a{color:#ffda93}
 .cash-book-dialog button{margin-top:.8rem}
+
+.cash-hero-card .cash-hero-power{display:none;color:var(--shot-color);font-weight:600}
+.cash-hero-card:has(input:checked) .cash-hero-power{display:grid}
+@media(prefers-reduced-motion:no-preference){
+ .cash-hero-card:has(input:checked) img{animation:hero-pick .24s ease-out}
+ @keyframes hero-pick{from{transform:scale(.96);filter:brightness(1.3)}to{transform:scale(1);filter:brightness(1)}}
+}
+
+.cash-hero-card .cash-hero-shot-preview {
+ display:none;position:absolute;top:34%;left:24%;width:18px;height:18px;padding:0;
+ border:2px solid #fff4cf;border-radius:50%;background:var(--shot-color);
+ box-shadow:0 0 9px var(--shot-color);pointer-events:none
+}
+.cash-hero-card:has(input:checked) .cash-hero-shot-preview { display:block }
+.cash-hero-shot-preview[data-weapon=cash] { --preview-motion:boot-coin }
+.cash-hero-card .cash-hero-shot-preview[data-weapon=kairo] {
+ --preview-motion:bubble-bolt;background:#173946aa;border-color:var(--shot-color)
+}
+.cash-hero-card .cash-hero-shot-preview[data-weapon=mom] {
+ --preview-motion:light-pulse;clip-path:polygon(50% 0,63% 36%,100% 50%,63% 64%,50% 100%,37% 64%,0 50%,37% 36%)
+}
+.cash-hero-card .cash-hero-shot-preview[data-weapon=ninja] {
+ --preview-motion:throwing-star;border:0;
+ clip-path:polygon(50% 0,65% 35%,100% 50%,65% 65%,50% 100%,35% 65%,0 50%,35% 35%)
+}
+.cash-hero-card .cash-hero-shot-preview[data-weapon=dad] {
+ --preview-motion:shield-wave;background:#244b75aa;border-radius:55% 55% 70% 70%
+}
+@media(prefers-reduced-motion:no-preference) {
+ .cash-hero-card:has(input:checked) .cash-hero-shot-preview {
+  animation:var(--preview-motion) 1.35s ease-out both
+ }
+ @keyframes boot-coin {
+  from{transform:translateY(16px) scaleX(.4)}
+  48%{transform:translate(18px,-8px) scaleX(1)}
+  to{transform:translate(30px,7px) scaleX(.4);opacity:.65}
+ }
+ @keyframes bubble-bolt {
+  from{transform:scale(.45)}
+  to{transform:translate(22px,-17px) scale(1.45)}
+ }
+ @keyframes light-pulse {
+  from{transform:scale(.25)}
+  55%{transform:translateX(14px) scale(1.55)}
+  to{transform:translateX(24px) scale(.85)}
+ }
+ @keyframes shield-wave {
+  from{transform:scale(.65)}
+  to{transform:translateX(16px) scale(1.6,1.35)}
+ }
+ @keyframes throwing-star {
+  from{transform:rotate(0)}
+  to{transform:translateX(28px) rotate(420deg)}
+ }
+}

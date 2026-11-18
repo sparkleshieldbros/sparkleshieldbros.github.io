@@ -55,3 +55,28 @@ test('expansion and factory boss shots start inside the arena with visible warni
  }
  assert.equal(labels.size,18);
 });
+
+test('escort waits for Ogre projectiles to clear before reserving a full warning',async()=>{
+ const {escortAction}=await import('../shared/cash/boss.js');
+ const duel={escortClock:0,clock:30,warning:false,shots:[{}]};
+ assert.equal(escortAction(duel,16),null);
+ duel.shots=[];
+ assert.equal(escortAction(duel,16),'aim');
+ assert.equal(escortAction(duel,649),null);
+ assert.equal(escortAction(duel,1),'fire');
+ assert.equal(duel.escortClock,4200);
+});
+
+test('escort recovery begins only after the shot has left play',async()=>{
+ const {escortReservesArena}=await import('../shared/cash/boss.js');
+ const duel={escortAim:true,escortRecovery:300,shots:[]};
+ assert.equal(escortReservesArena(duel,100),true);
+ duel.escortAim=false;
+ duel.shots.push({escortLife:40});
+ assert.equal(escortReservesArena(duel,100),true);
+ assert.equal(duel.escortRecovery,300);
+ duel.shots=[];
+ assert.equal(escortReservesArena(duel,250),true);
+ assert.equal(escortReservesArena(duel,50),true);
+ assert.equal(escortReservesArena(duel,1),false);
+});
