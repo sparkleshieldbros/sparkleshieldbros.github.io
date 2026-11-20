@@ -1,0 +1,42 @@
+.cash-chapter-results {
+ color:#fff3dd;background:radial-gradient(ellipse at top,#314f6e,#201932 65%);
+ border:2px solid var(--results-accent,#f2ce83);border-radius:1.4rem;padding:0;
+ width:min(35rem,calc(100vw - 1.5rem));max-height:calc(100dvh - 1.5rem);
+ box-shadow:0 20px 90px #070516aa;font-family:system-ui,sans-serif;
+}
+.cash-chapter-results::backdrop { background:#0b1021cf }
+.cash-results-content { padding:clamp(1rem,4vw,2rem);text-align:center }
+.cash-results-heading h2 { margin:.3rem 0 1rem;font-size:clamp(1.25rem,4vw,1.8rem);line-height:1.15 }
+.cash-results-chapter { margin:0;color:var(--results-accent,#a6edeb);font-size:.9rem;font-weight:800 }
+.cash-results-portrait { width:72px;height:72px;object-fit:cover;object-position:center 24%;border-radius:50%;border:2px solid #e4c179;margin:0 auto .5rem }
+.cash-results-score { position:relative;display:grid;gap:.1rem;padding:.55rem;border-block:1px solid #ffe2a04d }
+.cash-results-score>span:first-child { font-size:.85rem;color:#e9dcc3 }
+.cash-results-score strong { font-size:clamp(2.5rem,10vw,4rem);line-height:1.15;color:#ffe28b;font-variant-numeric:tabular-nums }
+.cash-results-rank { font-weight:900;color:#afffec }
+.cash-results-context { color:#d3dbe4;font-size:.85rem;margin:.7rem 0 }
+.cash-results-tally { margin:1rem auto;max-width:25rem;font-size:.9rem }
+.cash-results-tally>div { display:flex;justify-content:space-between;gap:1rem;padding:.22rem 0 }
+.cash-results-tally dt { text-align:left }
+.cash-results-tally dd { margin:0;font-variant-numeric:tabular-nums;color:#ffe4ab }
+.cash-results-best { color:#b6ffcf;font-weight:800;margin:.75rem 0 }
+.cash-results-board { text-align:left;border-top:1px solid #ffffff25;padding:.7rem 0;font-size:.85rem }
+.cash-results-board summary { cursor:pointer }
+.cash-results-board ol { padding-left:1.6rem;margin:.7rem 0 .2rem }
+.cash-results-board li { padding:.2rem 0 }
+.cash-results-board li span { float:right;color:#b9f5ec }
+.cash-results-actions { display:flex;justify-content:center;flex-wrap:wrap;gap:.55rem;margin-top:1rem }
+.cash-results-actions button { cursor:pointer;border:1px solid #9eb6c6;border-radius:.7rem;padding:.7rem 1rem;min-height:44px;background:#263e55;color:#fff4df;font:inherit;font-weight:800 }
+.cash-results-actions .cash-results-next { background:#ffe19a;color:#30233c;border-color:#ffe19a }
+.cash-results-actions .cash-results-share { font-size:.85rem }
+.cash-results-actions button:focus-visible { outline:3px solid #a8fff2;outline-offset:3px }
+.cash-results-share-status { min-height:1.2em;color:#b8ebe7;font-size:.8rem;margin:.7rem 0 0 }
+.cash-results-copy { box-sizing:border-box;width:100%;height:6rem;margin-top:.5rem;padding:.5rem;color:#f4f4e7;background:#16293c;border:1px solid #8bc2ce;border-radius:.4rem;font:inherit;font-size:.8rem }
+@media (max-height:500px) and (min-width:600px) {
+ .cash-results-content { padding:.8rem 1.3rem }
+ .cash-results-heading h2 { margin:.25rem 0 .5rem;font-size:1.3rem }
+ .cash-results-score strong { font-size:2.3rem }
+ .cash-results-tally { margin:.5rem auto }
+ .cash-results-portrait { display:none }
+}
+.cash-results-heading { display:block }
+.cash-results-portrait { display:block }
