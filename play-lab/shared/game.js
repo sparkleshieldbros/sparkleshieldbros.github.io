@@ -2453,7 +2453,7 @@ coin.aim=aim;coin.life=1600;this.projectiles.push(coin);tone(this,970,.065);emit
    if(this.player!==player||!this.completed)return;
    this.cashResults=showChapterResults({
     chapter:this.level,chapterName:chapterNames.cash[this.level],
-    portrait:canonical[this.hero].image,
+    portrait:canonical[this.hero].image,heroName:canonical[this.hero].name,
     accent:'#'+bossIdentity(this.level).accent.toString(16).padStart(6,'0'),
     score:tally.total,rank:tally.grade,
     breakdown:Object.entries(tally.breakdown).map(([key,points])=>({

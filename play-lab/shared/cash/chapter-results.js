@@ -1,3 +1,5 @@
+import {createScoreCard,COIN_DASH_URL} from './score-card.js';
+
 const congratulations = Object.freeze([
  'Maplewood is cheering for you!',
  'You brought the sparkle back to the garden!',
@@ -26,7 +28,7 @@ function points(value) {
 export function showChapterResults({
  chapter = 0, chapterName = '', score = 0, breakdown = [], rank = '', best = 0,
  leaderboard = [], newBest = false, ranked = true, saved = true, difficulty = '', mode = '',
- portrait, accent = '#f2ce83', onContinue = () => {}, onReplay = () => {},
+ portrait, heroName, accent = '#f2ce83', onContinue = () => {}, onReplay = () => {},
  parent = document.fullscreenElement || document.body,
 } = {}) {
  if (!document.querySelector('link[data-cash-results-style]')) {
@@ -37,6 +39,9 @@ export function showChapterResults({
   document.head.append(style);
  }
  const previousFocus = document.activeElement;
+ let closed = false;
+ let imageUrl;
+ let scoreFile;
  const dialog = element('dialog', 'cash-chapter-results');
  const titleId = 'cash-results-title';
  dialog.setAttribute('aria-labelledby', titleId);
@@ -98,44 +103,105 @@ export function showChapterResults({
  replay.type = 'button';
  const share = element('button', 'cash-results-share', 'Share score');
  share.type = 'button';
- actions.append(next, replay, share);
+ share.disabled = true;
+ const save = element('a', 'cash-results-save', 'Save image');
+ save.hidden = true;
+ save.target = '_blank';
+ save.rel = 'noopener';
+ actions.append(next, replay, share, save);
  content.append(actions);
  const feedback = element('p', 'cash-results-share-status');
  feedback.setAttribute('role', 'status');
  content.append(feedback);
+ const cardPreview = element('details', 'cash-results-image-preview');
+ cardPreview.hidden = true;
+ cardPreview.append(element('summary', '', 'Preview score image'));
+ const previewImage = element('img');
+ previewImage.alt = 'Shareable Coin Dash score card with hero artwork, chapter score and QR code to play';
+ cardPreview.append(previewImage);
+ const copyCaption = element('button', '', 'Copy challenge text');
+ copyCaption.type = 'button';
+ cardPreview.append(copyCaption);
+ content.append(cardPreview);
+ const shareText = 'I scored ' + points(score) + ' in ' +
+  (chapterName || 'Coin Dash Chapter ' + (chapter + 1)) +
+  (context ? ' (' + context + ')' : '') +
+  (ranked ? '' : ' — checkpoint practice') + '. Can you beat my score?';
+ const caption = shareText + '\n' + COIN_DASH_URL;
  let copyField;
- share.addEventListener('click', async () => {
-  const shareUrl = 'https://sparkleshieldbros.github.io/play-lab/games/coin-dash/';
-  const shareText = 'I scored ' + points(score) + ' in ' + (chapterName || 'Coin Dash Chapter ' + (chapter + 1)) + (context ? ' (' + context + ')' : '') + (ranked ? '' : ' — checkpoint practice') + '. Can you beat my score?';
-  const text = shareText + '\n' + shareUrl;
+
+ copyCaption.addEventListener('click', async () => {
   try {
-   if (navigator.share) {
-    await navigator.share({ title: 'Sparkle Shield Bros · Coin Dash', text: shareText, url: shareUrl });
-    feedback.textContent = 'Score shared!';
-   } else if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text);
-    feedback.textContent = 'Copied! Paste your challenge into a message or post.';
-   } else {
-    throw new Error('Copy unavailable');
-   }
-  } catch (error) {
-   if (error.name === 'AbortError') return;
+   await navigator.clipboard.writeText(caption);
+   if (!closed) feedback.textContent = 'Challenge copied. Paste it with your score image.';
+  } catch {
+   if (closed) return;
    if (!copyField) {
     copyField = element('textarea', 'cash-results-copy');
     copyField.readOnly = true;
     copyField.setAttribute('aria-label', 'Your score challenge to copy');
-    content.append(copyField);
+    cardPreview.append(copyField);
    }
-   copyField.value = text;
+   copyField.value = caption;
    copyField.focus();
    copyField.select();
-   feedback.textContent = 'Copy this challenge to share your score.';
+   feedback.textContent = 'Copy this text to post with your image.';
   }
  });
- let closed = false;
+
+ async function prepareImage() {
+  share.disabled = true;
+  feedback.textContent = 'Preparing score image…';
+  try {
+   const card = await createScoreCard({
+    chapter, chapterName, score, rank, difficulty, mode,
+    heroPortrait:portrait, heroName, ranked,
+   });
+   if (closed) return;
+   imageUrl = URL.createObjectURL(card.blob);
+   if (typeof File !== 'undefined') {
+    scoreFile = new File([card.blob], card.filename, {type:'image/png'});
+   }
+   previewImage.src = imageUrl;
+   save.href = imageUrl;
+   save.download = card.filename;
+   save.hidden = false;
+   cardPreview.hidden = false;
+   feedback.textContent = '';
+  } catch {
+   if (closed) return;
+   feedback.textContent = 'Artwork could not load. Tap Share score to try again.';
+  } finally {
+   if (!closed) share.disabled = false;
+  }
+ }
+
+ share.addEventListener('click', async () => {
+  if (!imageUrl) {
+   await prepareImage();
+   return;
+  }
+  try {
+   if (scoreFile && navigator.share && navigator.canShare?.({files:[scoreFile]})) {
+    // The file is already prepared, preserving the tap required by Safari.
+    await navigator.share({
+     files:[scoreFile], title:'Sparkle Shield Bros · Coin Dash',
+     text:shareText, url:COIN_DASH_URL,
+    });
+    if (!closed) feedback.textContent = 'Score image shared!';
+    return;
+   }
+  } catch (error) {
+   if (closed || error.name === 'AbortError') return;
+  }
+  cardPreview.open = true;
+  feedback.textContent = 'Save the image, then add it to your post. Copy challenge text to include the game link.';
+  save.focus();
+ });
  function close() {
   if (closed) return;
   closed = true;
+  if (imageUrl) URL.revokeObjectURL(imageUrl);
   if (dialog.open) dialog.close();
   dialog.remove();
   if (previousFocus?.isConnected) previousFocus.focus();
@@ -154,5 +220,6 @@ export function showChapterResults({
  parent.append(dialog);
  dialog.showModal();
  next.focus();
+ prepareImage();
  return { close };
 }

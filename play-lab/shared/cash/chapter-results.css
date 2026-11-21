@@ -40,3 +40,18 @@
 }
 .cash-results-heading { display:block }
 .cash-results-portrait { display:block }
+.cash-results-actions .cash-results-save {
+ display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;
+ min-height:44px;padding:.7rem 1rem;border:1px solid #b1decf;border-radius:.7rem;
+ color:#c5ffe4;background:#203c40;text-decoration:none;font-weight:800
+}
+.cash-results-save[hidden],.cash-results-image-preview[hidden] { display:none }
+.cash-results-actions button:disabled { opacity:.55;cursor:wait }
+.cash-results-save:focus-visible { outline:3px solid #a8fff2;outline-offset:3px }
+.cash-results-image-preview { margin-top:.8rem;text-align:left }
+.cash-results-image-preview summary { cursor:pointer;padding:.5rem 0 }
+.cash-results-image-preview img { display:block;width:100%;height:auto;margin:.7rem 0;border-radius:.6rem }
+.cash-results-image-preview button {
+ min-height:44px;padding:.5rem .8rem;color:#fff3dd;background:#263e55;
+ border:1px solid #9eb6c6;border-radius:.6rem;font:inherit;cursor:pointer
+}
