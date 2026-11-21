@@ -14,7 +14,7 @@ function enable(){
  enabled=true;
  window.dataLayer=window.dataLayer||[];
  window.gtag=function(){window.dataLayer.push(arguments);};
- window.gtag('consent','default',{analytics_storage:'granted',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
+ window.gtag('consent','default',{analytics_storage:'denied',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
  window.gtag('js',new Date());
  window.gtag('config',ID,{send_page_view:false,allow_google_signals:false,allow_ad_personalization_signals:false,ignore_referrer:true,cookie_expires:86400,cookie_update:false,page_location:location.origin+location.pathname,page_referrer:''});
  // Local verification exercises the queue without sending developer traffic.
@@ -28,17 +28,20 @@ function enable(){
 }
 export function installAnalytics(){
  const details=document.createElement('details');
- const title=document.createElement('summary');title.textContent='For grown-ups · Usage measurement';
- const text=document.createElement('p');text.textContent='Optional Google Analytics helps us measure game use. Google processes usage data and may use analytics cookies. Advertising features are disabled. Only allow this if you are a grown-up choosing for this browser.';
- const allow=document.createElement('button');allow.type='button';allow.textContent='Allow usage measurement';
- const decline=document.createElement('button');decline.type='button';decline.textContent='Keep measurement off';
+ const title=document.createElement('summary');title.textContent='Usage measurement & privacy';
+ const text=document.createElement('p');
+ text.textContent='We use Google Analytics cookieless usage signals to understand game performance. Analytics and advertising cookie storage are disabled. Google still receives connection and browser information. Gameplay does not require names or accounts.';
+ const stop=document.createElement('button');stop.type='button';stop.textContent='Turn usage measurement off';
  const status=document.createElement('p');status.setAttribute('role','status');
- details.append(title,text,allow,decline,status);document.querySelector('main')?.append(details);
- const update=()=>{status.textContent=enabled?'Usage measurement is on.':'Usage measurement is off.';};
- allow.onclick=()=>{try{localStorage.setItem(KEY,'yes');}catch{}enable();update();};
- decline.onclick=()=>{try{localStorage.setItem(KEY,'no');}catch{}enabled=false;window['ga-disable-'+ID]=true;location.reload();};
- if(choice()==='yes')enable();
- update();
+ details.append(title,text,stop,status);document.querySelector('main')?.append(details);
+ // Preserve an explicit prior refusal rather than reversing the visitor choice.
+ if(choice()!=='no')enable();
+ status.textContent=enabled?'Cookieless measurement is on.':'Usage measurement is off.';
+ stop.hidden=!enabled;
+ stop.onclick=()=>{
+  try{localStorage.setItem(KEY,'no');}catch{}
+  enabled=false;window['ga-disable-'+ID]=true;location.reload();
+ };
  window.addEventListener('error',()=>track('game_error'));
  window.addEventListener('unhandledrejection',()=>track('game_error'));
 }
