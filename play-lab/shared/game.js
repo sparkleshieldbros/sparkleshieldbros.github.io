@@ -1,3 +1,4 @@
+import {track,installAnalytics} from './cash/analytics.js';
 import {bossIdentity,drawBossRegalia,advanceEdgePressure,takeEdgePressure} from './cash/boss-identity.js';
 import {calculateChapterScore,recordChapterScore} from './cash/scoring.js';
 import {showChapterResults} from './cash/chapter-results.js';
@@ -1052,6 +1053,7 @@ class Adventure extends Phaser.Scene{
    stars:markers.filter(o=>o.name==='star').map((o,i)=>this.obj(this.add.image(o.x,o.y,'sun-cuff').setDisplaySize(50,42).setDepth(10)))};
   this.events.off('resume',this.resetCashActiveClock,this);
   this.events.on('resume',this.resetCashActiveClock,this);
+  track('chapter_started',{chapter:this.level+1,difficulty:this.echoMode,mode:$('cash-coop')?.checked?'co-op':'solo'});
   this.showcase.scoring={
    elapsedSeconds:0,scouts:0,collectibles:0,dodgeCounters:0,lifeLosses:0,
    eligible:true,partnerFalls:0,lastActiveAt:performance.now(),defeated:new Set(),collected:new Set(),
@@ -1396,6 +1398,7 @@ class Adventure extends Phaser.Scene{
   }catch{}
  }
  showCashGameOver(){
+  track('game_over',{chapter:this.level+1});
   this.saveCashAttempt('retry');
   this.echoStep='retry';
   this.player.body.stop();
@@ -2290,6 +2293,7 @@ class Adventure extends Phaser.Scene{
   }
  }
  loadLevel(resumeCheckpoint=false){
+  if(kind==='cash'&&this.showcase&&!this.completed)track('game_restarted',{chapter:this.level+1});
   this.cashResults?.close();
   this.cashResults=null;
   this.cashResultsPending=false;
@@ -2418,12 +2422,15 @@ coin.aim=aim;coin.life=1600;this.projectiles.push(coin);tone(this,970,.065);emit
  finishCashChapter(){
   const s=this.showcase;
   const tally=calculateChapterScore({...s.scoring,cleared:true});
+  track('chapter_completed',{chapter:this.level+1,score:tally.total,difficulty:this.echoMode,mode:s.partner?'co-op':'solo'});
+  if(this.level===9)track('game_completed');
   this.score=tally.total;
   this.updateHUD();
   let storage;
   try{storage=window.localStorage;}catch{}
   const context={chapter:this.level+1,difficulty:this.echoMode,mode:s.partner?'co-op':'solo'};
   const board=recordChapterScore(storage,context,tally,{eligible:s.scoring.eligible});
+  if(board.saved)track('score_submitted',{chapter:this.level+1,score:tally.total,rank:tally.grade});
   this.cashResultsPending=true;
   const player=this.player;
   const heroes=[player,s.partner].filter(Boolean);
@@ -2657,6 +2664,7 @@ if(new URLSearchParams(location.search).get('test')==='1'){
 }
 setStatus(info.desc)}
 if(kind==='cash'){
+ installAnalytics();
  const difficulty=$('echo-mode');
  const difficultyKey='sparkle-play-lab:cash:tier';
  try{
@@ -2720,7 +2728,8 @@ if(kind==='cash'){
   syncCashMusic();
   init();
  };
- $('cash-start').addEventListener('click',()=>start(false),{once:true});
+ $('cash-start').addEventListener('click',()=>{track('game_started');start(false);},{once:true});
+ track('game_loaded');
  document.querySelectorAll('[data-cash-challenge]').forEach(button=>button.addEventListener('click',()=>start(false,Number(button.dataset.cashChallenge))));
  $('cash-boss-shortcut').addEventListener('click',()=>{if(!game)start(true);});
 }else init();

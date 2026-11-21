@@ -1,3 +1,4 @@
+import {track} from './analytics.js';
 import {createScoreCard,COIN_DASH_URL} from './score-card.js';
 
 const congratulations = Object.freeze([
@@ -177,6 +178,7 @@ export function showChapterResults({
  }
 
  share.addEventListener('click', async () => {
+  track('share_clicked',{chapter:chapter+1,score});
   if (!imageUrl) {
    await prepareImage();
    return;
