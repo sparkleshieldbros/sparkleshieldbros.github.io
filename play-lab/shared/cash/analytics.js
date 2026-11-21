@@ -1,16 +1,12 @@
+import {EVENTS,eventFields,campaignFields} from './analytics-fields.js';
 const ID='G-LD7XH6WBYE';
 const KEY='ssb:analytics-choice';
-const names=new Set(['page_view','game_loaded','game_started','chapter_started','chapter_completed','game_completed','game_restarted','game_over','score_submitted','share_clicked','game_error']);
 let enabled=false;
 function choice(){try{return localStorage.getItem(KEY);}catch{return null;}}
 export function track(name,params={}){
- if(!enabled||!names.has(name))return;
+ if(!enabled||!EVENTS.has(name))return;
  const clean={game_name:'coin_dash',page_location:location.origin+location.pathname,page_referrer:'',send_to:ID};
- for(const key of ['chapter','score','difficulty','mode','rank']){
-  const value=params[key];
-  if(typeof value==='number'&&Number.isFinite(value))clean[key]=Math.max(0,Math.round(value));
-  else if(['practice','adventurer','challenge','solo','co-op','S','A','B','C','D'].includes(value))clean[key]=value;
- }
+ Object.assign(clean,campaignFields(location.search),eventFields(params));
  window.gtag('event',name,clean);
 }
 function enable(){
@@ -20,13 +16,14 @@ function enable(){
  window.gtag=function(){window.dataLayer.push(arguments);};
  window.gtag('consent','default',{analytics_storage:'granted',ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied'});
  window.gtag('js',new Date());
- window.gtag('config',ID,{send_page_view:false,allow_google_signals:false,allow_ad_personalization_signals:false,ignore_referrer:true,page_location:location.origin+location.pathname,page_referrer:''});
+ window.gtag('config',ID,{send_page_view:false,allow_google_signals:false,allow_ad_personalization_signals:false,ignore_referrer:true,cookie_expires:86400,cookie_update:false,page_location:location.origin+location.pathname,page_referrer:''});
  // Local verification exercises the queue without sending developer traffic.
  if(location.hostname==='sparkleshieldbros.github.io'){
   const script=document.createElement('script');script.async=true;
   script.src='https://www.googletagmanager.com/gtag/js?id='+ID;
   document.head.append(script);
  }
+ window['ga-disable-'+ID]=false;
  track('page_view');
 }
 export function installAnalytics(){

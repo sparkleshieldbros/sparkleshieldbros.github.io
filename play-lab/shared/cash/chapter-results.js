@@ -107,6 +107,7 @@ export function showChapterResults({
  share.disabled = true;
  const save = element('a', 'cash-results-save', 'Save image');
  save.hidden = true;
+ save.addEventListener('click',()=>track('score_image_saved',{chapter:chapter+1,score}));
  save.target = '_blank';
  save.rel = 'noopener';
  actions.append(next, replay, share, save);
@@ -190,6 +191,7 @@ export function showChapterResults({
      files:[scoreFile], title:'Sparkle Shield Bros · Coin Dash',
      text:shareText, url:COIN_DASH_URL,
     });
+    track('share_completed',{chapter:chapter+1,score});
     if (!closed) feedback.textContent = 'Score image shared!';
     return;
    }

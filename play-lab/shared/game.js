@@ -1054,6 +1054,7 @@ class Adventure extends Phaser.Scene{
   this.events.off('resume',this.resetCashActiveClock,this);
   this.events.on('resume',this.resetCashActiveClock,this);
   track('chapter_started',{chapter:this.level+1,difficulty:this.echoMode,mode:$('cash-coop')?.checked?'co-op':'solo'});
+  track('game_loaded',{chapter:this.level+1});
   this.showcase.scoring={
    elapsedSeconds:0,scouts:0,collectibles:0,dodgeCounters:0,lifeLosses:0,
    eligible:true,partnerFalls:0,lastActiveAt:performance.now(),defeated:new Set(),collected:new Set(),
@@ -1374,6 +1375,7 @@ class Adventure extends Phaser.Scene{
   this.updateHUD();
  }
  recordCashLifeLoss(cause){
+  track('life_lost',{chapter:this.level+1,cause});
   if(this.showcase.scoring){
    this.showcase.scoring.lifeLosses++;
    this.score=calculateChapterScore({...this.showcase.scoring,cleared:false}).total;
@@ -1972,6 +1974,7 @@ class Adventure extends Phaser.Scene{
   if(portal){
    portal.entered=true;
    s.district=s.portals.indexOf(portal)+1;
+   track('checkpoint_reached',{chapter:this.level+1,checkpoint:s.district});
    this.arriveCashPortal(s,portal);
    try{localStorage.setItem('sparkle-play-lab:cash-portal:'+this.level,String(s.district));}catch{}
    const reveal=()=>{if(this.showcase===s){this.showCashDistrict(s);this.showCashPortalStamp(s);}};
@@ -2422,7 +2425,7 @@ coin.aim=aim;coin.life=1600;this.projectiles.push(coin);tone(this,970,.065);emit
  finishCashChapter(){
   const s=this.showcase;
   const tally=calculateChapterScore({...s.scoring,cleared:true});
-  track('chapter_completed',{chapter:this.level+1,score:tally.total,difficulty:this.echoMode,mode:s.partner?'co-op':'solo'});
+  track('chapter_completed',{chapter:this.level+1,score:tally.total,duration_seconds:s.scoring.elapsedSeconds,life_losses:s.scoring.lifeLosses,difficulty:this.echoMode,mode:s.partner?'co-op':'solo'});
   if(this.level===9)track('game_completed');
   this.score=tally.total;
   this.updateHUD();
@@ -2688,6 +2691,7 @@ if(kind==='cash'){
    const title=document.createElement('span');
    title.textContent=option.textContent;
    radio.addEventListener('change',()=>{
+    track('hero_selected',{hero});
     select.value=hero;
     select.dispatchEvent(new Event('change',{bubbles:true}));
    });
@@ -2729,7 +2733,7 @@ if(kind==='cash'){
   init();
  };
  $('cash-start').addEventListener('click',()=>{track('game_started');start(false);},{once:true});
- track('game_loaded');
+
  document.querySelectorAll('[data-cash-challenge]').forEach(button=>button.addEventListener('click',()=>start(false,Number(button.dataset.cashChallenge))));
  $('cash-boss-shortcut').addEventListener('click',()=>{if(!game)start(true);});
 }else init();
