@@ -2,6 +2,7 @@ import {EVENTS,eventFields,campaignFields} from './analytics-fields.js';
 const ID='G-LD7XH6WBYE';
 const KEY='ssb:analytics-choice';
 let enabled=false;
+let installed=false;
 function choice(){try{return localStorage.getItem(KEY);}catch{return null;}}
 export function track(name,params={}){
  if(!enabled||!EVENTS.has(name))return;
@@ -27,6 +28,8 @@ function enable(){
  track('page_view');
 }
 export function installAnalytics(){
+ if(installed)return;
+ installed=true;
  const details=document.createElement('details');
  const title=document.createElement('summary');title.textContent='Usage measurement & privacy';
  const text=document.createElement('p');
