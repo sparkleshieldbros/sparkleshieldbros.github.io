@@ -1400,6 +1400,19 @@ class Adventure extends Phaser.Scene{
   }catch{}
  }
  showCashGameOver(){
+  if(this.cashGameOverDialog?.open)return;
+  const panel=document.createElement('dialog');
+  panel.className='cash-book-dialog';
+  panel.setAttribute('aria-labelledby','cash-game-over-title');
+  const heading=document.createElement('h2');heading.id='cash-game-over-title';heading.textContent='GAME OVER';
+  const message=document.createElement('p');message.textContent='Out of lives. Try again from your checkpoint.';
+  const retry=document.createElement('button');retry.type='button';retry.textContent='↻ Retry';
+  panel.append(heading,message,retry);
+  (document.fullscreenElement||document.body).append(panel);
+  const restart=()=>{panel.close();panel.remove();this.cashGameOverDialog=null;this.loadLevel(true);};
+  retry.addEventListener('click',restart);
+  panel.addEventListener('cancel',event=>{event.preventDefault();restart();});
+  this.cashGameOverDialog=panel;panel.showModal();retry.focus();
   track('game_over',{chapter:this.level+1});
   this.saveCashAttempt('retry');
   this.echoStep='retry';
@@ -2296,6 +2309,9 @@ class Adventure extends Phaser.Scene{
   }
  }
  loadLevel(resumeCheckpoint=false){
+  if(this.cashGameOverDialog){
+   this.cashGameOverDialog.close();this.cashGameOverDialog.remove();this.cashGameOverDialog=null;
+  }
   if(kind==='cash'&&this.showcase&&!this.completed)track('game_restarted',{chapter:this.level+1});
   this.cashResults?.close();
   this.cashResults=null;
