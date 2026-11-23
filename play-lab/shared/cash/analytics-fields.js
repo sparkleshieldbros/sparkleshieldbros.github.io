@@ -16,8 +16,8 @@ export function eventFields(params={}){
 export function campaignFields(search=''){
  const query=new URLSearchParams(search),clean={};
  const values={
-  utm_source:['facebook','instagram','linkedin','substack','qr','youtube'],
-  utm_medium:['organic_social','email','referral','qr'],
+  utm_source:['facebook','instagram','linkedin','substack','qr','youtube','sparkle_site'],
+  utm_medium:['organic_social','email','referral','qr','owned'],
   utm_campaign:['coin_dash_high_score_v1','coin_dash_gameplay_v1','coin_dash_family_v1'],
  };
  for(const [key,allowed] of Object.entries(values)){
